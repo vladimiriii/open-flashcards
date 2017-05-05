@@ -1,0 +1,14 @@
+/* Error Page Styling */
+
+.error-text {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.error-links-div {
+    margin-bottom: 50px;
+}
+
+#error-img {
+    margin-top: 100px;
+}

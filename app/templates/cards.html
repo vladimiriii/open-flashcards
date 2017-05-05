@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cards | Open Flashcards</title>
+
+	<!-- Encoding -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Facebook Open Graph tags -->
+    <meta property="og:title" content="Cards | Open Flashcards" />
+    <meta property="og:site_name" content="Open Flashcards"/>
+    <meta property="og:image" content=""/>
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content=""/>
+    <meta property="fb:app_id" content=""/>
+    <meta property="og:description" content=""/>
+
+    <!-- jQuery plugin -->
+    <script src="{{ url_for('static',filename='script/jquery/jquery-3.1.1.min.js') }}"></script>
+
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://bootswatch.com/paper/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+	<!-- Font-awesome for sharing buttons -->
+	<link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+	<!-- Internal CSS -->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/baseStyle.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/cards.css') }}">
+
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static',filename='script/custom/cardsOnLoad.js') }}"></script>
+
+	<!-- Google Analytics -->
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-60963697-3', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+</head>
+<body>
+    <div id="spinner" class="spinner" style="display:none;">
+        <div class="sk-cube-grid">
+            <div class="sk-cube sk-cube1"></div>
+            <div class="sk-cube sk-cube2"></div>
+            <div class="sk-cube sk-cube3"></div>
+            <div class="sk-cube sk-cube4"></div>
+            <div class="sk-cube sk-cube5"></div>
+            <div class="sk-cube sk-cube6"></div>
+            <div class="sk-cube sk-cube7"></div>
+            <div class="sk-cube sk-cube8"></div>
+            <div class="sk-cube sk-cube9"></div>
+        </div>
+    </div>
+	<!-- Content -->
+	<div class="container-fluid">
+        <!-- Navbar -->
+        <div class="row">
+            <nav class="navbar navbar-default">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="">Open Flashcards</a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapse-right" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse" id="collapse-right">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="./sheet_select">Change Sheet</a></li>
+                        <li><a href="">Find a Public Set</a></li>
+                        <li><a href="./logout">Logout</a></li>
+                    </ul> <!-- navbar-collapse -->
+                </div>
+            </nav>
+        </div>
+        <!-- Page Content -->
+        <div class="row">
+            <!-- Tool Bar -->
+            <div class="col-md-2" id="toolbar">
+                <div class="row" style="text-align: center">
+                    <p class="toolbar-text">Front of Cards</p>
+                </div>
+                <div class="row">
+                    <div id="language-select" class="form-group">
+                        <select id="language-list" class="form-control eco-select"></select>
+                    </div>
+                </div>
+                <div class="row" style="text-align: center">
+                    <p class="toolbar-text">Category</p>
+                </div>
+                <div class="row">
+                    <div id="category-select" class="form-group">
+                        <select id="category-list" class="form-control eco-select"></select>
+                    </div>
+                </div>
+                <div class="row" style="text-align: center">
+                    <button type="button" class="btn btn-default" id="refresh-btn">
+                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> New Cards
+                    </button>
+                </div>
+                <div class="row" style="text-align: center">
+                    <h3>Score</h3>
+                    <div class="row">
+                        <div class="col-xs-6" id="correct-count">
+                            <p>Correct</p>
+                        </div>
+                        <div class="col-xs-6" id="wrong-count">
+                            <p>Incorrect</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button type="button" class="btn btn-default" id="reset-score">Reset Scores</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Flip Cards -->
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-6 card-div">
+                        <section class="card-container">
+                            <div class="card" id="card1">
+                                <div class="front"></div>
+                                <div class="back" id="card1-back">
+                                    <div class="row card-back-row1" id="card1-back1">
+                                    </div>
+                                    <div class="row card-back-row2" id="card1-back2">
+                                    </div>
+                                    <div class="row card-back-row3">
+                                        <button type="button" class="btn btn-default correct-btn">
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-default wrong-btn">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-md-6 card-div">
+                        <section class="card-container">
+                            <div class="card" id="card2">
+                                <div class="front"></div>
+                                <div class="back" id="card2-back">
+                                    <div class="row card-back-row1" id="card2-back1">
+                                    </div>
+                                    <div class="row card-back-row2" id="card2-back2">
+                                    </div>
+                                    <div class="row card-back-row3">
+                                        <button type="button" class="btn btn-default correct-btn">
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-default wrong-btn">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 card-div">
+                        <section class="card-container">
+                            <div class="card" id="card3">
+                                <div class="front"></div>
+                                <div class="back" id="card3-back">
+                                    <div class="row card-back-row1" id="card3-back1">
+                                    </div>
+                                    <div class="row card-back-row2" id="card3-back2">
+                                    </div>
+                                    <div class="row card-back-row3">
+                                        <button type="button" class="btn btn-default correct-btn">
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-default wrong-btn">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-md-6 card-div">
+                        <section class="card-container">
+                            <div class="card" id="card4">
+                                <div class="front"></div>
+                                <div class="back" id="card4-back">
+                                    <div class="row card-back-row1" id="card4-back1">
+                                    </div>
+                                    <div class="row card-back-row2" id="card4-back2">
+                                    </div>
+                                    <div class="row card-back-row3">
+                                        <button type="button" class="btn btn-default correct-btn">
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-default wrong-btn">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer -->
+		<div class="row">
+		    <footer>
+		        <div class="page-footer">
+		            <div class="container">
+		                <div class="row">
+		                    <div class="footer-col col-md-12">
+		                        <br>
+		                        <h4>Get in touch!</h4>
+		                        <!-- Twitter -->
+		                        <a href="https://twitter.com/mrbrettromero" data-toggle="tooltip" title="Twitter" target="_blank" class="share-btn twitter">
+		                            <i class="fa fa-twitter"></i>
+		                        </a>
+
+		                        <!-- Facebook -->
+		                        <a href="https://www.facebook.com/brett.romero.9" data-toggle="tooltip" title="Facebook" target="_blank" class="share-btn facebook">
+		                            <i class="fa fa-facebook"></i>
+		                        </a>
+
+		                        <!-- Page -->
+		                        <a href="http://brettromero.com" data-toggle="tooltip" title="brettromero.com" target="_blank" class="share-btn home">
+		                            <i class="fa fa-home"></i>
+		                        </a>
+		                        <br>
+                                <br>
+                                <br>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </footer>
+		</div>
+	</div>
+</body>
+</html>

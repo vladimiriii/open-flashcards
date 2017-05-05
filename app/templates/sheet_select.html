@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sheet Select | Open Flashcards</title>
+
+	<!-- Encoding -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Facebook Open Graph tags -->
+    <meta property="og:title" content="Sheet Select | Open Flashcards" />
+    <meta property="og:site_name" content="Open Flashcards"/>
+    <meta property="og:image" content=""/>
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content=""/>
+    <meta property="fb:app_id" content=""/>
+    <meta property="og:description" content=""/>
+
+    <!-- jQuery plugin -->
+    <script src="{{ url_for('static',filename='script/jquery/jquery-3.1.1.min.js') }}"></script>
+
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://bootswatch.com/paper/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.2/css/select.dataTables.min.css">
+    <script src="https://cdn.datatables.net/select/1.2.2/js/dataTables.select.min.js"></script>
+
+	<!-- Font-awesome for sharing buttons -->
+	<link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+	<!-- Internal CSS -->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/baseStyle.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/sheetSelect.css') }}">
+
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static',filename='script/custom/sheetSelect.js') }}"></script>
+
+	<!-- Google Analytics -->
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-60963697-3', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+</head>
+<body>
+    <div id="spinner" class="spinner" style="display:none;">
+        <div class="sk-cube-grid">
+            <div class="sk-cube sk-cube1"></div>
+            <div class="sk-cube sk-cube2"></div>
+            <div class="sk-cube sk-cube3"></div>
+            <div class="sk-cube sk-cube4"></div>
+            <div class="sk-cube sk-cube5"></div>
+            <div class="sk-cube sk-cube6"></div>
+            <div class="sk-cube sk-cube7"></div>
+            <div class="sk-cube sk-cube8"></div>
+            <div class="sk-cube sk-cube9"></div>
+        </div>
+    </div>
+	<!-- Content -->
+	<div class="container-fluid">
+        <!-- Navbar -->
+        <div class="row">
+            <nav class="navbar navbar-default">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="">Open Flashcards</a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapse-right" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse" id="collapse-right">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="">Find a Public Set</a></li>
+                        <li><a href="./logout">Logout</a></li>
+                    </ul> <!-- navbar-collapse -->
+                </div>
+            </nav>
+        </div>
+		<div class="row" id="sheets-panel">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+                <div class="row text-btn-row">
+                    <div class="col-md-8 text-div">
+                        <h4>Select sheet to use</h4>
+                    </div>
+                    <div class="col-md-4 btn-div">
+                        <a href="./view_cards" id="accept-link">
+                        <!-- <a id="accept-link"> -->
+                            <button type="button" class="btn btn-primary disabled" id="accept-btn">Accept</button>
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <table id="sheet_list" class="display">
+                        <thead>
+                            <tr>
+                                <th>Sheet Name</th>
+                                <th>Last Modified</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-2">
+            </div>
+        </div>
+        <br>
+        <br>
+        <!-- Footer -->
+		<div class="row">
+		    <footer>
+		        <div class="page-footer">
+		            <div class="container">
+		                <div class="row">
+		                    <div class="footer-col col-md-12">
+		                        <br>
+		                        <h4>Get in touch!</h4>
+		                        <!-- Twitter -->
+		                        <a href="https://twitter.com/mrbrettromero" data-toggle="tooltip" title="Twitter" target="_blank" class="share-btn twitter">
+		                            <i class="fa fa-twitter"></i>
+		                        </a>
+
+		                        <!-- Facebook -->
+		                        <a href="https://www.facebook.com/brett.romero.9" data-toggle="tooltip" title="Facebook" target="_blank" class="share-btn facebook">
+		                            <i class="fa fa-facebook"></i>
+		                        </a>
+
+		                        <!-- Page -->
+		                        <a href="http://brettromero.com" data-toggle="tooltip" title="brettromero.com" target="_blank" class="share-btn home">
+		                            <i class="fa fa-home"></i>
+		                        </a>
+		                        <br>
+                                <br>
+                                <br>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </footer>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+.idea
+info
+venv
+config.cfg
+app.wsgi
+*.pyc
+app/static/data/private/*.*
+app/lib/__pycache__/*.*
