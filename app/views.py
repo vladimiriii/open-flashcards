@@ -12,6 +12,8 @@ from oauth2client import client
 
 # Custom Libraries
 import app.lib.cardData as cd
+import app.lib.processLogin as pl
+import app.lib.processSheets as ps
 
 # Define the blueprint:
 landing_page = Blueprint('landing_page', __name__)
@@ -22,6 +24,9 @@ logout = Blueprint('logout', __name__)
 cards_page = Blueprint('cards_page', __name__)
 card_data = Blueprint('card_data', __name__)
 error_page = Blueprint('error_page', __name__)
+
+# Set scopes
+scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/drive.readonly', 'https://www.googleapis.com/auth/userinfo.email']
 
 
 @landing_page.route('/', methods=['GET'])
@@ -49,7 +54,7 @@ def oauth2callback():
         if 'credentials' not in session:
             flow = client.flow_from_clientsecrets(
                 client_secrets_path,
-                scope=['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/drive.readonly'],
+                scope=scopes,
                 redirect_uri=url_for('process_login.oauth2callback', _external=True))
 
             if 'code' not in request.args:
@@ -67,7 +72,7 @@ def oauth2callback():
         if credentials.access_token_expired:
             flow = client.flow_from_clientsecrets(
                 client_secrets_path,
-                scope=['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/drive.readonly'],
+                scope=scopes,
                 redirect_uri=url_for('process_login.oauth2callback', _external=True))
 
             if 'code' not in request.args:
@@ -94,13 +99,14 @@ def ss_page():
             return redirect(url_for('landing_page.la_page'))
 
         else:
+            pl.process_login()
             credentials = client.OAuth2Credentials.from_json(session['credentials'])
             # If credentials have expired refresh them
             if credentials.access_token_expired:
                 client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret_71572721139-4k4cch634h94b76f1qelmvuqpr6jv4da.apps.googleusercontent.com.json')
                 flow = client.flow_from_clientsecrets(
                     client_secrets_path,
-                    scope=['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/drive.readonly'],
+                    scope=scopes,
                     redirect_uri=url_for('process_login.oauth2callback', _external=True))
 
                 if 'code' not in request.args:
@@ -124,14 +130,10 @@ def save_page():
     try:
         # Return Account Map and Selected Sheet ID (if it exists)
         if request.method == 'GET':
-
             # Get Sheet List
-            credentials = client.OAuth2Credentials.from_json(session['credentials'])
-            http = credentials.authorize(http=httplib2.Http())
-            discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?version=v3')
-            service = build('drive', 'v3', http=http)
-            sheet_list = get_sheet_list(service)
+            sheet_list = ps.get_sheet_list()
             results = {"sheets": sheet_list}
+            # ps.save_sheet_info()
             return jsonify(results)
 
         # Saves Sheet ID to Session
@@ -159,7 +161,7 @@ def vc_page():
                 client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret_71572721139-4k4cch634h94b76f1qelmvuqpr6jv4da.apps.googleusercontent.com.json')
                 flow = client.flow_from_clientsecrets(
                     client_secrets_path,
-                    scope=['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/drive.readonly'],
+                    scope=scopes,
                     redirect_uri=url_for('process_login.oauth2callback', _external=True))
 
                 if 'code' not in request.args:
@@ -205,22 +207,3 @@ def lo_page():
             sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
         print(message)
         return redirect(url_for('error_page.er_page'))
-
-
-def get_sheet_list(service):
-    # Get a list of all Sheets in the account for the current user.
-
-    response = service.files().list(q="mimeType='application/vnd.google-apps.spreadsheet'",
-                                    spaces='drive',
-                                    fields='nextPageToken, files(id, name, modifiedTime)').execute()
-
-    file_list = []
-    for file in response.get('files', []):
-        # Process change
-        file_list.append({
-            'name': file.get('name'),
-            'id': file.get('id'),
-            'modified': file.get('modifiedTime')
-            })
-
-    return file_list

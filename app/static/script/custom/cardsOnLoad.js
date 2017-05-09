@@ -2,6 +2,7 @@
 Global Variables
 -----------------------------------*/
 var cardData,
+    headers,
     catIndex,
     lanOneIndex,
     lanTwoIndex,
@@ -39,11 +40,16 @@ function getSheetData() {
 };
 
 // Build list of indicators
-function buildIndicatorList(div, dataset) {
+function buildIndicatorList(div, dataset, optional=false) {
 	$("#" + div).empty();
     for (key in dataset) {
-        text = "<option value='" + dataset[key] + "'>" + capitalizeFirstLetter(dataset[key]) + "</option>";
+        text = "<option value='" + dataset[key].toString() + "'>" + capitalizeFirstLetter(dataset[key].toString()) + "</option>";
         $("#" + div).append(text);
+    };
+
+    if (optional) {
+        text = "<option value='none'>None</option>";
+        $("#" + div).prepend(text);
     };
 };
 
@@ -64,10 +70,12 @@ function getCategoryList(array) {
     var finalList = ["All"];
     var cat;
 
-    for (var index = 0; index < array.length; ++index) {
-        cat = array[index][catIndex];
-        if ($.inArray(cat, finalList) == -1) {
-            finalList.push(cat);
+    if (catIndex != undefined) {
+        for (var index = 0; index < array.length; ++index) {
+            cat = array[index][catIndex];
+            if ($.inArray(cat, finalList) == -1) {
+                finalList.push(cat);
+            };
         };
     };
     return finalList;
@@ -78,7 +86,7 @@ function getLanguageList(array) {
     languages.push(array[lanOneIndex]);
     languages.push(array[lanTwoIndex]);
 
-    if (array.length == 4) {
+    if (lanThreeIndex > 0) {
         languages.push(array[lanThreeIndex]);
     };
     return languages
@@ -218,6 +226,102 @@ function unflipCards() {
     };
 };
 
+
+function detectColumns() {
+
+    // Take data row as an example and determine string columns
+    var sampleRow = cardData['data'][0];
+    var colIndices = [];
+    for (n in cardData['headers']) {
+        colIndices.push(n);
+    };
+
+    // Check header names for category column
+    var catFound = false;
+    for (hdrIdx in cardData['headers']) {
+        var header = cardData['headers'][hdrIdx].toLowerCase();
+        if (header.indexOf('cat') != -1) {
+            catIndex = Number(hdrIdx);
+            catFound = true;
+            break;
+        };
+    };
+
+    // If that doesn't work, look at column values
+    if (!catFound) {
+        // Loop through all columns, get unique value count
+        // Column with lowest unique value count will be guessed as category column
+        uniqueVals = [];
+        for (rowIndex in cardData['data']) {
+            row = cardData['data'][rowIndex];
+            for (i in colIndices) {
+                // Initialize array of arrays
+                if (rowIndex == 0){
+                    uniqueVals[i] = [];
+                };
+                // console.log(uniqueVals);
+                if (uniqueVals[i].indexOf(row[i]) == -1) {
+                    uniqueVals[i].push(row[i]);
+                };
+            };
+        };
+
+        // Count Values and get max and min
+        counts = [];
+        for (list in uniqueVals) {
+            counts.push(uniqueVals[list].length);
+        };
+        var minValue = Math.min.apply(null, counts);
+        var maxValue = Math.max.apply(null, counts);
+
+        // If min is less than max, assume min column is category column
+        // If not, than assume there is not category column
+        if (minValue < maxValue) {
+            catIndex = Number(colIndices[counts.indexOf(minValue)]);
+            catFound = true;
+        };
+    };
+
+    // Remove Category Column (if found)
+    if (catFound) {
+        colIndices.splice(catIndex, 1);
+    };
+
+    // Remove ID Columns (if any, and if there are still enough columns)
+    for (ind in colIndices) {
+        var header = cardData['headers'][colIndices[ind]].toLowerCase();
+        // Need at least two headers for languages
+        if (header.indexOf('id') != -1 && colIndices.length > 2) {
+            colIndices.splice(ind, 1);
+        };
+    };
+
+    // Assign Remaining Columns
+    lanOneIndex = Number(colIndices[0]);
+    lanTwoIndex = Number(colIndices[1]);
+    if (colIndices.length > 2) {
+        lanThreeIndex = Number(colIndices[2]);
+    } else {
+        lanThreeIndex = -1;
+    };
+    console.log(lanOneIndex + ", " + lanTwoIndex + ", " + lanThreeIndex);
+};
+
+function populateModalDropdowns() {
+    buildIndicatorList("primary-list", headers);
+    buildIndicatorList("secondary-list", headers);
+    buildIndicatorList("tertiary-list", headers, true);
+    buildIndicatorList("modal-categories-list", headers, true);
+    $('#primary-list>option:eq(' + lanOneIndex + ')').prop('selected', true);
+    $('#secondary-list>option:eq(' + lanTwoIndex + ')').prop('selected', true);
+    $('#modal-categories-list>option:eq(' + (catIndex + 1).toString() + ')').prop('selected', true);
+    if (headers.length == 3) {
+        $('#tertiary-list>option:eq(0)').prop('selected', true);
+    } else if (headers.length > 3) {
+        $('#tertiary-list>option:eq(' + (lanThreeIndex + 1).toString() + ')').prop('selected', true);
+    };
+};
+
 /*-----------------------------------
 On Page Load
 -----------------------------------*/
@@ -225,32 +329,43 @@ $(document).ready(function(){
 
     // Get Card Data
     $.when(getSheetData()).done( function() {
-        catIndex = (cardData['headers'].length) - 1;
-        lanOneIndex = 0;
-        lanTwoIndex = 1;
-        lanThreeIndex = 2;
+        headers = cardData['headers'];
 
-        // Get Category and Language Lists
-        var categories = getCategoryList(cardData['data']);
-        languages = getLanguageList(cardData['headers']);
-        primaryLanguage = cardData['headers'][lanOneIndex];
+        // Populate Modal Drop Downs
+        $('#column-select').modal('show');
+        detectColumns();
+        populateModalDropdowns();
 
-        // Populate Dropdowns
-        buildIndicatorList("language-list", languages);
-        $("#language-list").val(primaryLanguage);
-        buildIndicatorList("category-list", categories);
+        // Modal Accept Button
+        $('#confirm-btn').click(function() {
+            lanOneIndex = headers.indexOf($("#primary-list").val());
+            lanTwoIndex = headers.indexOf($("#secondary-list").val());
+            lanThreeIndex = headers.indexOf($("#tertiary-list").val());
+            catIndex = headers.indexOf($("#modal-categories-list").val());
+            $('#column-select').modal('hide');
 
-        // Initialize Scoreboard
-        $('#correct-count').append('<span id="cor-count">0</span>');
-        $('#wrong-count').append('<span id="wro-count">0</span>');
+            // Get Category and Language Lists
+            var categories = getCategoryList(cardData['data']);
+            languages = getLanguageList(headers);
+            primaryLanguage = headers[lanOneIndex];
 
-        // Get Random numbers
-        createIDList(category);
-        getRandomIds(cardCount);
+            // Populate Dropdowns
+            buildIndicatorList("language-list", languages);
+            $("#language-list").val(primaryLanguage);
+            buildIndicatorList("category-list", categories);
 
-        // Populate Cards
-        populateCards(primaryLanguage);
+            // Get Random numbers
+            createIDList(category);
+            getRandomIds(cardCount);
+
+            // Populate Cards
+            populateCards(primaryLanguage);
+        });
     });
+
+    // Initialize Scoreboard
+    $('#correct-count').append('<span id="cor-count">0</span>');
+    $('#wrong-count').append('<span id="wro-count">0</span>');
 
     // Flip cards on click
     $('#card1').click(function() {
@@ -382,5 +497,4 @@ $(document).ready(function(){
         $('#correct-count').append('<span id="cor-count">' + String(correct) + '</span>');
         $('#wrong-count').append('<span id="wro-count">' + String(wrong) + '</span>');
     });
-
 });

@@ -36,7 +36,7 @@ def initialize_reporting():
 
 def query_API(service, sheet_id):
 
-    rangeName = 'A1:E'
+    rangeName = 'A1:J'
     result = service.spreadsheets().values().get(spreadsheetId=sheet_id, range=rangeName).execute()
     values = result.get('values', [])
 

@@ -34,7 +34,7 @@
     <script src="{{ url_for('static',filename='script/custom/cardsOnLoad.js') }}"></script>
 
 	<!-- Google Analytics -->
-    <script>
+    <!-- <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -43,7 +43,7 @@
         ga('create', 'UA-60963697-3', 'auto');
         ga('send', 'pageview');
 
-    </script>
+    </script> -->
 </head>
 <body>
     <div id="spinner" class="spinner" style="display:none;">
@@ -76,6 +76,7 @@
                 <div class="collapse navbar-collapse" id="collapse-right">
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="./sheet_select">Change Sheet</a></li>
+                        <li><a id="change-columns" data-toggle="modal" data-target="#column-select">Column Select</a></li>
                         <li><a href="">Find a Public Set</a></li>
                         <li><a href="./logout">Logout</a></li>
                     </ul> <!-- navbar-collapse -->
@@ -246,6 +247,64 @@
 		        </div>
 		    </footer>
 		</div>
+        <!-- About Modal -->
+    	<div class="row">
+    	    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="column-select" role="dialog">
+    	        <div class="modal-dialog">
+    	            <!-- Modal content-->
+    	            <div class="modal-content">
+    	                <div class="navbar-collapse modal-header">
+    	                    <h4 style="text-align: center">Select Columns</h4>
+    	                </div>
+    	                <div class="modal-body">
+    						<div class="row modal-row">
+                                <div class="col-md-6">
+                                    <p>First Language: </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="primary-language" class="form-group">
+                                        <select id="primary-list" class="form-control eco-select"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row modal-row">
+                                <div class="col-md-6">
+                                    <p>Second Language: </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="secondary-language" class="form-group">
+                                        <select id="secondary-list" class="form-control eco-select"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row modal-row">
+                                <div class="col-md-6">
+                                    <p>Third Language (Optional): </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="tertiary-language" class="form-group">
+                                        <select id="tertiary-list" class="form-control eco-select"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row modal-row">
+                                <div class="col-md-6">
+                                    <p>Categories (Optional): </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="modal-categories" class="form-group">
+                                        <select id="modal-categories-list" class="form-control eco-select"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <button type="button" class="btn btn-default" id="confirm-btn">Confirm</button>
+                            </div>
+    					</div>
+    	            </div>
+    	        </div>
+    	    </div>
+    	</div>
 	</div>
 </body>
 </html>
