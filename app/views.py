@@ -133,7 +133,6 @@ def save_page():
             # Get Sheet List
             sheet_list = ps.get_sheet_list()
             results = {"sheets": sheet_list}
-            # ps.save_sheet_info()
             return jsonify(results)
 
         # Saves Sheet ID to Session
@@ -172,6 +171,7 @@ def vc_page():
                     credentials = flow.step2_exchange(auth_code)
                     session['credentials'] = credentials.to_json()
 
+            ps.save_sheet_info(session['sheet_id'])
             return render_template('cards.html')
     except:
         message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(

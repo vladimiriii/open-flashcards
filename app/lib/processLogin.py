@@ -42,3 +42,7 @@ def process_login():
     else:
         current_user.au_last_sign_in = datetime.now()
         db_session.commit()
+
+    # Save User ID to Session
+    current_user = app_user.query.filter_by(au_email=email).first()
+    session['au_id'] = current_user.au_id
