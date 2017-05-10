@@ -22,7 +22,7 @@ class app_user_role(Base):
     __tablename__ = 'app_user_role'
     __table_args__ = {"schema": schema_name}
     aur_id = Column(Integer, primary_key=True)
-    aur_role_name = Column(String(120), unique=True)
+    aur_role_name = Column(String(120))
     aur_role_description = Column(Text)
     aur_create_date = Column(DateTime)
     aur_is_deleted = Column(Boolean)
@@ -38,11 +38,11 @@ class app_user(Base):
     __table_args__ = {"schema": schema_name}
     au_id = Column(Integer, primary_key=True)
     au_aur_id = Column(Integer, ForeignKey(schema_name + '.app_user_role.aur_id'), nullable=False)
-    au_email = Column(String(120), unique=True)
-    au_first_name = Column(String(120), unique=True)
-    au_last_name = Column(String(120), unique=True)
-    au_gender = Column(String(12), unique=True)
-    au_profile_url = Column(String(120), unique=True)
+    au_email = Column(String(120))
+    au_first_name = Column(String(120))
+    au_last_name = Column(String(120))
+    au_gender = Column(String(12))
+    au_profile_url = Column(String(120))
     au_first_sign_in = Column(DateTime)
     au_last_sign_in = Column(DateTime)
     au_is_deleted = Column(Boolean)
@@ -65,7 +65,7 @@ class sheet(Base):
     s_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
     s_ca_id = Column(Integer) #ForeignKey(schema_name + '.category.ca_id'), nullable=False)
     s_sca_id = Column(Integer) #ForeignKey(schema_name + '.subcategory.sca_id'), nullable=False)
-    s_google_id = Column(String(120), unique=True)
+    s_google_id = Column(String(120))
     s_row_count = Column(Integer)
     s_last_modified = Column(DateTime)
     s_shared = Column(Boolean)
@@ -136,7 +136,7 @@ class category(Base):
     __tablename__ = 'category'
     __table_args__ = {"schema": schema_name}
     ca_id = Column(Integer, primary_key=True)
-    ca_cat_name = Column(String(120), unique=True)
+    ca_cat_name = Column(String(120))
     ca_cat_description = Column(Text)
     ca_create_date = Column(DateTime)
     ca_last_modified = Column(DateTime)
@@ -152,7 +152,7 @@ class subcategory(Base):
     __table_args__ = {"schema": schema_name}
     sca_id = Column(Integer, primary_key=True)
     sca_ca_id = Column(Integer, ForeignKey(schema_name + '.category.ca_id'), nullable=False)
-    sca_cat_name = Column(String(120), unique=True)
+    sca_cat_name = Column(String(120))
     sca_cat_description = Column(Text)
     sca_create_date = Column(DateTime)
     sca_last_modified = Column(DateTime)
