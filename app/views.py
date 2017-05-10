@@ -73,46 +73,46 @@ def tc_page():
 
 @process_login.route('/process-login', methods=['GET', 'POST'])
 def oauth2callback():
-    try:
-        client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret_71572721139-4k4cch634h94b76f1qelmvuqpr6jv4da.apps.googleusercontent.com.json')
-        if 'credentials' not in session:
-            flow = client.flow_from_clientsecrets(
-                client_secrets_path,
-                scope=scopes,
-                redirect_uri=url_for('process_login.oauth2callback', _external=True))
+    # try:
+    client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret_71572721139-4k4cch634h94b76f1qelmvuqpr6jv4da.apps.googleusercontent.com.json')
+    if 'credentials' not in session:
+        flow = client.flow_from_clientsecrets(
+            client_secrets_path,
+            scope=scopes,
+            redirect_uri=url_for('process_login.oauth2callback', _external=True))
 
-            if 'code' not in request.args:
-                auth_uri = flow.step1_get_authorize_url()
-                return redirect(auth_uri)
-            else:
-                auth_code = request.args.get('code')
-                credentials = flow.step2_exchange(auth_code)
-                session['credentials'] = credentials.to_json()
-
-                return redirect(url_for('sheet_select.ss_page'))
-
-        credentials = client.OAuth2Credentials.from_json(session['credentials'])
-
-        if credentials.access_token_expired:
-            flow = client.flow_from_clientsecrets(
-                client_secrets_path,
-                scope=scopes,
-                redirect_uri=url_for('process_login.oauth2callback', _external=True))
-
-            if 'code' not in request.args:
-                auth_uri = flow.step1_get_authorize_url()
-                return redirect(auth_uri)
-            else:
-                auth_code = request.args.get('code')
-                credentials = flow.step2_exchange(auth_code)
-                session['credentials'] = credentials.to_json()
-                return redirect(url_for('sheet_select.ss_page'))
+        if 'code' not in request.args:
+            auth_uri = flow.step1_get_authorize_url()
+            return redirect(auth_uri)
         else:
+            auth_code = request.args.get('code')
+            credentials = flow.step2_exchange(auth_code)
+            session['credentials'] = credentials.to_json()
+
             return redirect(url_for('sheet_select.ss_page'))
-    except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
+
+    credentials = client.OAuth2Credentials.from_json(session['credentials'])
+
+    if credentials.access_token_expired:
+        flow = client.flow_from_clientsecrets(
+            client_secrets_path,
+            scope=scopes,
+            redirect_uri=url_for('process_login.oauth2callback', _external=True))
+
+        if 'code' not in request.args:
+            auth_uri = flow.step1_get_authorize_url()
+            return redirect(auth_uri)
+        else:
+            auth_code = request.args.get('code')
+            credentials = flow.step2_exchange(auth_code)
+            session['credentials'] = credentials.to_json()
+            return redirect(url_for('sheet_select.ss_page'))
+    else:
+        return redirect(url_for('sheet_select.ss_page'))
+    # except:
+    #     message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
+    #         sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
+    #     print(message)
 
 
 @sheet_select.route('/sheet_select', methods=['GET'])
