@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # check python version, should be over 3.5.2
-ret=`python -c 'import sys; print("%i" % (sys.hexversion<0x03050200))'`
+ret=`python3 -c 'import sys; print("%i" % (sys.hexversion<0x03050200))'`
 if [ $ret -eq 0 ]; then
     echo "Required version of Python already installed."
 
@@ -46,13 +46,13 @@ if [ -z "$ve" ]; then
       echo `curl -O https://pypi.python.org/packages/d4/0c/9840c08189e030873387a73b90ada981885010dd9aea134d6de30cd24cb8/virtualenv-15.1.0.tar.gz#md5=44e19f4134906fe2d75124427dc9b716`
       echo `tar xvfz virtualenv-15.1.0.tar.gz`
       cd virtualenv-15.1.0
-      echo `python setup.py install`
+      echo `python3 setup.py install`
       cd $currdir
    fi
 fi
 
 # start virtual env and install flask
-echo `virtualenv -p python venv`
+echo `virtualenv -p python3 venv`
 currentDir=`pwd`
 virtualenvPath='venv/bin/activate'
 source $currentDir/$virtualenvPath
