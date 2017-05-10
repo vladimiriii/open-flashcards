@@ -7,11 +7,11 @@ var cardData,
     lanOneIndex,
     lanTwoIndex,
     lanThreeIndex,
-    primaryLanguage,
     languages;
 
 
 var category = "All",
+    randomFlag = false,
     correct = 0,
     wrong = 0,
     cardCount = 4,
@@ -93,7 +93,7 @@ function getLanguageList(array) {
 }
 
 function createIDList(cat) {
-    // Reinitialize allIds
+    // Reinitialize all IDs
     allIds = [];
     var array = cardData['data']
 
@@ -110,8 +110,11 @@ function createIDList(cat) {
         };
     };
 
+    console.log(randomFlag);
     // Randomize Array
-    allIds = shuffle(allIds);
+    if (randomFlag) {
+        allIds = shuffle(allIds);
+    };
 };
 
 function shuffle(array) {
@@ -135,7 +138,7 @@ function shuffle(array) {
   return array;
 };
 
-function getRandomIds(entries) {
+function getNextIds(entries) {
     var idsRemaining = allIds.length;
 
     if (idsRemaining >= entries) {
@@ -304,7 +307,6 @@ function detectColumns() {
     } else {
         lanThreeIndex = -1;
     };
-    console.log(lanOneIndex + ", " + lanTwoIndex + ", " + lanThreeIndex);
 };
 
 function populateModalDropdowns() {
@@ -322,10 +324,26 @@ function populateModalDropdowns() {
     };
 };
 
+function checkButton(radioId) {
+	allKeys = Object.keys(allData[ind_num]);
+
+	if ($.inArray(year, allKeys) == -1) {
+		// if currently selected year does not exist for new indicator, set year to latest year
+		var yearToCheck = allKeys[allKeys.length - 1];
+	} else {
+		var yearToCheck = year;
+	};
+
+	// Set checks
+
+};
+
 /*-----------------------------------
 On Page Load
 -----------------------------------*/
 $(document).ready(function(){
+    // Check Order Button	$('#' + yearToCheck).addClass('checked');
+    $('input[id=ordered][name=or-radio]').prop("checked", true).change();
 
     // Get Card Data
     $.when(getSheetData()).done( function() {
@@ -335,32 +353,6 @@ $(document).ready(function(){
         $('#column-select').modal('show');
         detectColumns();
         populateModalDropdowns();
-
-        // Modal Accept Button
-        $('#confirm-btn').click(function() {
-            lanOneIndex = headers.indexOf($("#primary-list").val());
-            lanTwoIndex = headers.indexOf($("#secondary-list").val());
-            lanThreeIndex = headers.indexOf($("#tertiary-list").val());
-            catIndex = headers.indexOf($("#modal-categories-list").val());
-            $('#column-select').modal('hide');
-
-            // Get Category and Language Lists
-            var categories = getCategoryList(cardData['data']);
-            languages = getLanguageList(headers);
-            primaryLanguage = headers[lanOneIndex];
-
-            // Populate Dropdowns
-            buildIndicatorList("language-list", languages);
-            $("#language-list").val(primaryLanguage);
-            buildIndicatorList("category-list", categories);
-
-            // Get Random numbers
-            createIDList(category);
-            getRandomIds(cardCount);
-
-            // Populate Cards
-            populateCards(primaryLanguage);
-        });
     });
 
     // Initialize Scoreboard
@@ -384,33 +376,6 @@ $(document).ready(function(){
         $('#card4').toggleClass('flipped');
     });
 
-    // On Language Change
-    $("#language-list").change(function(){
-
-        // Unflip all Cards
-        unflipCards();
-
-        // Reset all Buttons
-        for (var index = 1; index <= cardCount; ++index) {
-            $('#card' + index + "-back :button").attr("disabled", false);
-            $('#card' + index + '-back').css("background-color", "#E9C46A");
-        };
-
-        // Update Cards (delayed so answer is not revealed)
-        setTimeout(function() {
-
-            // Get Selected Language
-            primaryLanguage = $("#language-list").val();
-
-            // Get IDs
-            createIDList(category);
-            getRandomIds(cardCount);
-
-            // Populate Cards
-            populateCards(primaryLanguage);
-        }, 250);
-    });
-
     // On Category Change
     $("#category-list").change(function(){
         // Unflip all Cards
@@ -430,10 +395,10 @@ $(document).ready(function(){
 
             // Get IDs
             createIDList(category);
-            getRandomIds(cardCount);
+            getNextIds(cardCount);
 
             // Populate Cards
-            populateCards(primaryLanguage);
+            populateCards(languages[0]);
         }, 250);
     });
 
@@ -452,20 +417,32 @@ $(document).ready(function(){
         // Update Cards (delayed so answer is not revealed)
         setTimeout(function() {
 
-            // Get Selected Language
-            primaryLanguage = $("#language-list").val();
-
-            // Get Random IDs
-            getRandomIds(cardCount);
+            // Get Next IDs
+            getNextIds(cardCount);
 
             // Populate Cards
-            populateCards(primaryLanguage);
+            populateCards(languages[0]);
         }, 250);
 
         // Gives more satisfying click
         setTimeout(function() {
             $('#refresh-btn').removeClass('active');
         }, 500);
+    });
+
+    // Order Toggle
+    $('#order-radio').on('change', 'input[name="or-radio"]', function() {
+        value = $('input[type="radio"][name="or-radio"]:checked').val();
+        if (value == 'random') {
+            randomFlag = true;
+        } else {
+            randomFlag = false;
+        };
+		$('input[name="or-radio"]').removeClass('checked');
+		$('input[name="or-radio"]:checked').addClass('checked');
+
+        // Create New ID List
+        createIDList(category);
     });
 
     // Keeping Score
@@ -496,5 +473,27 @@ $(document).ready(function(){
         $('#wrong-count span').remove();
         $('#correct-count').append('<span id="cor-count">' + String(correct) + '</span>');
         $('#wrong-count').append('<span id="wro-count">' + String(wrong) + '</span>');
+    });
+
+    // Modal Accept Button
+    $('#confirm-btn').click(function() {
+        lanOneIndex = headers.indexOf($("#primary-list").val());
+        lanTwoIndex = headers.indexOf($("#secondary-list").val());
+        lanThreeIndex = headers.indexOf($("#tertiary-list").val());
+        catIndex = headers.indexOf($("#modal-categories-list").val());
+        $('#column-select').modal('hide');
+
+        // Get Category and Language Lists
+        var categories = getCategoryList(cardData['data']);
+        languages = getLanguageList(headers);
+
+        buildIndicatorList("category-list", categories);
+
+        // Get Random numbers
+        createIDList(category);
+        getNextIds(cardCount);
+
+        // Populate Cards
+        populateCards(languages[0]);
     });
 });

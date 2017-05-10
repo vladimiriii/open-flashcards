@@ -19,6 +19,8 @@ def create_app():
 def init_modules(app):
     # Import a module / component using its blueprint handler variable
     from app.views import landing_page
+    from app.views import privacy_policy
+    from app.views import terms_conditions
     from app.views import process_login
     from app.views import sheet_select
     from app.views import save_sheet
@@ -29,6 +31,8 @@ def init_modules(app):
 
     # Register blueprint(s)
     app.register_blueprint(landing_page)
+    app.register_blueprint(privacy_policy)
+    app.register_blueprint(terms_conditions)
     app.register_blueprint(process_login)
     app.register_blueprint(sheet_select)
     app.register_blueprint(save_sheet)

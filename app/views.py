@@ -17,6 +17,8 @@ import app.lib.processSheets as ps
 
 # Define the blueprint:
 landing_page = Blueprint('landing_page', __name__)
+privacy_policy = Blueprint('privacy_policy', __name__)
+terms_conditions = Blueprint('terms_conditions', __name__)
 process_login = Blueprint('process_login', __name__)
 sheet_select = Blueprint('sheet_select', __name__)
 save_sheet = Blueprint('save_sheet', __name__)
@@ -40,6 +42,28 @@ def la_page():
                 return render_template('index.html')
         else:
             return render_template('index.html')
+    except:
+        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
+            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
+        print(message)
+        return redirect(url_for('error_page.er_page'))
+
+
+@privacy_policy.route('/privacy-policy', methods=['GET'])
+def pp_page():
+    try:
+        return render_template('privacy_policy.html')
+    except:
+        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
+            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
+        print(message)
+        return redirect(url_for('error_page.er_page'))
+
+
+@terms_conditions.route('/terms-conditions', methods=['GET'])
+def tc_page():
+    try:
+        return render_template('terms_conditions.html')
     except:
         message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
             sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""

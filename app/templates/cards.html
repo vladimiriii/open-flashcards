@@ -65,7 +65,7 @@
         <div class="row">
             <nav class="navbar navbar-default">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="">Open Flashcards</a>
+                    <a class="navbar-brand" href="./">Open Flashcards</a>
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapse-right" aria-expanded="false">
                         <span class="sr-only">Toggle navigation</span>
                         <span class="icon-bar"></span>
@@ -76,8 +76,6 @@
                 <div class="collapse navbar-collapse" id="collapse-right">
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="./sheet_select">Change Sheet</a></li>
-                        <li><a id="change-columns" data-toggle="modal" data-target="#column-select">Column Select</a></li>
-                        <li><a href="">Find a Public Set</a></li>
                         <li><a href="./logout">Logout</a></li>
                     </ul> <!-- navbar-collapse -->
                 </div>
@@ -88,14 +86,6 @@
             <!-- Tool Bar -->
             <div class="col-md-2" id="toolbar">
                 <div class="row" style="text-align: center">
-                    <p class="toolbar-text">Front of Cards</p>
-                </div>
-                <div class="row">
-                    <div id="language-select" class="form-group">
-                        <select id="language-list" class="form-control eco-select"></select>
-                    </div>
-                </div>
-                <div class="row" style="text-align: center">
                     <p class="toolbar-text">Category</p>
                 </div>
                 <div class="row">
@@ -103,6 +93,27 @@
                         <select id="category-list" class="form-control eco-select"></select>
                     </div>
                 </div>
+                <div class="row" style="text-align: center">
+                    <div style="display-inline;">
+    		            <div class="no-checkedselector" style="text-align:center;">
+    		                <div id="order-radio" class="toggle-container">
+                                <input type="radio" class="toggle" name="or-radio" id="ordered" value="ordered">
+                                    <label for="ordered" class="btn order-btn">
+                                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                                         In Order
+                                    </label>
+                                </input>
+                                <input type="radio" class="toggle" name="or-radio" id="random" value="random">
+                                    <label for="random" class="btn order-btn">
+                                        <span class="glyphicon glyphicon-random" aria-hidden="true"></span>
+                                         Random
+                                    </label>
+                                </input>
+                            </div>
+                        </div>
+                    </div>
+		        </div>
+                <br>
                 <div class="row" style="text-align: center">
                     <button type="button" class="btn btn-default" id="refresh-btn">
                         <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> New Cards
@@ -121,6 +132,14 @@
                     <div class="row">
                         <button type="button" class="btn btn-default" id="reset-score">Reset Scores</button>
                     </div>
+                </div>
+                <br>
+                <div class="row" style="text-align: center">
+                    <a id="change-columns" data-toggle="modal" data-target="#column-select">
+                        <button type="button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span> Card Orientation
+                        </button>
+                    </a>
                 </div>
             </div>
             <!-- Flip Cards -->
@@ -238,9 +257,11 @@
 		                        <a href="http://brettromero.com" data-toggle="tooltip" title="brettromero.com" target="_blank" class="share-btn home">
 		                            <i class="fa fa-home"></i>
 		                        </a>
-		                        <br>
                                 <br>
                                 <br>
+                                <p class='document-links'>
+                                    <a href='./privacy-policy'>Privacy Policy</a> | <a href='./terms-conditions'>Terms &amp; Conditions</a>
+                                </p>
 		                    </div>
 		                </div>
 		            </div>
@@ -259,7 +280,7 @@
     	                <div class="modal-body">
     						<div class="row modal-row">
                                 <div class="col-md-6">
-                                    <p>First Language: </p>
+                                    <p>Front of Card: </p>
                                 </div>
                                 <div class="col-md-6">
                                     <div id="primary-language" class="form-group">
@@ -269,7 +290,7 @@
                             </div>
                             <div class="row modal-row">
                                 <div class="col-md-6">
-                                    <p>Second Language: </p>
+                                    <p>Back of Card (Primary): </p>
                                 </div>
                                 <div class="col-md-6">
                                     <div id="secondary-language" class="form-group">
@@ -279,7 +300,7 @@
                             </div>
                             <div class="row modal-row">
                                 <div class="col-md-6">
-                                    <p>Third Language (Optional): </p>
+                                    <p>Back of Card (Primary - optional): </p>
                                 </div>
                                 <div class="col-md-6">
                                     <div id="tertiary-language" class="form-group">

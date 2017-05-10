@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Open Flashcards</title>
+	<title>Terms &amp; Conditions | Open Flashcards</title>
 
 	<!-- Encoding -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Facebook Open Graph tags -->
-    <meta property="og:title" content="Open Flashcards" />
+    <meta property="og:title" content="Terms &amp; Conditions | Open Flashcards" />
     <meta property="og:site_name" content="Open Flashcards"/>
     <meta property="og:image" content=""/>
     <meta property="og:type" content="website" />
@@ -20,7 +20,6 @@
     <script src="{{ url_for('static',filename='script/jquery/jquery-3.1.1.min.js') }}"></script>
 
 	<!-- Bootstrap -->
-	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> -->
 	<link rel="stylesheet" href="https://bootswatch.com/paper/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
@@ -29,9 +28,6 @@
 
 	<!-- Internal CSS -->
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/baseStyle.css') }}">
-
-    <!-- Custom JavaScript -->
-    <script src="{{ url_for('static',filename='script/custom/login.js') }}"></script>
 
 	<!-- Google Analytics -->
     <!-- <script>
@@ -46,36 +42,30 @@
     </script> -->
 </head>
 <body>
-    <div id="spinner" class="spinner" style="display:none;">
-        <div class="sk-folding-cube">
-            <div class="sk-cube1 sk-cube"></div>
-            <div class="sk-cube2 sk-cube"></div>
-            <div class="sk-cube4 sk-cube"></div>
-            <div class="sk-cube3 sk-cube"></div>
-        </div>
-    </div>
 	<!-- Content -->
 	<div class="container-fluid">
-		<!-- Navbar -->
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-		<div class="row" style="text-align: center;">
-            <h1>Welcome to Open Flashcards</h1>
+        <!-- Navbar -->
+        <div class="row">
+            <nav class="navbar navbar-default">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="./">Open Flashcards</a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapse-right" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+            </nav>
         </div>
-        <br>
-        <br>
-        <div class="row" style="text-align: center;">
-			<a id="login-btn"><button type="button" class="btn btn-default btn-lg">Login with Google</button></a>
-        </div>
-        <br>
-        <br>
-        <br>
-        <br>
-        <div class="row" style="text-align: center;">
-			<p>Powered by Flask</p>
+        <!-- Content -->
+		<div class="row">
+            <div class='col-md-12'>
+                <h2>Terms &amp; Conditions</h2>
+                <p>
+                    Check back soon!
+                </p>
+            </div>
         </div>
         <br>
         <br>
@@ -102,10 +92,10 @@
 		                        <a href="http://brettromero.com" data-toggle="tooltip" title="brettromero.com" target="_blank" class="share-btn home">
 		                            <i class="fa fa-home"></i>
 		                        </a>
-                                <br>
+		                        <br>
                                 <br>
                                 <p class='document-links'>
-                                    <a href='./privacy-policy'>Privacy Policy</a> | <a href='./terms-conditions'>Terms &amp; Conditions</a>
+                                    <a href='./privacy-policy'>Privacy Policy</a> | <a href=''>Terms &amp; Conditions</a>
                                 </p>
 		                    </div>
 		                </div>
