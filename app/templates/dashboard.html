@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Sheet Select | Open Flashcards</title>
+	<title>Dashboard | Open Flashcards</title>
 
 	<!-- Encoding -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Facebook Open Graph tags -->
-    <meta property="og:title" content="Sheet Select | Open Flashcards" />
+    <meta property="og:title" content="Dashboard | Open Flashcards" />
     <meta property="og:site_name" content="Open Flashcards"/>
     <meta property="og:image" content=""/>
     <meta property="og:type" content="website" />
@@ -32,10 +32,11 @@
 
 	<!-- Internal CSS -->
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/baseStyle.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/sheetSelect.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/dashboard.css') }}">
 
     <!-- Custom JavaScript -->
-    <script src="{{ url_for('static',filename='script/custom/sheetSelect.js') }}"></script>
+    <script src="{{ url_for('static',filename='script/custom/dashboard.js') }}"></script>
+    <script src="{{ url_for('static',filename='script/custom/dashboardMeta.js') }}"></script>
 
 	<!-- Google Analytics -->
     <script>
@@ -84,33 +85,39 @@
             </nav>
         </div>
 		<div class="row" id="sheets-panel">
-            <div class="col-md-2">
+            <div class="col-md-12">
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="active"><a href="#private" data-toggle="tab">Your Sets</a></li>
+                    <li><a href="#public" data-toggle="tab">Public Sets</a></li>
+                </ul>
             </div>
-            <div class="col-md-8">
-                <div class="row text-btn-row">
-                    <div class="col-md-8 text-div">
-                        <h4>Select sheet to use</h4>
-                    </div>
-                    <div class="col-md-4 btn-div">
-                        <a href="./view_cards" id="accept-link">
-                        <!-- <a id="accept-link"> -->
-                            <button type="button" class="btn btn-primary disabled" id="accept-btn">Accept</button>
-                        </a>
+            <div class="tab-content">
+                <div class="tab-pane active" id="private">
+                    <div class="row text-btn-row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <h4>Select sheet to use</h4>
+                            </div>
+                            <div class="row">
+                                <table id="user-most-viewed" class="display">
+                                </table>
+                            </div>
+                            <div class="row">
+                                <p>Not seeing the sheet you want?</p>
+                                <a id="import-sheet" href="#full-list-modal" data-toggle="modal">
+                                    <button type="button" class="btn btn-primary" id="import-sheet">Import New Sheet</button>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <table id="sheet_list" class="display">
-                        <thead>
-                            <tr>
-                                <th>Sheet Name</th>
-                                <th>Last Modified</th>
-                            </tr>
-                        </thead>
-                    </table>
+                <div class="tab-pane" id="public">
+                    <div class="row">
+                        <table id="public-most-viewed" class="display">
+                        </table>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-2">
-            </div>
+           </div>
         </div>
         <br>
         <br>
@@ -148,6 +155,24 @@
 		        </div>
 		    </footer>
 		</div>
-	</div>
+        <!-- Data Download Modal -->
+    	<div class="row">
+    	    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="full-list-modal" role="dialog">
+    	        <div class="modal-dialog">
+    	            <!-- Modal content-->
+    	            <div class="modal-content">
+    	                <div class="navbar-collapse modal-header">
+    	                    <button type="button" class="btn btn-default" id="close" style="float:right" data-dismiss="modal">Close</button>
+    	                    <h4>Import New Sheet</h4>
+    	                </div>
+    	                <div class="modal-body">
+                            <table id="full-list" class="display">
+                            </table>
+    					</div>
+    	            </div>
+    	        </div>
+    	    </div>
+    	</div>
+    </div>
 </body>
 </html>

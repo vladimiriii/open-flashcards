@@ -13,13 +13,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 # Database Config
-from databaseConfig import DATABASE
+from app.lib.databaseConfig import DATABASE
 
 # Creates the DB engine
 engine = create_engine(URL(**DATABASE))
 
 # Create all tables in the engine
-from models import Base, app_user_role
+from app.lib.models import Base, app_user_role
 Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 

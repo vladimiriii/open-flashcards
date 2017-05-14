@@ -15,6 +15,8 @@ from apiclient.discovery import build
 import httplib2
 from oauth2client import client
 
+from app.lib.models import Base, sheet, db_session
+
 ###############################################
 # Functions                                   #
 ###############################################
@@ -50,12 +52,10 @@ def process_data(response):
 
 
 def get_data():
-    # Get Configuration Details
-    SHEET_ID = session['sheet_id']
-
+    
     # Get Data
     service_object = initialize_reporting()
-    response = query_API(service=service_object, sheet_id=SHEET_ID)
+    response = query_API(service=service_object, sheet_id=session['google_id'])
     final_data = process_data(response)
 
     return final_data

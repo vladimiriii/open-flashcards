@@ -3,6 +3,8 @@
 /* Body */
 #sheets-panel {
     min-height: 590px;
+    margin-left: 10%;
+    margin-right: 10%;
 }
 
 .text-btn-row {
@@ -19,12 +21,28 @@
     cursor: pointer;
 }
 
+.confirm-col {
+    text-align: right;
+}
+
+.confirm-head {
+    text-align: right;
+}
+
+.modal-dialog {
+    width:80%;
+}
+
 @media screen and (max-width: 992px) {
     .text-div {
         text-align: center;
     }
     .btn-div {
         text-align: center;
+    }
+
+    .modal-dialog {
+        width:95%;
     }
 }
 

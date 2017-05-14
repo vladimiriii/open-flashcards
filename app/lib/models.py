@@ -65,6 +65,7 @@ class sheet(Base):
     s_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
     s_ca_id = Column(Integer) #ForeignKey(schema_name + '.category.ca_id'), nullable=False)
     s_sca_id = Column(Integer) #ForeignKey(schema_name + '.subcategory.sca_id'), nullable=False)
+    s_sheet_name = Column(Text)
     s_google_id = Column(String(120))
     s_row_count = Column(Integer)
     s_last_modified = Column(DateTime)
@@ -72,11 +73,12 @@ class sheet(Base):
     s_date_shared = Column(DateTime)
     s_hide_sharer = Column(Boolean)
 
-    def __init__(self,  s_au_id=None, s_ca_id=None, s_sca_id=None, s_google_id=None, s_row_count=None, s_last_modified=None, s_shared=None, s_date_shared=None, s_hide_sharer=None):
+    def __init__(self,  s_au_id=None, s_ca_id=None, s_sca_id=None, s_google_id=None, s_sheet_name=None, s_row_count=None, s_last_modified=None, s_shared=None, s_date_shared=None, s_hide_sharer=None):
         self.s_au_id = s_au_id
         self.s_ca_id = s_ca_id
         self.s_sca_id = s_sca_id
         self.s_google_id = s_google_id
+        self.s_sheet_name = s_sheet_name
         self.s_row_count = s_row_count
         self.s_last_modified = s_last_modified
         self.s_shared = s_shared
