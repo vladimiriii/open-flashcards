@@ -28,7 +28,6 @@ function getSheetList(requestType) {
 function postSheetID(id, googleID, sheetName) {
     $("#spinner").show();
     var dataJson = {"sheetID": id, "googleID": googleID, "sheetName": sheetName};
-    console.log(dataJson);
     return $.ajax({
         type: "POST",
         url: '/save-sheet',

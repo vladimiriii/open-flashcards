@@ -5,6 +5,7 @@ from datetime import datetime
 from flask import session
 
 from apiclient.discovery import build
+from sqlalchemy import update
 
 import httplib2
 from oauth2client import client
@@ -47,7 +48,6 @@ def get_full_list():
     # Get a list of all Sheets in the account for the current user.
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
     http = credentials.authorize(http=httplib2.Http())
-    # discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?version=v3')
     service = build('drive', 'v3', http=http)
     response = service.files().list(q="mimeType='application/vnd.google-apps.spreadsheet'",
                                     spaces='drive',
@@ -64,33 +64,61 @@ def get_full_list():
 
     return file_list
 
-def save_sheet_info(sheet_id, sheet_name):
-    # Get card row count
+def get_sheet_meta(g_id):
+    # Get a list of all Sheets in the account for the current user.
+    credentials = client.OAuth2Credentials.from_json(session['credentials'])
+    http = credentials.authorize(http=httplib2.Http())
+    service = build('drive', 'v3', http=http)
+    response = service.files().get(fileId=g_id, fields= 'name, modifiedTime').execute()
+
+    meta_data = {}
+    for key in response:
+        meta_data[key] = response[key]
+
+    return meta_data
+
+def get_sheet_rows(g_id):
+    # Get sheet row count
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
     http = credentials.authorize(httplib2.Http())
     discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?version=v4')
     service = build('sheets', 'v4', http=http, discoveryServiceUrl=discoveryUrl)
     rangeName = 'A1:Z'
-    result = service.spreadsheets().values().get(spreadsheetId=session['google_id'], range=rangeName).execute()
-    row_count = len(result.get('values', []))
+    result = service.spreadsheets().values().get(spreadsheetId=g_id, range=rangeName).execute()
+
+    return len(result.get('values', []))
+
+def save_sheet_info(sheet_id, sheet_name):
+    meta_data = get_sheet_meta(session['google_id'])
+    sheet_name = meta_data['name']
+    last_modified = meta_data['modifiedTime']
+    row_count = get_sheet_rows(session['google_id'])
 
     # Query DB
     current_sheet = sheet.query.filter_by(s_id = sheet_id).first()
 
     if current_sheet is None:
+        # Insert new record
         record = sheet( s_au_id = session['au_id'],
                         s_ca_id = None,
                         s_sca_id = None,
                         s_google_id = session['google_id'],
                         s_sheet_name = sheet_name,
                         s_row_count = row_count,
-                        s_last_modified = datetime.now(),
+                        s_last_modified = last_modified,
                         s_shared = False,
                         s_date_shared = None,
                         s_hide_sharer = True)
         db_session.add(record)
         db_session.commit()
         current_sheet = sheet.query.filter_by(s_google_id = sheet_id).first()
+    else:
+        # Ensure existing record is to date
+        record = sheet.query.filter_by(s_id=sheet_id).first()
+        record.s_sheet_name = sheet_name
+        record.s_row_count = row_count
+        record.s_last_modified = last_modified
+        db_session.commit()
 
     # Update View Table
     current_view = view(v_au_id = session['au_id'],
