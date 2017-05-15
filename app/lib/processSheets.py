@@ -44,6 +44,7 @@ def get_initial_view():
             })
     return file_list
 
+
 def get_full_list():
     # Get a list of all Sheets in the account for the current user.
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
@@ -64,6 +65,7 @@ def get_full_list():
 
     return file_list
 
+
 def get_sheet_meta(g_id):
     # Get a list of all Sheets in the account for the current user.
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
@@ -77,6 +79,7 @@ def get_sheet_meta(g_id):
 
     return meta_data
 
+
 def get_sheet_rows(g_id):
     # Get sheet row count
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
@@ -88,21 +91,20 @@ def get_sheet_rows(g_id):
 
     return len(result.get('values', []))
 
-def save_sheet_info(sheet_id, sheet_name):
-    meta_data = get_sheet_meta(session['google_id'])
+
+def save_sheet_info(sheet_id, google_id):
+    meta_data = get_sheet_meta(google_id)
     sheet_name = meta_data['name']
     last_modified = meta_data['modifiedTime']
-    row_count = get_sheet_rows(session['google_id'])
-
-    # Query DB
-    current_sheet = sheet.query.filter_by(s_id = sheet_id).first()
+    row_count = get_sheet_rows(google_id)
+    current_sheet = sheet.query.filter_by(s_google_id = google_id).first()
 
     if current_sheet is None:
         # Insert new record
         record = sheet( s_au_id = session['au_id'],
                         s_ca_id = None,
                         s_sca_id = None,
-                        s_google_id = session['google_id'],
+                        s_google_id = google_id,
                         s_sheet_name = sheet_name,
                         s_row_count = row_count,
                         s_last_modified = last_modified,
@@ -111,10 +113,13 @@ def save_sheet_info(sheet_id, sheet_name):
                         s_hide_sharer = True)
         db_session.add(record)
         db_session.commit()
-        current_sheet = sheet.query.filter_by(s_google_id = sheet_id).first()
+        current_sheet = sheet.query.filter_by(s_google_id = google_id).first()
+        s_id = current_sheet.s_id
+
     else:
         # Ensure existing record is to date
-        record = sheet.query.filter_by(s_id=sheet_id).first()
+        s_id = current_sheet.s_id
+        record = sheet.query.filter_by(s_id=s_id).first()
         record.s_sheet_name = sheet_name
         record.s_row_count = row_count
         record.s_last_modified = last_modified
@@ -122,7 +127,9 @@ def save_sheet_info(sheet_id, sheet_name):
 
     # Update View Table
     current_view = view(v_au_id = session['au_id'],
-                v_s_id = current_sheet.s_id,
+                v_s_id = s_id,
                 v_date = datetime.now())
     db_session.add(current_view)
     db_session.commit()
+
+    return s_id

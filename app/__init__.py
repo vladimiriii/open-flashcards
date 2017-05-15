@@ -24,6 +24,7 @@ def init_modules(app):
     from app.views import process_login
     from app.views import user_dashboard
     from app.views import get_sheet_lists
+    from app.views import import_sheet
     from app.views import save_sheet
     from app.views import logout
     from app.views import cards_page
@@ -37,6 +38,7 @@ def init_modules(app):
     app.register_blueprint(process_login)
     app.register_blueprint(user_dashboard)
     app.register_blueprint(get_sheet_lists)
+    app.register_blueprint(import_sheet)
     app.register_blueprint(save_sheet)
     app.register_blueprint(logout)
     app.register_blueprint(cards_page)

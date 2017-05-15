@@ -18,8 +18,14 @@ var tableMappings = {
         "Views",
         "Last Modified"
     ],
-    "user-full-list": [
-        "Sheet Name",
-        "Last Modified"
-    ]
+    "full-list": {
+        "columns": [
+            "name",
+            "modified"
+        ],
+        "cleanNames": [
+            "Sheet Name",
+            "Last Modified"
+        ]
+    }
 };

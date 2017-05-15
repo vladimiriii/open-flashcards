@@ -22,6 +22,7 @@ terms_conditions = Blueprint('terms_conditions', __name__)
 process_login = Blueprint('process_login', __name__)
 user_dashboard = Blueprint('user_dashboard', __name__)
 get_sheet_lists = Blueprint('get_sheet_lists', __name__)
+import_sheet = Blueprint('import_sheet', __name__)
 save_sheet = Blueprint('save_sheet', __name__)
 logout = Blueprint('logout', __name__)
 cards_page = Blueprint('cards_page', __name__)
@@ -175,6 +176,22 @@ def get_lists():
         return redirect(url_for('error_page.er_page'))
 
 
+@import_sheet.route('/import-sheet', methods=['POST'])
+def imp_sheet():
+    try:
+        inputs = json.loads(request.data)
+        g_id = inputs['sheetID']
+        s_id = ps.save_sheet_info(None, g_id)
+        session['sheet_id'] = s_id
+        session['google_id'] = g_id
+        return jsonify({"status": "Success"})
+    except:
+        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
+            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
+        print(message)
+        return redirect(url_for('error_page.er_page'))
+
+
 @save_sheet.route('/save-sheet', methods=['GET', 'POST'])
 def save_page():
     try:
@@ -183,8 +200,7 @@ def save_page():
         session['sheet_id'] = inputs['sheetID']
         session['google_id'] = inputs['googleID']
         session.modified = True
-        sheet_name = inputs['sheetName']
-        ps.save_sheet_info(session['sheet_id'], sheet_name)
+        ps.save_sheet_info(session['sheet_id'], session['google_id'])
         return jsonify({"status": "Success"})
     except:
         message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(

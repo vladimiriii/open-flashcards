@@ -70,7 +70,7 @@ function getCategoryList(array) {
     var finalList = ["All"];
     var cat;
 
-    if (catIndex != undefined) {
+    if (catIndex != -1) {
         for (var index = 0; index < array.length; ++index) {
             cat = array[index][catIndex];
             if ($.inArray(cat, finalList) == -1) {
@@ -110,7 +110,6 @@ function createIDList(cat) {
         };
     };
 
-    console.log(randomFlag);
     // Randomize Array
     if (randomFlag) {
         allIds = shuffle(allIds);
