@@ -16,7 +16,7 @@ from app.lib.models import Base, sheet, view, db_session
 # Functions                                   #
 ###############################################
 
-def get_initial_view():
+def get_user_sheets():
 
     # Query database
     user_query = ("SELECT s_id, s_google_id, s_sheet_name, s_row_count, views, s_last_modified "
@@ -26,8 +26,8 @@ def get_initial_view():
                     "FROM public.view "
                     "WHERE v_au_id = \'" + str(session['au_id']) + "\' "
                     "GROUP BY v_s_id "
-                    "ORDER BY views DESC "
-                    "LIMIT 10) AS vs "
+                    "ORDER BY views DESC"
+                    ") AS vs "
                  "ON s.s_id = vs.v_s_id;")
     user_data = db_session.execute(user_query)
 
@@ -42,6 +42,37 @@ def get_initial_view():
             'views': row[4],
             'modified': row[5],
             })
+
+    return file_list
+
+
+def get_public_sheets():
+
+    # Query database
+    public_query = ("SELECT s_id, s_google_id, s_sheet_name, s_row_count, views, s_last_modified "
+                 "FROM sheet AS s "
+                 "INNER JOIN ("
+                    "SELECT v_s_id, COUNT(v_id) AS views "
+                    "FROM public.view "
+                    "GROUP BY v_s_id "
+                    "ORDER BY views DESC"
+                    ") AS vs "
+                 "ON s.s_id = vs.v_s_id "
+                 "WHERE s_shared = TRUE;")
+    public_data = db_session.execute(public_query)
+
+    # Process Results
+    file_list = []
+    for row in public_data:
+        file_list.append({
+            'id': row[0],
+            'google_id': row[1],
+            'sheet_name': row[2],
+            'row_count': row[3],
+            'views': row[4],
+            'modified': row[5],
+            })
+
     return file_list
 
 
@@ -54,14 +85,26 @@ def get_full_list():
                                     spaces='drive',
                                     fields='nextPageToken, files(id, name, modifiedTime)').execute()
 
+    # Get list of already imported sheet ids
+    sheet_query = ("SELECT s_google_id "
+                   "FROM sheet "
+                   "WHERE s_au_id = " + str(session['au_id']))
+
+    imported_sheets = db_session.execute(sheet_query)
+    id_list = []
+    for g_id in imported_sheets:
+        id_list.append(g_id[0])
+
+    # Extract Full List of Sheets, excluding those already imported
     file_list = []
-    for file in response.get('files', []):
+    for sheet in response.get('files', []):
         # Process change
-        file_list.append({
-            'name': file.get('name'),
-            'id': file.get('id'),
-            'modified': file.get('modifiedTime')
-            })
+        if sheet.get('id') not in id_list:
+            file_list.append({
+                'name': sheet.get('name'),
+                'id': sheet.get('id'),
+                'modified': sheet.get('modifiedTime')
+                })
 
     return file_list
 

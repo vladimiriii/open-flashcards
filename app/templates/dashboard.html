@@ -89,6 +89,7 @@
                 <ul class="nav nav-tabs nav-justified">
                     <li class="active"><a href="#private" data-toggle="tab">Your Cards</a></li>
                     <li><a href="#public" data-toggle="tab">Public Cards</a></li>
+                    <li><a href="#featured" data-toggle="tab">Featured Cards</a></li>
                 </ul>
             </div>
             <div class="tab-content">
@@ -109,13 +110,6 @@
                                     <img class="image-btn-link" src="{{ url_for('static',filename='img/import.png') }}">
                                     <span class="image-btn-text">Import Cards</span>
                                 </div>
-                                <!-- <a id="import-sheet" class="image-btn-link" href="#full-list-modal" data-toggle="modal">
-                                    <div class="image-btn">
-                                        <img src="{{ url_for('static',filename='img/import.png') }}">
-                                        <span class="image-btn-text">Import Cards</span>
-                                        <span></span>
-                                    </div>
-                                </a> -->
                                 <div class="image-btn">
                                     <a id="create-sheet" href="#create-data-modal" data-toggle="modal"><span class="div-link"></span></a>
                                     <img class="image-btn-link" src="{{ url_for('static',filename='img/create.png') }}">
@@ -126,9 +120,25 @@
                     </div>
                 </div>
                 <div class="tab-pane" id="public">
-                    <div class="row">
-                        <table id="public-most-viewed" class="display">
-                        </table>
+                    <div class="row text-btn-row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <h4>Select cards to use</h4>
+                            </div>
+                            <div class="row">
+                                <table id="public-most-viewed" class="display">
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="featured">
+                    <div class="row text-btn-row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <h4>Still Under Development - check back soon!</h4>
+                            </div>
+                        </div>
                     </div>
                 </div>
            </div>

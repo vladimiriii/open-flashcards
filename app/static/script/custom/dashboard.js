@@ -18,7 +18,8 @@ function getSheetList(requestType) {
         contentType: 'application/json',
         success: function(result) {
             if (requestType == 'initial view') {
-                userSheetList = result['sheets'];
+                userSheetList = result['user_list'];
+                publicSheetList = result['public_list'];
             } else if (requestType == 'full list') {
                 fullSheetList = result['sheets'];
             };
@@ -143,12 +144,12 @@ $(document).ready(function(){
             'select': 'single'
         });
 
-        // $('#public-most-viewed').DataTable({
-        //     'order': [[ 1, "desc" ]],
-        //     'lengthChange': false,
-        //     'select': 'single'
-        // });
-        //
+        generateSheetList("public-most-viewed", publicSheetList);
+        $('#public-most-viewed').DataTable({
+            'order': [[ 1, "desc" ]],
+            'lengthChange': false,
+            'select': 'single'
+        });
 
         $("#user-most-viewed .table-row").on('click', function () {
             selectRow('user-most-viewed', this.id, "confirmSelection", "View");

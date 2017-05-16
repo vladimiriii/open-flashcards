@@ -126,7 +126,6 @@ def dashboard_page():
             return redirect(url_for('landing_page.la_page'))
 
         else:
-            pl.process_login()
             credentials = client.OAuth2Credentials.from_json(session['credentials'])
             # If credentials have expired refresh them
             if credentials.access_token_expired:
@@ -160,8 +159,9 @@ def get_lists():
 
         # Return Account Map and Selected Sheet ID (if it exists)
         if request_type == 'initial view':
-            sheet_list = ps.get_initial_view()
-            results = {"sheets": sheet_list}
+            user_list = ps.get_user_sheets()
+            public_list = ps.get_public_sheets()
+            results = {"user_list": user_list, "public_list": public_list}
             return jsonify(results)
 
         # Saves Sheet ID to Session
