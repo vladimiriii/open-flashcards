@@ -65,6 +65,10 @@
     width:80%;
 }
 
+#placeholder {
+    width: 40%;
+}
+
 @media screen and (max-width: 992px) {
     .text-div {
         text-align: center;

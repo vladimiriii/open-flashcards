@@ -105,7 +105,7 @@
                             <div class="row" style="text-align: center">
                                 <h4>Not seeing the cards you want?</h4>
                                 <div class="image-btn">
-                                    <a id="import-sheet" class="image-btn-link" href="#full-list-modal" data-toggle="modal"><span class="div-link"></span></a>
+                                    <a id="import-sheet" href="#full-list-modal" data-toggle="modal"><span class="div-link"></span></a>
                                     <img class="image-btn-link" src="{{ url_for('static',filename='img/import.png') }}">
                                     <span class="image-btn-text">Import Cards</span>
                                 </div>
@@ -117,7 +117,7 @@
                                     </div>
                                 </a> -->
                                 <div class="image-btn">
-                                    <a id="create-sheet" href=""><span class="div-link"></span></a>
+                                    <a id="create-sheet" href="#create-data-modal" data-toggle="modal"><span class="div-link"></span></a>
                                     <img class="image-btn-link" src="{{ url_for('static',filename='img/create.png') }}">
                                     <span class="image-btn-text">Create New Cards</span>
                                 </div>
@@ -176,12 +176,29 @@
     	            <!-- Modal content-->
     	            <div class="modal-content">
     	                <div class="navbar-collapse modal-header">
-    	                    <button type="button" class="btn btn-default" id="close" style="float:right" data-dismiss="modal">Close</button>
+    	                    <button type="button" class="btn btn-default" style="float:right" data-dismiss="modal">Close</button>
     	                    <h4>Import New Sheet</h4>
     	                </div>
     	                <div class="modal-body">
                             <table id="full-list" class="display">
                             </table>
+    					</div>
+    	            </div>
+    	        </div>
+    	    </div>
+    	</div>
+        <!-- Create Set Placeholder Modal -->
+    	<div class="row">
+    	    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="create-data-modal" role="dialog">
+    	        <div class="modal-dialog" id="placeholder">
+    	            <!-- Modal content-->
+    	            <div class="modal-content">
+    	                <div class="navbar-collapse modal-header">
+    	                    <button type="button" class="btn btn-default" style="float:right" data-dismiss="modal">Close</button>
+    	                    <h4>Create New Sheet</h4>
+    	                </div>
+    	                <div class="modal-body">
+                            <p>This feature is still under development. Please check back soon!
     					</div>
     	            </div>
     	        </div>
