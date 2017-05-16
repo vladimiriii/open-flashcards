@@ -4,7 +4,7 @@ View Select
 var userSheetList,
     publicSheetList,
     fullSheetList,
-    sheetID = null,
+    sharedSheetID = null,
     btnActive = false,
     importComplete = false;
 
@@ -32,7 +32,7 @@ function getSheetList(requestType) {
     });
 };
 
-function postNewSheetInfo(googleSheetID) {
+function importSheetInfo(googleSheetID) {
     $("#spinner").show();
     var dataJson = {"sheetID": googleSheetID};
     return $.ajax({
@@ -44,11 +44,11 @@ function postNewSheetInfo(googleSheetID) {
             if(result['status'] === "Success") {
                 window.location = "./view-cards";
             };
-            // $("#spinner").hide();
+            $("#spinner").hide();
         },
         error: function(msg){
             console.log(msg);
-            // $("#spinner").hide();
+            $("#spinner").hide();
         }
     });
 };
@@ -74,7 +74,38 @@ function postSheetID(id, googleID) {
     });
 };
 
+
+function openSheetAccess(sheetID) {
+    $("#spinner").show();
+    var dataJSON = {"sheetID": sheetID};
+    return $.ajax({
+        type: "POST",
+        url: '/open-sheet',
+        data: JSON.stringify(dataJSON),
+        contentType: 'application/json',
+        success: function(result) {
+            if (result['status'] == 'access needed') {
+                $('#share-btn-modal').modal('show');
+                sharedSheetID = sheetID;
+            } else if (result['status'] == 'sheet shared') {
+                $('#share-btn-success-modal').modal('show');
+            };
+            $("#spinner").hide();
+        },
+        error: function(msg){
+            console.log(msg);
+            $("#spinner").hide();
+        }
+    });
+};
+
+function getAdditionalScope() {
+    window.location = "./share-access";
+};
+
+
 function generateSheetList(div, data) {
+    $('#' + div).empty();
     var header = "<thead><tr>",
         rows = "<tbody>",
         colHeader,
@@ -106,11 +137,18 @@ function generateSheetList(div, data) {
     $('#' + div).append(rows);
 };
 
+
 function selectRow(div, id, btnFunction, btnText) {
     $("#" + div + " .confirm-col").empty();
     if (!$("#" + String(id)).hasClass("selected")) {
-        var button = '<button type="button" class="btn btn-success btn-sm" id="' + div + '-accept" onclick="' + btnFunction + '(\'' + id + '\')">' + btnText + '</button>'
+        var button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" id="' + div + '-accept" onclick="' + btnFunction + '(\'' + id + '\')">' + btnText + '</button>'
         $("#" + id + "> .confirm-col").append(button);
+
+        // Additional user table buttons
+        if (div == 'user-most-viewed') {
+            var button = '<button type="button" class="btn btn-warning btn-sm confirm-col-btn" id="make-public" onclick="openSheetAccess(\'' + id + '\')">Share</button>'
+            $("#" + id + "> .confirm-col").append(button);
+        };
     };
 };
 
@@ -122,7 +160,7 @@ function confirmSelection(id) {
 
 function importSheet(id) {
     event.stopPropagation();
-    postNewSheetInfo(id);
+    importSheetInfo(id);
 };
 
 function getGoogleID(id, data) {
@@ -152,7 +190,11 @@ $(document).ready(function(){
         });
 
         $("#user-most-viewed .table-row").on('click', function () {
-            selectRow('user-most-viewed', this.id, "confirmSelection", "View");
+            selectRow("user-most-viewed", this.id, "confirmSelection", "View");
+        });
+
+        $("#public-most-viewed .table-row").on('click', function () {
+            selectRow("public-most-viewed", this.id, "confirmSelection", "View");
         });
     });
 
@@ -175,4 +217,14 @@ $(document).ready(function(){
             });
         };
     });
+
+    $('#share-sheet-success-btn').on('click', function() {
+        $('#share-btn-success-modal').modal('hide');
+
+        // Refresh Public Data Table
+        $.when(getSheetList('initial view')).done( function() {
+            generateSheetList("public-most-viewed", publicSheetList);
+        });
+    });
+
 });

@@ -114,7 +114,7 @@ def get_sheet_meta(g_id):
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
     http = credentials.authorize(http=httplib2.Http())
     service = build('drive', 'v3', http=http)
-    response = service.files().get(fileId=g_id, fields= 'name, modifiedTime').execute()
+    response = service.files().get(fileId=g_id, fields='name, modifiedTime').execute()
 
     meta_data = {}
     for key in response:
@@ -134,39 +134,27 @@ def get_sheet_rows(g_id):
 
     return len(result.get('values', []))
 
-
-def save_sheet_info(sheet_id, google_id):
+def import_sheet_data(google_id):
     meta_data = get_sheet_meta(google_id)
     sheet_name = meta_data['name']
     last_modified = meta_data['modifiedTime']
     row_count = get_sheet_rows(google_id)
+
+    # Insert new record
+    record = sheet( s_au_id = session['au_id'],
+                    s_ca_id = None,
+                    s_sca_id = None,
+                    s_google_id = google_id,
+                    s_sheet_name = sheet_name,
+                    s_row_count = row_count,
+                    s_last_modified = last_modified,
+                    s_shared = False,
+                    s_date_shared = None,
+                    s_hide_sharer = True)
+    db_session.add(record)
+    db_session.commit()
     current_sheet = sheet.query.filter_by(s_google_id = google_id).first()
-
-    if current_sheet is None:
-        # Insert new record
-        record = sheet( s_au_id = session['au_id'],
-                        s_ca_id = None,
-                        s_sca_id = None,
-                        s_google_id = google_id,
-                        s_sheet_name = sheet_name,
-                        s_row_count = row_count,
-                        s_last_modified = last_modified,
-                        s_shared = False,
-                        s_date_shared = None,
-                        s_hide_sharer = True)
-        db_session.add(record)
-        db_session.commit()
-        current_sheet = sheet.query.filter_by(s_google_id = google_id).first()
-        s_id = current_sheet.s_id
-
-    else:
-        # Ensure existing record is to date
-        s_id = current_sheet.s_id
-        record = sheet.query.filter_by(s_id=s_id).first()
-        record.s_sheet_name = sheet_name
-        record.s_row_count = row_count
-        record.s_last_modified = last_modified
-        db_session.commit()
+    s_id = current_sheet.s_id
 
     # Update View Table
     current_view = view(v_au_id = session['au_id'],
@@ -176,3 +164,45 @@ def save_sheet_info(sheet_id, google_id):
     db_session.commit()
 
     return s_id
+
+def save_sheet_info(sheet_id, google_id):
+    # Get latest sheet meta data
+    meta_data = get_sheet_meta(google_id)
+    sheet_name = meta_data['name']
+    last_modified = meta_data['modifiedTime']
+    row_count = get_sheet_rows(google_id)
+
+    record = sheet.query.filter_by(s_id=sheet_id).first()
+    record.s_sheet_name = sheet_name
+    record.s_row_count = row_count
+    record.s_last_modified = last_modified
+    db_session.commit()
+
+    # Add new record to view table
+    current_view = view(v_au_id = session['au_id'],
+                v_s_id = s_id,
+                v_date = datetime.now())
+    db_session.add(current_view)
+    db_session.commit()
+
+def make_sheet_public(sheet_id):
+    # Update Database
+    record = sheet.query.filter_by(s_id=sheet_id).first()
+    record.s_shared = True
+    db_session.commit()
+    google_id = record.s_google_id
+
+    # Update Google Drive permissions
+    credentials = client.OAuth2Credentials.from_json(session['credentials'])
+    http = credentials.authorize(http=httplib2.Http())
+    service = build('drive', 'v3', http=http)
+    permission_details = {
+    'type': 'anyone',
+    'role': 'reader',
+    'allowFileDiscovery': False
+    }
+    response = service.permissions().create(
+        fileId=google_id,
+        body=permission_details,
+        fields='id',
+        ).execute()

@@ -66,7 +66,7 @@ class sheet(Base):
     s_ca_id = Column(Integer) #ForeignKey(schema_name + '.category.ca_id'), nullable=False)
     s_sca_id = Column(Integer) #ForeignKey(schema_name + '.subcategory.sca_id'), nullable=False)
     s_sheet_name = Column(Text)
-    s_google_id = Column(String(120))
+    s_google_id = Column(String(120), index=True)
     s_row_count = Column(Integer)
     s_last_modified = Column(DateTime)
     s_shared = Column(Boolean)

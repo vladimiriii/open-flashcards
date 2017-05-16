@@ -29,6 +29,11 @@
     text-align: right;
 }
 
+.confirm-col-btn {
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
 .image-btn {
     position: relative;
     width: 175px;

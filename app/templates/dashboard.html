@@ -136,7 +136,7 @@
                     <div class="row text-btn-row">
                         <div class="col-md-12">
                             <div class="row">
-                                <h4>Still Under Development - check back soon!</h4>
+                                <h4>This feature is still under development - please check back soon!</h4>
                             </div>
                         </div>
                     </div>
@@ -192,6 +192,47 @@
     	                <div class="modal-body">
                             <table id="full-list" class="display">
                             </table>
+    					</div>
+    	            </div>
+    	        </div>
+    	    </div>
+    	</div>
+        <!-- Share Button Modal -->
+    	<div class="row">
+    	    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="share-btn-modal" role="dialog">
+    	        <div class="modal-dialog" id="placeholder">
+    	            <!-- Modal content-->
+    	            <div class="modal-content">
+    	                <div class="navbar-collapse modal-header">
+    	                    <button type="button" class="btn btn-default" style="float:right" data-dismiss="modal">Close</button>
+    	                    <h4>Sharing Your Sheet</h4>
+    	                </div>
+    	                <div class="modal-body">
+                            <p>In order to share your card set publically, Open Flashcards needs access to your Google drive to change the file permissions. Do you want to proceed?</p>
+                            <div class="row" style="text-align:center">
+                                <button type="button" class="btn btn-success" onclick="getAdditionalScope()">Proceed</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            </div>
+    					</div>
+    	            </div>
+    	        </div>
+    	    </div>
+    	</div>
+        <!-- Share Button Success Modal -->
+    	<div class="row">
+    	    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="share-btn-success-modal" role="dialog">
+    	        <div class="modal-dialog" id="placeholder">
+    	            <!-- Modal content-->
+    	            <div class="modal-content">
+    	                <div class="navbar-collapse modal-header">
+    	                    <button type="button" class="btn btn-default" style="float:right" data-dismiss="modal">Close</button>
+    	                    <h4>Success!</h4>
+    	                </div>
+    	                <div class="modal-body">
+                            <p>Your cards iare now available for everyone to use!</p>
+                            <div class="row" style="text-align:center">
+                                <button type="button" class="btn btn-success" id="share-sheet-success-btn">OK</button>
+                            </div>
     					</div>
     	            </div>
     	        </div>
