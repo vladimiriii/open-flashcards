@@ -120,14 +120,14 @@ function generateSheetList(div, data) {
 
     // Create Data Rows
     for (sheet in data) {
-        rows = rows + '<tr class="table-row" id="' + data[sheet]['id'] + '">'
+        rows = rows + '<tr class="table-row" id="' + div.substring(0, 2) + data[sheet]['id'] + '">'
         for (key in tableMappings[div]["columns"]) {
             colName = tableMappings[div]["columns"][key];
             rows = rows + '<td>' + data[sheet][colName] + '</td>';
         };
 
         // Add Column for View/Import button
-        rows = rows + '<td class="confirm-col">' + '' + '</td>';
+        rows = rows + '<td class="confirm-col" id="' + div.substring(0, 2) + data[sheet]['id'] + '-opt">' + '' + '</td>';
         rows = rows + '</tr>';
     };
     rows = rows + "</tbody>";
@@ -139,15 +139,16 @@ function generateSheetList(div, data) {
 
 
 function selectRow(div, id, btnFunction, btnText) {
-    $("#" + div + " .confirm-col").empty();
+    $("td.confirm-col").empty();
+    var cellID = "#" + String(id) + "-opt";
     if (!$("#" + String(id)).hasClass("selected")) {
-        var button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" id="' + div + '-accept" onclick="' + btnFunction + '(\'' + id + '\')">' + btnText + '</button>'
-        $("#" + id + "> .confirm-col").append(button);
+        var button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" id="' + div + '-accept" onclick="' + btnFunction + '(\'' + id.substring(2) + '\')">' + btnText + '</button>'
+        $(cellID).append(button);
 
         // Additional user table buttons
         if (div == 'user-most-viewed') {
             var button = '<button type="button" class="btn btn-warning btn-sm confirm-col-btn" id="make-public" onclick="openSheetAccess(\'' + id + '\')">Share</button>'
-            $("#" + id + "> .confirm-col").append(button);
+            $(cellID).append(button);
         };
     };
 };
@@ -155,6 +156,8 @@ function selectRow(div, id, btnFunction, btnText) {
 function confirmSelection(id) {
     event.stopPropagation();
     var googleID = getGoogleID(id, userSheetList);
+    // console.log(id);
+    // console.log(googleID);
     postSheetID(id, googleID);
 };
 

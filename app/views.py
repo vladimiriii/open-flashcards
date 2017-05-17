@@ -32,7 +32,7 @@ card_data = Blueprint('card_data', __name__)
 error_page = Blueprint('error_page', __name__)
 
 # Set scopes
-scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/userinfo.email']
+scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/drive.readonly']
 
 
 @landing_page.route('/', methods=['GET'])
@@ -203,6 +203,7 @@ def save_page():
         session['sheet_id'] = inputs['sheetID']
         session['google_id'] = inputs['googleID']
         session.modified = True
+        # print(session['sheet_id'], ", ", session['google_id'])
         ps.save_sheet_info(session['sheet_id'], session['google_id'])
         return jsonify({"status": "Success"})
     except:

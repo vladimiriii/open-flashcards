@@ -180,7 +180,7 @@ def save_sheet_info(sheet_id, google_id):
 
     # Add new record to view table
     current_view = view(v_au_id = session['au_id'],
-                v_s_id = s_id,
+                v_s_id = sheet_id,
                 v_date = datetime.now())
     db_session.add(current_view)
     db_session.commit()
