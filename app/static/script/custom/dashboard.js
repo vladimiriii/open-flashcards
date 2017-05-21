@@ -84,10 +84,7 @@ function openSheetAccess(sheetID) {
         data: JSON.stringify(dataJSON),
         contentType: 'application/json',
         success: function(result) {
-            if (result['status'] == 'access needed') {
-                $('#share-btn-modal').modal('show');
-                sharedSheetID = sheetID;
-            } else if (result['status'] == 'sheet shared') {
+            if (result['status'] == 'sheet shared') {
                 $('#share-btn-success-modal').modal('show');
             };
             $("#spinner").hide();
@@ -97,10 +94,6 @@ function openSheetAccess(sheetID) {
             $("#spinner").hide();
         }
     });
-};
-
-function getAdditionalScope() {
-    window.location = "./share-access";
 };
 
 
@@ -120,7 +113,7 @@ function generateSheetList(div, data) {
 
     // Create Data Rows
     for (sheet in data) {
-        rows = rows + '<tr class="table-row" id="' + div.substring(0, 2) + data[sheet]['id'] + '">'
+        rows = rows + '<tr class="table-row" data-value="' + data[sheet]['id'] + '" id="' + div.substring(0, 2) + data[sheet]['id'] + '">'
         for (key in tableMappings[div]["columns"]) {
             colName = tableMappings[div]["columns"][key];
             rows = rows + '<td>' + data[sheet][colName] + '</td>';
@@ -138,17 +131,48 @@ function generateSheetList(div, data) {
 };
 
 
-function selectRow(div, id, btnFunction, btnText) {
+function selectRow(div, row_id, sheet_id) {
     $("td.confirm-col").empty();
-    var cellID = "#" + String(id) + "-opt";
-    if (!$("#" + String(id)).hasClass("selected")) {
-        var button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" id="' + div + '-accept" onclick="' + btnFunction + '(\'' + id.substring(2) + '\')">' + btnText + '</button>'
-        $(cellID).append(button);
-
-        // Additional user table buttons
+    var cellID = "#" + String(row_id) + "-opt";
+    if (!$("#" + String(row_id)).hasClass("selected")) {
+        // Users Private List
         if (div == 'user-most-viewed') {
-            var button = '<button type="button" class="btn btn-warning btn-sm confirm-col-btn" id="make-public" onclick="openSheetAccess(\'' + id + '\')">Share</button>'
-            $(cellID).append(button);
+            // View Button
+            var view_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
+                       + 'id="' + div + '-accept"'
+                       + 'onclick="confirmSelection(' + sheet_id + ')">'
+                       + '<span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>'
+
+            // Share Button
+            var share_button = '<button type="button" class="btn btn-warning btn-sm confirm-col-btn"'
+                       + ' id="make-public" onclick="openSheetAccess(' + sheet_id + ')">'
+                       + '<span class="glyphicon glyphicon-share" aria-hidden="true"></span></button>'
+
+            // Append Buttons
+            $(cellID).append(view_button);
+            $(cellID).append(share_button);
+
+        // Public Sheets List
+        } else if (div == 'public-most-viewed') {
+            // View Button
+            var view_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
+                       + 'id="' + div + '-accept"'
+                       + 'onclick="confirmSelection(' + sheet_id + ')">'
+                       + '<span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>'
+
+           // Append Button
+           $(cellID).append(view_button);
+
+        // Import Sheet List
+        } else if (div == 'full-list') {
+            // Import Button
+            var import_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
+                       + 'id="' + div + '-accept"'
+                       + 'onclick="importSheet(\'' + sheet_id + '\')">'
+                       + '<span class="glyphicon glyphicon-save" aria-hidden="true"></span></button>'
+
+            // Append Button
+            $(cellID).append(import_button);
         };
     };
 };
@@ -193,11 +217,11 @@ $(document).ready(function(){
         });
 
         $("#user-most-viewed .table-row").on('click', function () {
-            selectRow("user-most-viewed", this.id, "confirmSelection", "View");
+            selectRow("user-most-viewed", this.id, $(this).attr('data-value'));
         });
 
         $("#public-most-viewed .table-row").on('click', function () {
-            selectRow("public-most-viewed", this.id, "confirmSelection", "View");
+            selectRow("public-most-viewed", this.id, $(this).attr('data-value'));
         });
     });
 
@@ -215,7 +239,7 @@ $(document).ready(function(){
                 importComplete = true;
 
                 $("#full-list .table-row").on('click', function () {
-                    selectRow('full-list', this.id, "importSheet", "Import");
+                    selectRow('full-list', this.id, $(this).attr('data-value'));
                 });
             });
         };

@@ -62,7 +62,6 @@ class sheet(Base):
     __tablename__ = 'sheet'
     __table_args__ = {"schema": schema_name}
     s_id = Column(Integer, primary_key=True)
-    s_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
     s_ca_id = Column(Integer) #ForeignKey(schema_name + '.category.ca_id'), nullable=False)
     s_sca_id = Column(Integer) #ForeignKey(schema_name + '.subcategory.sca_id'), nullable=False)
     s_sheet_name = Column(Text)
@@ -73,8 +72,7 @@ class sheet(Base):
     s_date_shared = Column(DateTime)
     s_hide_sharer = Column(Boolean)
 
-    def __init__(self,  s_au_id=None, s_ca_id=None, s_sca_id=None, s_google_id=None, s_sheet_name=None, s_row_count=None, s_last_modified=None, s_shared=None, s_date_shared=None, s_hide_sharer=None):
-        self.s_au_id = s_au_id
+    def __init__(self, s_ca_id=None, s_sca_id=None, s_google_id=None, s_sheet_name=None, s_row_count=None, s_last_modified=None, s_shared=None, s_date_shared=None, s_hide_sharer=None):
         self.s_ca_id = s_ca_id
         self.s_sca_id = s_sca_id
         self.s_google_id = s_google_id
@@ -84,6 +82,24 @@ class sheet(Base):
         self.s_shared = s_shared
         self.s_date_shared = s_date_shared
         self.s_hide_sharer = s_hide_sharer
+
+class app_user_rel_sheet(Base):
+    __tablename__ = 'app_user_rel_sheet'
+    __table_args__ = {"schema": schema_name}
+    aurs_id = Column(Integer, primary_key=True)
+    aurs_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
+    aurs_s_id = Column(Integer, ForeignKey(schema_name + '.sheet.s_id'), nullable=False)
+    aurs_first_view = Column(DateTime)
+    aurs_is_owner = Column(Boolean)
+    aurs_deleted = Column(Boolean)
+
+    def __init__(self, aurs_id=None, aurs_au_id=None, aurs_s_id=None, aurs_first_view=None, aurs_is_owner=None, aurs_deleted=None):
+        self.aurs_id = aurs_id
+        self.aurs_au_id = aurs_au_id
+        self.aurs_s_id = aurs_s_id
+        self.aurs_first_view = aurs_first_view
+        self.aurs_is_owner = aurs_is_owner
+        self.aurs_deleted = aurs_deleted
 
 class comment(Base):
     __tablename__ = 'comment'

@@ -10,7 +10,7 @@ from sqlalchemy import update
 import httplib2
 from oauth2client import client
 
-from app.lib.models import Base, sheet, view, db_session
+from app.lib.models import Base, sheet, view, app_user_rel_sheet, db_session
 
 ###############################################
 # Functions                                   #
@@ -88,7 +88,9 @@ def get_full_list():
     # Get list of already imported sheet ids
     sheet_query = ("SELECT s_google_id "
                    "FROM sheet "
-                   "WHERE s_au_id = " + str(session['au_id']))
+                   "INNER JOIN app_user_rel_sheet "
+                   "ON s_id = aurs_s_id "
+                   "WHERE aurs_au_id = " + str(session['au_id']))
 
     imported_sheets = db_session.execute(sheet_query)
     id_list = []
@@ -113,8 +115,8 @@ def get_sheet_meta(g_id):
     # Get a list of all Sheets in the account for the current user.
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
     http = credentials.authorize(http=httplib2.Http())
-    service = build('drive', 'v3', http=http)
-    response = service.files().get(fileId=g_id, fields='name, modifiedTime').execute()
+    service = build('drive', 'v2', http=http)
+    response = service.files().get(fileId=g_id, fields='title, modifiedDate, userPermission').execute()
 
     meta_data = {}
     for key in response:
@@ -134,62 +136,103 @@ def get_sheet_rows(g_id):
 
     return len(result.get('values', []))
 
+def get_owner_status(permissions):
+    print(permissions)
+    if permissions['role'] == 'owner':
+        result = True
+    else:
+        result = False
+
+    return result
+
 def import_sheet_data(google_id):
+    # Get sheet metadata
     meta_data = get_sheet_meta(google_id)
-    sheet_name = meta_data['name']
-    last_modified = meta_data['modifiedTime']
+    sheet_name = meta_data['title']
+    last_modified = meta_data['modifiedDate']
     row_count = get_sheet_rows(google_id)
+    owner_status = get_owner_status(meta_data['userPermission'])
 
-    # Insert new record
-    record = sheet( s_au_id = session['au_id'],
-                    s_ca_id = None,
-                    s_sca_id = None,
-                    s_google_id = google_id,
-                    s_sheet_name = sheet_name,
-                    s_row_count = row_count,
-                    s_last_modified = last_modified,
-                    s_shared = False,
-                    s_date_shared = None,
-                    s_hide_sharer = True)
-    db_session.add(record)
-    db_session.commit()
+    # Look for existing record in sheet table
     current_sheet = sheet.query.filter_by(s_google_id = google_id).first()
-    s_id = current_sheet.s_id
 
-    # Update View Table
-    current_view = view(v_au_id = session['au_id'],
-                v_s_id = s_id,
-                v_date = datetime.now())
-    db_session.add(current_view)
-    db_session.commit()
+    if current_sheet is None:
+        # If sheet record does not yet exist, create it
+        sheet_record = sheet(
+                        s_ca_id = None,
+                        s_sca_id = None,
+                        s_google_id = google_id,
+                        s_sheet_name = sheet_name,
+                        s_row_count = row_count,
+                        s_last_modified = last_modified,
+                        s_shared = False,
+                        s_date_shared = None,
+                        s_hide_sharer = True)
+        db_session.add(sheet_record)
+        db_session.flush()
+        s_id = sheet_record.s_id
 
-    return s_id
+        # Add Record to User Sheet Rel Table
+        rel_record = app_user_rel_sheet(
+                        aurs_au_id = session['au_id'],
+                        aurs_s_id = s_id,
+                        aurs_first_view = datetime.now(),
+                        aurs_is_owner = owner_status,
+                        aurs_deleted = False)
+
+        # Update View Table
+        view_record = view(
+                        v_au_id = session['au_id'],
+                        v_s_id = s_id,
+                        v_date = datetime.now())
+
+        # Save to Database
+        db_session.bulk_save_objects([rel_record, view_record])
+        db_session.commit()
+        return s_id
+
+    else:
+        # Get Sheet ID
+        s_id = current_sheet.s_id
+
+        # Update View Table
+        view_record = view(v_au_id = session['au_id'],
+                    v_s_id = s_id,
+                    v_date = datetime.now())
+
+        # Save to Database
+        db_session.add(view_record)
+        db_session.commit()
+        return s_id
+
 
 def save_sheet_info(sheet_id, google_id):
     # Get latest sheet meta data
     meta_data = get_sheet_meta(google_id)
-    sheet_name = meta_data['name']
-    last_modified = meta_data['modifiedTime']
+    sheet_name = meta_data['title']
+    last_modified = meta_data['modifiedDate']
     row_count = get_sheet_rows(google_id)
+    owner_status = get_owner_status(meta_data['userPermission'])
 
-    record = sheet.query.filter_by(s_id=sheet_id).first()
-    record.s_sheet_name = sheet_name
-    record.s_row_count = row_count
-    record.s_last_modified = last_modified
-    db_session.commit()
+    # Update sheet record with latest metadata
+    sheet_record = sheet.query.filter_by(s_id=sheet_id).first()
+    sheet_record.s_sheet_name = sheet_name
+    sheet_record.s_row_count = row_count
+    sheet_record.s_last_modified = last_modified
 
     # Add new record to view table
-    current_view = view(v_au_id = session['au_id'],
+    view_record = view(v_au_id = session['au_id'],
                 v_s_id = sheet_id,
                 v_date = datetime.now())
-    db_session.add(current_view)
+
+    # Save to database
+    db_session.bulk_save_objects([sheet_record, view_record])
     db_session.commit()
 
+
 def make_sheet_public(sheet_id):
-    # Update Database
+    # Get Google ID
     record = sheet.query.filter_by(s_id=sheet_id).first()
-    record.s_shared = True
-    db_session.commit()
     google_id = record.s_google_id
 
     # Update Google Drive permissions
@@ -204,5 +247,9 @@ def make_sheet_public(sheet_id):
     response = service.permissions().create(
         fileId=google_id,
         body=permission_details,
-        fields='id',
+        fields='id'
         ).execute()
+
+    # Update Database
+    record.s_shared = True
+    db_session.commit()

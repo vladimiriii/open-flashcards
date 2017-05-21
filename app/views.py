@@ -24,7 +24,6 @@ user_dashboard = Blueprint('user_dashboard', __name__)
 get_sheet_lists = Blueprint('get_sheet_lists', __name__)
 import_sheet = Blueprint('import_sheet', __name__)
 save_sheet = Blueprint('save_sheet', __name__)
-share_access = Blueprint('share_access', __name__)
 open_sheet = Blueprint('open_sheet', __name__)
 logout = Blueprint('logout', __name__)
 cards_page = Blueprint('cards_page', __name__)
@@ -32,7 +31,7 @@ card_data = Blueprint('card_data', __name__)
 error_page = Blueprint('error_page', __name__)
 
 # Set scopes
-scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/drive.readonly']
+scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/drive']
 
 
 @landing_page.route('/', methods=['GET'])
@@ -213,53 +212,55 @@ def save_page():
         return redirect(url_for('error_page.er_page'))
 
 
+# @drive_access.route('/drive-access', methods=['GET'])
+# def get_drive_access():
+#     try:
+#         scopes.append('https://www.googleapis.com/auth/drive')
+#         client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret_71572721139-4k4cch634h94b76f1qelmvuqpr6jv4da.apps.googleusercontent.com.json')
+#         flow = client.flow_from_clientsecrets(
+#             client_secrets_path,
+#             scope = scopes,
+#             redirect_uri = url_for('drive_access.get_drive_access', _external = True))
+#
+#         if 'code' not in request.args:
+#             auth_uri = flow.step1_get_authorize_url()
+#             return redirect(auth_uri)
+#         else:
+#             auth_code = request.args.get('code')
+#             credentials = flow.step2_exchange(auth_code)
+#             session['credentials'] = credentials.to_json()
+#
+#         # Update session to reflect new scope
+#         session['drive_access'] = True
+#         session.modified = True
+#         dataJSON = {"sheetID": session['shared_sheet_id']}
+#         response = requests.post('http://localhost:8888/open-sheet', json=dataJSON)
+#         print(response)
+#         return jsonify({"status": "access granted"})
+#         # return redirect(url_for('open_sheet.open_sheet_permissions', messages=dataJSON, code=307))
+#     except:
+#         message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
+#             sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
+#         print(message)
+#         return redirect(url_for('error_page.er_page'))
+
+
 @open_sheet.route('/open-sheet', methods=['GET', 'POST'])
-def share_page():
+def open_sheet_permissions():
     try:
         if request.data is not None:
             inputs = json.loads(request.data)
-            session['shared_sheet_id'] = inputs['sheetID']
             session.modified = True
 
-        if 'drive_access' in session and session['drive_access'] == True:
             # Open sheet permissions
-            ps.make_sheet_public(session['shared_sheet_id'])
+            ps.make_sheet_public(inputs['sheetID'])
 
-            # Remove ID from session
-            del session['shared_sheet_id']
-            session.modified = True
-
-            return jsonify({"status": "sheet shared"})
-        else:
-            return jsonify({"status": "access needed"})
+        return jsonify({"status": "sheet shared"})
     except:
         message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
             sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
         print(message)
         return redirect(url_for('error_page.er_page'))
-
-
-@share_access.route('/share-access', methods=['GET'])
-def get_drive_access():
-    scopes.append('https://www.googleapis.com/auth/drive')
-    client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret_71572721139-4k4cch634h94b76f1qelmvuqpr6jv4da.apps.googleusercontent.com.json')
-    flow = client.flow_from_clientsecrets(
-        client_secrets_path,
-        scope = scopes,
-        redirect_uri = url_for('share_access.get_drive_access', _external = True))
-
-    if 'code' not in request.args:
-        auth_uri = flow.step1_get_authorize_url()
-        return redirect(auth_uri)
-    else:
-        auth_code = request.args.get('code')
-        credentials = flow.step2_exchange(auth_code)
-        session['credentials'] = credentials.to_json()
-
-    # Update session to reflect new scope
-    session['drive_access'] = True
-    session.modified = True
-    return redirect(url_for('open_sheet.share_page'))
 
 
 @cards_page.route('/view-cards', methods=['GET'])

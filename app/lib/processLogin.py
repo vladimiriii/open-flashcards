@@ -46,3 +46,4 @@ def process_login():
     # Save User ID to Session
     current_user = app_user.query.filter_by(au_email=email).first()
     session['au_id'] = current_user.au_id
+    session['email'] = email

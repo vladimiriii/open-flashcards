@@ -26,7 +26,6 @@ def init_modules(app):
     from app.views import get_sheet_lists
     from app.views import import_sheet
     from app.views import save_sheet
-    from app.views import share_access
     from app.views import open_sheet
     from app.views import cards_page
     from app.views import card_data
@@ -42,7 +41,6 @@ def init_modules(app):
     app.register_blueprint(get_sheet_lists)
     app.register_blueprint(import_sheet)
     app.register_blueprint(save_sheet)
-    app.register_blueprint(share_access)
     app.register_blueprint(open_sheet)
     app.register_blueprint(cards_page)
     app.register_blueprint(card_data)
