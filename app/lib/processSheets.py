@@ -137,7 +137,6 @@ def get_sheet_rows(g_id):
     return len(result.get('values', []))
 
 def get_owner_status(permissions):
-    print(permissions)
     if permissions['role'] == 'owner':
         result = True
     else:
