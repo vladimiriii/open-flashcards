@@ -18,11 +18,11 @@ def process_login():
     profile_info = service.people().get(userId='me').execute()
 
     # Parse Information
-    email = profile_info['emails'][0]['value']
-    first_name = profile_info['name']['givenName']
-    last_name = profile_info['name']['familyName']
-    gender = profile_info['gender']
-    profile_url = profile_info['url']
+    email = profile_info['emails'][0].get('value')
+    first_name = profile_info['name'].get('givenName')
+    last_name = profile_info['name'].get('familyName')
+    gender = profile_info.get('gender')
+    profile_url = profile_info.get('url')
 
     # Query DB
     current_user = app_user.query.filter_by(au_email=email).first()
