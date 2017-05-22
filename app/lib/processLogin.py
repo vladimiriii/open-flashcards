@@ -28,15 +28,15 @@ def process_login():
     current_user = app_user.query.filter_by(au_email=email).first()
 
     if current_user is None:
-        record = app_user(2,
-                    email,
-                    first_name,
-                    last_name,
-                    gender,
-                    profile_url,
-                    datetime.now(),
-                    datetime.now(),
-                    False)
+        record = app_user(au_aur_id = 2,
+                    au_email = email,
+                    au_first_name = first_name,
+                    au_last_name = last_name,
+                    au_gender = gender,
+                    au_profile_url = profile_url,
+                    au_first_sign_in = datetime.now(),
+                    au_last_sign_in = datetime.now(),
+                    au_is_deleted = False)
         db_session.add(record)
         db_session.commit()
     else:
