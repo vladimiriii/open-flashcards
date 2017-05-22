@@ -140,7 +140,7 @@ function selectRow(div, row_id, sheet_id) {
             // View Button
             var view_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
                        + 'id="' + div + '-accept"'
-                       + 'onclick="confirmSelection(' + sheet_id + ')">'
+                       + 'onclick="confirmPrivateSelection(' + sheet_id + ')">'
                        + '<span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>'
 
             // Share Button
@@ -157,7 +157,7 @@ function selectRow(div, row_id, sheet_id) {
             // View Button
             var view_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
                        + 'id="' + div + '-accept"'
-                       + 'onclick="confirmSelection(' + sheet_id + ')">'
+                       + 'onclick="confirmPublicSelection(' + sheet_id + ')">'
                        + '<span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>'
 
            // Append Button
@@ -177,11 +177,15 @@ function selectRow(div, row_id, sheet_id) {
     };
 };
 
-function confirmSelection(id) {
+function confirmPrivateSelection(id) {
     event.stopPropagation();
     var googleID = getGoogleID(id, userSheetList);
-    // console.log(id);
-    // console.log(googleID);
+    postSheetID(id, googleID);
+};
+
+function confirmPublicSelection(id) {
+    event.stopPropagation();
+    var googleID = getGoogleID(id, publicSheetList);
     postSheetID(id, googleID);
 };
 

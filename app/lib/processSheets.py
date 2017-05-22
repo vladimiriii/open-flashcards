@@ -28,7 +28,13 @@ def get_user_sheets():
                     "GROUP BY v_s_id "
                     "ORDER BY views DESC"
                     ") AS vs "
-                 "ON s.s_id = vs.v_s_id;")
+                 "ON s.s_id = vs.v_s_id "
+                 "INNER JOIN ("
+                    "SELECT aurs_s_id "
+                    "FROM public.app_user_rel_sheet "
+                    "WHERE aurs_au_id = \'" + str(session['au_id']) + "\' "
+                    ") AS aurs "
+                 "ON aurs.aurs_s_id = vs.v_s_id;")
     user_data = db_session.execute(user_query)
 
     # Process Results
@@ -171,38 +177,28 @@ def import_sheet_data(google_id):
         db_session.flush()
         s_id = sheet_record.s_id
 
-        # Add Record to User Sheet Rel Table
-        rel_record = app_user_rel_sheet(
-                        aurs_au_id = session['au_id'],
-                        aurs_s_id = s_id,
-                        aurs_first_view = datetime.now(),
-                        aurs_is_owner = owner_status,
-                        aurs_deleted = False)
-
-        # Update View Table
-        view_record = view(
-                        v_au_id = session['au_id'],
-                        v_s_id = s_id,
-                        v_date = datetime.now())
-
-        # Save to Database
-        db_session.bulk_save_objects([rel_record, view_record])
-        db_session.commit()
-        return s_id
-
     else:
         # Get Sheet ID
         s_id = current_sheet.s_id
 
-        # Update View Table
-        view_record = view(v_au_id = session['au_id'],
+    # Add Record to User Sheet Rel Table
+    rel_record = app_user_rel_sheet(
+                    aurs_au_id = session['au_id'],
+                    aurs_s_id = s_id,
+                    aurs_first_view = datetime.now(),
+                    aurs_is_owner = owner_status,
+                    aurs_deleted = False)
+
+    # Update View Table
+    view_record = view(
+                    v_au_id = session['au_id'],
                     v_s_id = s_id,
                     v_date = datetime.now())
 
-        # Save to Database
-        db_session.add(view_record)
-        db_session.commit()
-        return s_id
+    # Save to Database
+    db_session.bulk_save_objects([rel_record, view_record])
+    db_session.commit()
+    return s_id
 
 
 def save_sheet_info(sheet_id, google_id):

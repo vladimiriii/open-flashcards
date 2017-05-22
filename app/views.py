@@ -202,7 +202,6 @@ def save_page():
         session['sheet_id'] = inputs['sheetID']
         session['google_id'] = inputs['googleID']
         session.modified = True
-        # print(session['sheet_id'], ", ", session['google_id'])
         ps.save_sheet_info(session['sheet_id'], session['google_id'])
         return jsonify({"status": "Success"})
     except:
