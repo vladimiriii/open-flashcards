@@ -1,0 +1,60 @@
+#initial-view {
+    width: 100%;
+    height: 100vh;
+}
+
+#primary-header {
+    font-size: 80px;
+    text-align: center;
+    color: #000000;
+}
+
+#header-row {
+    margin-top: 100px;
+}
+
+#btn-row {
+    margin-top: 50px;
+    text-align: center;
+}
+
+#text-overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 2;
+}
+
+#primary-image {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-image: url("../img/index.jpg");
+    background-position: center;
+    opacity: 0.5;
+    z-index: 1;
+}
+
+.section-header {
+    text-align: center;
+    font-size: 50px;
+}
+
+.landing-page-col {
+    padding-top: 50px;
+    padding-right: 100px;
+    padding-left: 100px;
+    padding-bottom: 50px;
+}
+
+#third-view {
+    background-color: #FFFFFF;
+}
+
+/* Vertical Alignment for Phones and Tablets */
+@media screen and (max-width: 992px) {
+    .landing-page-col {
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+}

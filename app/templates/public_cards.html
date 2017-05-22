@@ -8,13 +8,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Facebook Open Graph tags -->
-    <meta property="og:title" content="Public Cards | Open Flashcards" />
+    <meta property="og:title" content="Open Flashcards" />
     <meta property="og:site_name" content="Open Flashcards"/>
-    <meta property="og:image" content=""/>
+    <meta property="og:image" content="{{ url_for('static',filename='img/index.jpg') }}"/>
     <meta property="og:type" content="website" />
-    <meta property="og:url" content=""/>
-    <meta property="fb:app_id" content=""/>
-    <meta property="og:description" content=""/>
+    <meta property="og:url" content="http://openflashcards.com"/>
+    <meta property="og:description" content="An online application for creating, viewing and sharing flashcards by quickly and easily importing information from Google Sheets."/>
 
     <!-- jQuery plugin -->
     <script src="{{ url_for('static',filename='script/jquery/jquery-3.1.1.min.js') }}"></script>

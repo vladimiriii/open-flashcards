@@ -251,7 +251,12 @@ $(document).ready(function(){
         // Refresh Public Data Table
         $.when(getSheetList('initial view')).done( function() {
             generateSheetList("public-most-viewed", publicSheetList);
+
+            $("#public-most-viewed .table-row").on('click', function () {
+                selectRow("public-most-viewed", this.id, $(this).attr('data-value'));
+            });
         });
+
     });
 
 });
