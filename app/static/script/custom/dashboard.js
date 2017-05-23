@@ -140,12 +140,12 @@ function selectRow(div, row_id, sheet_id) {
             // View Button
             var view_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
                        + 'id="' + div + '-accept"'
-                       + 'onclick="confirmPrivateSelection(' + sheet_id + ')">'
+                       + 'onclick="confirmPrivateSelection(' + sheet_id + ', event)">'
                        + '<span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>'
 
             // Share Button
             var share_button = '<button type="button" class="btn btn-warning btn-sm confirm-col-btn"'
-                       + ' id="make-public" onclick="openSheetAccess(' + sheet_id + ')">'
+                       + ' id="make-public" onclick="openSheetAccess(' + sheet_id + ', event)">'
                        + '<span class="glyphicon glyphicon-share" aria-hidden="true"></span></button>'
 
             // Append Buttons
@@ -157,7 +157,7 @@ function selectRow(div, row_id, sheet_id) {
             // View Button
             var view_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
                        + 'id="' + div + '-accept"'
-                       + 'onclick="confirmPublicSelection(' + sheet_id + ')">'
+                       + 'onclick="confirmPublicSelection(' + sheet_id + ', event)">'
                        + '<span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>'
 
            // Append Button
@@ -168,7 +168,7 @@ function selectRow(div, row_id, sheet_id) {
             // Import Button
             var import_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
                        + 'id="' + div + '-accept"'
-                       + 'onclick="importSheet(\'' + sheet_id + '\')">'
+                       + 'onclick="importSheet(\'' + sheet_id + '\', event)">'
                        + '<span class="glyphicon glyphicon-save" aria-hidden="true"></span></button>'
 
             // Append Button
@@ -177,19 +177,19 @@ function selectRow(div, row_id, sheet_id) {
     };
 };
 
-function confirmPrivateSelection(id) {
+function confirmPrivateSelection(id, event) {
     event.stopPropagation();
     var googleID = getGoogleID(id, userSheetList);
     postSheetID(id, googleID);
 };
 
-function confirmPublicSelection(id) {
+function confirmPublicSelection(id, event) {
     event.stopPropagation();
     var googleID = getGoogleID(id, publicSheetList);
     postSheetID(id, googleID);
 };
 
-function importSheet(id) {
+function importSheet(id, event) {
     event.stopPropagation();
     importSheetInfo(id);
 };
