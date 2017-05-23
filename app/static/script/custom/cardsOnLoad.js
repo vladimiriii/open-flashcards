@@ -445,7 +445,7 @@ $(document).ready(function(){
     });
 
     // Keeping Score
-    $('.correct-btn').click(function() {
+    $('.correct-btn').click(function(event) {
         event.stopPropagation();
         var cardID = $(this).parent().parent().attr('id');
         correct = correct + 1;
@@ -455,7 +455,7 @@ $(document).ready(function(){
         $('#' + cardID).css("background-color", "#2A9D8F");
 
     });
-    $('.wrong-btn').click(function() {
+    $('.wrong-btn').click(function(event) {
         event.stopPropagation();
         var cardID = $(this).parent().parent().attr('id');
         wrong = wrong + 1;
