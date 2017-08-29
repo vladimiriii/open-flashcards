@@ -3,6 +3,7 @@ from app import create_app
 
 # Create the flask app.
 app = create_app()
+app.secret_key = 'BesosElCantoDelLoco2006Espana'
 
 #-------------------------------------------
 # Run the App
@@ -16,5 +17,5 @@ if __name__ == '__main__':
 
     # Parse arguemnts and run the app.
     args = parser.parse_args()
-    app.secret_key = 'BesosElCantoDelLoco2006Espana'
+    #app.secret_key = 'BesosElCantoDelLoco2006Espana'
     app.run(debug=args.debug, host=args.host, port=args.port)
