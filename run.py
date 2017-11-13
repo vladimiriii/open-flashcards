@@ -17,5 +17,4 @@ if __name__ == '__main__':
 
     # Parse arguemnts and run the app.
     args = parser.parse_args()
-    #app.secret_key = 'BesosElCantoDelLoco2006Espana'
     app.run(debug=args.debug, host=args.host, port=args.port)
