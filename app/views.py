@@ -16,31 +16,22 @@ import app.lib.processLogin as pl
 import app.lib.processSheets as ps
 
 # Define the blueprint:
-landing_page = Blueprint('landing_page', __name__)
-privacy_policy = Blueprint('privacy_policy', __name__)
-terms_conditions = Blueprint('terms_conditions', __name__)
-process_login = Blueprint('process_login', __name__)
-user_dashboard = Blueprint('user_dashboard', __name__)
-get_sheet_lists = Blueprint('get_sheet_lists', __name__)
-import_sheet = Blueprint('import_sheet', __name__)
-save_sheet = Blueprint('save_sheet', __name__)
-open_sheet = Blueprint('open_sheet', __name__)
-logout = Blueprint('logout', __name__)
-cards_page = Blueprint('cards_page', __name__)
-card_data = Blueprint('card_data', __name__)
-error_page = Blueprint('error_page', __name__)
+basic_page = Blueprint('basic_page', __name__)
+internal_page = Blueprint('internal_page', __name__)
+google_api = Blueprint('google_api', __name__)
 
 # Set scopes
 scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/drive']
 
 
-@landing_page.route('/', methods=['GET'])
+# BASIC PAGES
+@basic_page.route('/', methods=['GET'])
 def la_page():
     try:
         if 'credentials' in session:
             credentials = client.OAuth2Credentials.from_json(session['credentials'])
             if not credentials.access_token_expired:
-                return redirect(url_for('user_dashboard.dashboard_page'))
+                return redirect(url_for('internal_page.dashboard_page'))
             else:
                 return render_template('index.html')
         else:
@@ -49,10 +40,9 @@ def la_page():
         message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
             sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
         print(message)
-        return redirect(url_for('error_page.er_page'))
+        return redirect(url_for('basic_page.er_page'))
 
-
-@privacy_policy.route('/privacy-policy', methods=['GET'])
+@basic_page.route('/privacy-policy', methods=['GET'])
 def pp_page():
     try:
         return render_template('privacy_policy.html')
@@ -60,10 +50,9 @@ def pp_page():
         message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
             sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
         print(message)
-        return redirect(url_for('error_page.er_page'))
+        return redirect(url_for('basic_page.er_page'))
 
-
-@terms_conditions.route('/terms-conditions', methods=['GET'])
+@basic_page.route('/terms-conditions', methods=['GET'])
 def tc_page():
     try:
         return render_template('terms_conditions.html')
@@ -71,60 +60,20 @@ def tc_page():
         message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
             sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
         print(message)
-        return redirect(url_for('error_page.er_page'))
+        return redirect(url_for('basic_page.er_page'))
+
+@basic_page.route('/error', methods=['GET'])
+def er_page():
+    return render_template('error.html')
 
 
-@process_login.route('/process-login', methods=['GET', 'POST'])
-def oauth2callback():
-    try:
-        client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret.json')
-        if 'credentials' not in session:
-            flow = client.flow_from_clientsecrets(
-                client_secrets_path,
-                scope=scopes,
-                redirect_uri=url_for('process_login.oauth2callback', _external=True))
-
-            if 'code' not in request.args:
-                auth_uri = flow.step1_get_authorize_url()
-                return redirect(auth_uri)
-            else:
-                auth_code = request.args.get('code')
-                credentials = flow.step2_exchange(auth_code)
-                session['credentials'] = credentials.to_json()
-                pl.process_login()
-                return redirect(url_for('user_dashboard.dashboard_page'))
-
-        credentials = client.OAuth2Credentials.from_json(session['credentials'])
-
-        if credentials.access_token_expired:
-            flow = client.flow_from_clientsecrets(
-                client_secrets_path,
-                scope=scopes,
-                redirect_uri=url_for('process_login.oauth2callback', _external=True))
-
-            if 'code' not in request.args:
-                auth_uri = flow.step1_get_authorize_url()
-                return redirect(auth_uri)
-            else:
-                auth_code = request.args.get('code')
-                credentials = flow.step2_exchange(auth_code)
-                session['credentials'] = credentials.to_json()
-                return redirect(url_for('user_dashboard.dashboard_page'))
-        else:
-            return redirect(url_for('user_dashboard.dashboard_page'))
-    except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
-        return redirect(url_for('error_page.er_page'))
-
-
-@user_dashboard.route('/dashboard', methods=['GET'])
+# LOGGED IN PAGES
+@internal_page.route('/dashboard', methods=['GET'])
 def dashboard_page():
     try:
         # If no credentials (i.e. user is logged out), kick user to landing page
         if 'credentials' not in session:
-            return redirect(url_for('landing_page.la_page'))
+            return redirect(url_for('basic_page.la_page'))
 
         else:
             credentials = client.OAuth2Credentials.from_json(session['credentials'])
@@ -149,9 +98,97 @@ def dashboard_page():
         message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
             sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
         print(message)
-        return redirect(url_for('error_page.er_page'))
+        return redirect(url_for('basic_page.er_page'))
 
-@get_sheet_lists.route('/get-sheets', methods=['GET', 'POST'])
+@internal_page.route('/view-cards', methods=['GET'])
+def vc_page():
+    try:
+        if 'credentials' not in session:
+            return redirect(url_for('basic_page.la_page'))
+        else:
+            credentials = client.OAuth2Credentials.from_json(session['credentials'])
+
+            # If credentials have expired refresh them
+            if credentials.access_token_expired:
+                client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret.json')
+                flow = client.flow_from_clientsecrets(
+                    client_secrets_path,
+                    scope=scopes,
+                    redirect_uri=url_for('process_login.oauth2callback', _external=True))
+
+                if 'code' not in request.args:
+                    auth_uri = flow.step1_get_authorize_url()
+                    return redirect(auth_uri)
+                else:
+                    auth_code = request.args.get('code')
+                    credentials = flow.step2_exchange(auth_code)
+                    session['credentials'] = credentials.to_json()
+
+            return render_template('cards.html')
+    except:
+        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
+            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
+        print(message)
+        return redirect(url_for('basic_page.er_page'))
+
+@internal_page.route('/logout', methods=['GET'])
+def lo_page():
+    try:
+        session.clear()
+        return redirect(url_for('basic_page.la_page'))
+    except:
+        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
+            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
+        print(message)
+        return redirect(url_for('basic_page.er_page'))
+
+
+# GOOGLE API INTERACTIONS
+@google_api.route('/process-login', methods=['GET', 'POST'])
+def oauth2callback():
+    try:
+        client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret.json')
+        if 'credentials' not in session:
+            flow = client.flow_from_clientsecrets(
+                client_secrets_path,
+                scope=scopes,
+                redirect_uri=url_for('google_api.oauth2callback', _external=True))
+
+            if 'code' not in request.args:
+                auth_uri = flow.step1_get_authorize_url()
+                return redirect(auth_uri)
+            else:
+                auth_code = request.args.get('code')
+                credentials = flow.step2_exchange(auth_code)
+                session['credentials'] = credentials.to_json()
+                pl.process_login()
+                return redirect(url_for('internal_page.dashboard_page'))
+
+        credentials = client.OAuth2Credentials.from_json(session['credentials'])
+
+        if credentials.access_token_expired:
+            flow = client.flow_from_clientsecrets(
+                client_secrets_path,
+                scope=scopes,
+                redirect_uri=url_for('google_api.oauth2callback', _external=True))
+
+            if 'code' not in request.args:
+                auth_uri = flow.step1_get_authorize_url()
+                return redirect(auth_uri)
+            else:
+                auth_code = request.args.get('code')
+                credentials = flow.step2_exchange(auth_code)
+                session['credentials'] = credentials.to_json()
+                return redirect(url_for('internal_page.dashboard_page'))
+        else:
+            return redirect(url_for('internal_page.dashboard_page'))
+    except:
+        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
+            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
+        print(message)
+        return redirect(url_for('basic_page.er_page'))
+
+@google_api.route('/get-sheets', methods=['GET', 'POST'])
 def get_lists():
     try:
         # Determine request type
@@ -174,10 +211,10 @@ def get_lists():
         message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
             sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
         print(message)
-        return redirect(url_for('error_page.er_page'))
+        return redirect(url_for('basic_page.er_page'))
 
 
-@import_sheet.route('/import-sheet', methods=['POST'])
+@google_api.route('/import-sheet', methods=['POST'])
 def imp_sheet():
     try:
         inputs = json.loads(request.data)
@@ -191,10 +228,9 @@ def imp_sheet():
         message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
             sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
         print(message)
-        return redirect(url_for('error_page.er_page'))
+        return redirect(url_for('basic_page.er_page'))
 
-
-@save_sheet.route('/save-sheet', methods=['GET', 'POST'])
+@google_api.route('/save-sheet', methods=['GET', 'POST'])
 def save_page():
     try:
         # Saves Sheet ID to Session
@@ -208,8 +244,35 @@ def save_page():
         message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
             sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
         print(message)
-        return redirect(url_for('error_page.er_page'))
+        return redirect(url_for('basic_page.er_page'))
 
+@google_api.route('/open-sheet', methods=['GET', 'POST'])
+def open_sheet_permissions():
+    try:
+        if request.data is not None:
+            inputs = json.loads(request.data)
+            session.modified = True
+
+            # Open sheet permissions
+            ps.make_sheet_public(inputs['sheetID'])
+
+        return jsonify({"status": "sheet shared"})
+    except:
+        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
+            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
+        print(message)
+        return redirect(url_for('basic_page.er_page'))
+
+@google_api.route('/card-data', methods=['GET'])
+def output_card_data():
+    try:
+        results = cd.get_data()
+        return jsonify(results)
+    except:
+        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
+            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
+        print(message)
+        return message
 
 # @drive_access.route('/drive-access', methods=['GET'])
 # def get_drive_access():
@@ -241,83 +304,4 @@ def save_page():
 #         message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
 #             sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
 #         print(message)
-#         return redirect(url_for('error_page.er_page'))
-
-
-@open_sheet.route('/open-sheet', methods=['GET', 'POST'])
-def open_sheet_permissions():
-    try:
-        if request.data is not None:
-            inputs = json.loads(request.data)
-            session.modified = True
-
-            # Open sheet permissions
-            ps.make_sheet_public(inputs['sheetID'])
-
-        return jsonify({"status": "sheet shared"})
-    except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
-        return redirect(url_for('error_page.er_page'))
-
-
-@cards_page.route('/view-cards', methods=['GET'])
-def vc_page():
-    try:
-        if 'credentials' not in session:
-            return redirect(url_for('landing_page.la_page'))
-        else:
-            credentials = client.OAuth2Credentials.from_json(session['credentials'])
-
-            # If credentials have expired refresh them
-            if credentials.access_token_expired:
-                client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret.json')
-                flow = client.flow_from_clientsecrets(
-                    client_secrets_path,
-                    scope=scopes,
-                    redirect_uri=url_for('process_login.oauth2callback', _external=True))
-
-                if 'code' not in request.args:
-                    auth_uri = flow.step1_get_authorize_url()
-                    return redirect(auth_uri)
-                else:
-                    auth_code = request.args.get('code')
-                    credentials = flow.step2_exchange(auth_code)
-                    session['credentials'] = credentials.to_json()
-
-            return render_template('cards.html')
-    except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
-        return redirect(url_for('error_page.er_page'))
-
-
-@card_data.route('/card-data', methods=['GET'])
-def output_card_data():
-    try:
-        results = cd.get_data()
-        return jsonify(results)
-    except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
-        return message
-
-
-@error_page.route('/error', methods=['GET'])
-def er_page():
-    return render_template('error.html')
-
-
-@logout.route('/logout', methods=['GET'])
-def lo_page():
-    try:
-        session.clear()
-        return redirect(url_for('landing_page.la_page'))
-    except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
-        return redirect(url_for('error_page.er_page'))
+#         return redirect(url_for('basic_page.er_page'))

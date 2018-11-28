@@ -18,34 +18,14 @@ def create_app():
 
 def init_modules(app):
     # Import a module / component using its blueprint handler variable
-    from app.views import landing_page
-    from app.views import privacy_policy
-    from app.views import terms_conditions
-    from app.views import process_login
-    from app.views import user_dashboard
-    from app.views import get_sheet_lists
-    from app.views import import_sheet
-    from app.views import save_sheet
-    from app.views import open_sheet
-    from app.views import cards_page
-    from app.views import card_data
-    from app.views import logout
-    from app.views import error_page
+    from app.views import basic_page
+    from app.views import google_api
+    from app.views import internal_page
 
     # Register blueprint(s)
-    app.register_blueprint(landing_page)
-    app.register_blueprint(privacy_policy)
-    app.register_blueprint(terms_conditions)
-    app.register_blueprint(process_login)
-    app.register_blueprint(user_dashboard)
-    app.register_blueprint(get_sheet_lists)
-    app.register_blueprint(import_sheet)
-    app.register_blueprint(save_sheet)
-    app.register_blueprint(open_sheet)
-    app.register_blueprint(cards_page)
-    app.register_blueprint(card_data)
-    app.register_blueprint(logout)
-    app.register_blueprint(error_page)
+    app.register_blueprint(basic_page)
+    app.register_blueprint(google_api)
+    app.register_blueprint(internal_page)
 
 # Read config file
 def load_config(app):
