@@ -9,7 +9,7 @@ from app.lib.databaseConfig import DATABASE
 Base = declarative_base()
 engine = create_engine(URL(**DATABASE))
 db_session = scoped_session(sessionmaker(autocommit=False,
-                                     autoflush=False,
+                                     autoflush=True,
                                      bind=engine))
 
 Base.query = db_session.query_property()

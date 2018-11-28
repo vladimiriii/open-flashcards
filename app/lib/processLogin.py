@@ -28,18 +28,22 @@ def process_login():
     current_user = app_user.query.filter_by(au_email=email).first()
 
     if current_user is None:
-        current_user = app_user(au_aur_id = 2,
-                    au_email = email,
-                    au_first_name = first_name,
-                    au_last_name = last_name,
-                    au_gender = gender,
-                    au_profile_url = profile_url,
-                    au_first_sign_in = datetime.now(),
-                    au_last_sign_in = datetime.now(),
-                    au_is_deleted = False)
+        current_user = app_user(
+            au_aur_id = 2,
+            au_email = email,
+            au_first_name = first_name,
+            au_last_name = last_name,
+            au_gender = gender,
+            au_profile_url = profile_url,
+            au_first_sign_in = datetime.now(),
+            au_last_sign_in = datetime.now(),
+            au_is_deleted = False
+        )
         db_session.add(current_user)
         db_session.flush()
+        db_session.commit()
         s_id = current_user.au_id
+        print("Current user ID: %d" % s_id)
     else:
         current_user.au_last_sign_in = datetime.now()
         db_session.commit()

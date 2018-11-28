@@ -77,7 +77,7 @@ def tc_page():
 @process_login.route('/process-login', methods=['GET', 'POST'])
 def oauth2callback():
     try:
-        client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret_71572721139-4k4cch634h94b76f1qelmvuqpr6jv4da.apps.googleusercontent.com.json')
+        client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret.json')
         if 'credentials' not in session:
             flow = client.flow_from_clientsecrets(
                 client_secrets_path,
@@ -130,7 +130,7 @@ def dashboard_page():
             credentials = client.OAuth2Credentials.from_json(session['credentials'])
             # If credentials have expired refresh them
             if credentials.access_token_expired:
-                client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret_71572721139-4k4cch634h94b76f1qelmvuqpr6jv4da.apps.googleusercontent.com.json')
+                client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret.json')
                 flow = client.flow_from_clientsecrets(
                     client_secrets_path,
                     scope=scopes,
@@ -215,7 +215,7 @@ def save_page():
 # def get_drive_access():
 #     try:
 #         scopes.append('https://www.googleapis.com/auth/drive')
-#         client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret_71572721139-4k4cch634h94b76f1qelmvuqpr6jv4da.apps.googleusercontent.com.json')
+#         client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret.json')
 #         flow = client.flow_from_clientsecrets(
 #             client_secrets_path,
 #             scope = scopes,
@@ -272,7 +272,7 @@ def vc_page():
 
             # If credentials have expired refresh them
             if credentials.access_token_expired:
-                client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret_71572721139-4k4cch634h94b76f1qelmvuqpr6jv4da.apps.googleusercontent.com.json')
+                client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret.json')
                 flow = client.flow_from_clientsecrets(
                     client_secrets_path,
                     scope=scopes,
