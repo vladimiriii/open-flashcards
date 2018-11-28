@@ -37,9 +37,7 @@ def la_page():
         else:
             return render_template('index.html')
     except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
+        print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 @basic_page.route('/privacy-policy', methods=['GET'])
@@ -57,9 +55,7 @@ def tc_page():
     try:
         return render_template('terms_conditions.html')
     except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
+        print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 @basic_page.route('/error', methods=['GET'])
@@ -95,9 +91,7 @@ def dashboard_page():
 
             return render_template('dashboard.html')
     except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
+        print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 @internal_page.route('/view-cards', methods=['GET'])
@@ -126,9 +120,7 @@ def vc_page():
 
             return render_template('cards.html')
     except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
+        print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 @internal_page.route('/logout', methods=['GET'])
@@ -137,9 +129,7 @@ def lo_page():
         session.clear()
         return redirect(url_for('basic_page.la_page'))
     except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
+        print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 
@@ -183,9 +173,7 @@ def oauth2callback():
         else:
             return redirect(url_for('internal_page.dashboard_page'))
     except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
+        print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 @google_api.route('/get-sheets', methods=['GET', 'POST'])
@@ -208,9 +196,7 @@ def get_lists():
             results = {"sheets": sheet_list}
             return jsonify(results)
     except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
+        print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 
@@ -225,9 +211,7 @@ def imp_sheet():
         session.modified = True
         return jsonify({"status": "Success"})
     except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
+        print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 @google_api.route('/save-sheet', methods=['GET', 'POST'])
@@ -241,9 +225,7 @@ def save_page():
         ps.save_sheet_info(session['sheet_id'], session['google_id'])
         return jsonify({"status": "Success"})
     except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
+        print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 @google_api.route('/open-sheet', methods=['GET', 'POST'])
@@ -258,9 +240,7 @@ def open_sheet_permissions():
 
         return jsonify({"status": "sheet shared"})
     except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
+        print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 @google_api.route('/card-data', methods=['GET'])
@@ -269,9 +249,7 @@ def output_card_data():
         results = cd.get_data()
         return jsonify(results)
     except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
+        print(pl.generate_error_message(sys.exc_info()))
         return message
 
 # @drive_access.route('/drive-access', methods=['GET'])
@@ -301,7 +279,5 @@ def output_card_data():
 #         return jsonify({"status": "access granted"})
 #         # return redirect(url_for('open_sheet.open_sheet_permissions', messages=dataJSON, code=307))
 #     except:
-#         message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-#             sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-#         print(message)
+#         print(pl.generate_error_message(sys.exc_info()))
 #         return redirect(url_for('basic_page.er_page'))
