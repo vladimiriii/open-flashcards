@@ -3,14 +3,13 @@ import pandas as pd
 import os, shutil
 from datetime import datetime
 from flask import session
-
-from apiclient.discovery import build
 from sqlalchemy import update
 
-import httplib2
-from oauth2client import client
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
 
 from app.lib.models import Base, sheet, view, app_user_rel_sheet, db_session
+from app.lib.processLogin import credentials_to_dict
 
 ###############################################
 # Functions                                   #
@@ -83,10 +82,14 @@ def get_public_sheets():
 
 
 def get_full_list():
+
+    # Get credentials from session
+    credentials = Credentials(**session['credentials'])
+
+    # Create access object
+    service = build('drive', 'v3', credentials=credentials)
+
     # Get a list of all Sheets in the account for the current user.
-    credentials = client.OAuth2Credentials.from_json(session['credentials'])
-    http = credentials.authorize(http=httplib2.Http())
-    service = build('drive', 'v3', http=http)
     response = service.files().list(q="mimeType='application/vnd.google-apps.spreadsheet'",
                                     spaces='drive',
                                     fields='nextPageToken, files(id, name, modifiedTime)').execute()
@@ -114,49 +117,58 @@ def get_full_list():
                 'modified': sheet.get('modifiedTime')
                 })
 
+    # Save credentials back in case the access token was refreshed
+    session['credentials'] = credentials_to_dict(credentials)
+
     return file_list
 
 
 def get_sheet_meta(g_id):
+
+    # Get credentials from session
+    credentials = Credentials(**session['credentials'])
+
+    # Create access object
+    service = build('drive', 'v3', credentials=credentials)
+
     # Get a list of all Sheets in the account for the current user.
-    credentials = client.OAuth2Credentials.from_json(session['credentials'])
-    http = credentials.authorize(http=httplib2.Http())
-    service = build('drive', 'v2', http=http)
-    response = service.files().get(fileId=g_id, fields='title, modifiedDate, userPermission').execute()
+    response = service.files().get(fileId=g_id, fields='name,modifiedTime,ownedByMe').execute()
 
     meta_data = {}
     for key in response:
         meta_data[key] = response[key]
 
+    print(meta_data)
+    # Save credentials back in case the access token was refreshed
+    session['credentials'] = credentials_to_dict(credentials)
+
     return meta_data
 
 
 def get_sheet_rows(g_id):
+
+    # Get credentials from session
+    credentials = Credentials(**session['credentials'])
+
+    # Create access object
+    service = build('sheets', 'v4', credentials=credentials)
+
     # Get sheet row count
-    credentials = client.OAuth2Credentials.from_json(session['credentials'])
-    http = credentials.authorize(httplib2.Http())
-    discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?version=v4')
-    service = build('sheets', 'v4', http=http, discoveryServiceUrl=discoveryUrl)
     rangeName = 'A1:Z'
     result = service.spreadsheets().values().get(spreadsheetId=g_id, range=rangeName).execute()
 
+    # Save credentials back in case the access token was refreshed
+    session['credentials'] = credentials_to_dict(credentials)
+
     return len(result.get('values', []))
-
-def get_owner_status(permissions):
-    if permissions['role'] == 'owner':
-        result = True
-    else:
-        result = False
-
-    return result
 
 def import_sheet_data(google_id):
     # Get sheet metadata
     meta_data = get_sheet_meta(google_id)
-    sheet_name = meta_data['title']
-    last_modified = meta_data['modifiedDate']
+    sheet_name = meta_data['name']
+    last_modified = meta_data['modifiedTime']
     row_count = get_sheet_rows(google_id)
-    owner_status = get_owner_status(meta_data['userPermission'])
+    owner_status = meta_data['ownedByMe']
 
     # Look for existing record in sheet table
     current_sheet = sheet.query.filter_by(s_google_id = google_id).first()
@@ -204,10 +216,10 @@ def import_sheet_data(google_id):
 def save_sheet_info(sheet_id, google_id):
     # Get latest sheet meta data
     meta_data = get_sheet_meta(google_id)
-    sheet_name = meta_data['title']
-    last_modified = meta_data['modifiedDate']
+    sheet_name = meta_data['name']
+    last_modified = meta_data['modifiedTime']
     row_count = get_sheet_rows(google_id)
-    owner_status = get_owner_status(meta_data['userPermission'])
+    owner_status = meta_data['ownedByMe']
 
     # Update sheet record with latest metadata
     sheet_record = sheet.query.filter_by(s_id=sheet_id).first()

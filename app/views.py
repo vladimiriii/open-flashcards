@@ -7,8 +7,11 @@ import sys
 import httplib2
 import requests
 import argparse
-from apiclient.discovery import build
-from oauth2client import client
+
+# Google Outh2
+import google.oauth2.credentials
+import google_auth_oauthlib.flow
+import googleapiclient.discovery
 
 # Custom Libraries
 import app.lib.cardData as cd
@@ -20,16 +23,26 @@ basic_page = Blueprint('basic_page', __name__)
 internal_page = Blueprint('internal_page', __name__)
 google_api = Blueprint('google_api', __name__)
 
-# Set scopes
-scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/drive']
+# This variable specifies the name of a file that contains the OAuth 2.0
+# information for this application, including its client_id and client_secret.
+CLIENT_SECRETS_FILE = "app/static/data/private/client_secret.json"
 
+# This OAuth 2.0 access scope allows for full read/write access to the
+# authenticated user's account and requires requests to use an SSL connection.
+SCOPES = [
+    'https://www.googleapis.com/auth/spreadsheets.readonly'
+    , 'https://www.googleapis.com/auth/plus.me'
+    , 'https://www.googleapis.com/auth/userinfo.email'
+    , 'https://www.googleapis.com/auth/drive'
+    ]
 
 # BASIC PAGES
 @basic_page.route('/', methods=['GET'])
 def la_page():
     try:
         if 'credentials' in session:
-            credentials = client.OAuth2Credentials.from_json(session['credentials'])
+            credentials = google.oauth2.credentials.Credentials(**flask.session['credentials'])
+
             if not credentials.access_token_expired:
                 return redirect(url_for('internal_page.dashboard_page'))
             else:
@@ -45,9 +58,7 @@ def pp_page():
     try:
         return render_template('privacy_policy.html')
     except:
-        message = "ERROR FOUND\nError Type: \"" + str(sys.exc_info()[0]) + "\"\nError Value: \"" + str(
-            sys.exc_info()[1]) + "\"\nError Traceback: \"" + str(sys.exc_info()[2]) + "\""
-        print(message)
+        print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 @basic_page.route('/terms-conditions', methods=['GET'])
@@ -72,22 +83,22 @@ def dashboard_page():
             return redirect(url_for('basic_page.la_page'))
 
         else:
-            credentials = client.OAuth2Credentials.from_json(session['credentials'])
-            # If credentials have expired refresh them
-            if credentials.access_token_expired:
-                client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret.json')
-                flow = client.flow_from_clientsecrets(
-                    client_secrets_path,
-                    scope=scopes,
-                    redirect_uri=url_for('process_login.oauth2callback', _external=True))
-
-                if 'code' not in request.args:
-                    auth_uri = flow.step1_get_authorize_url()
-                    return redirect(auth_uri)
-                else:
-                    auth_code = request.args.get('code')
-                    credentials = flow.step2_exchange(auth_code)
-                    session['credentials'] = credentials.to_json()
+            # credentials = client.OAuth2Credentials.from_json(session['credentials'])
+            # # If credentials have expired refresh them
+            # if credentials.access_token_expired:
+            #     client_secrets_path = os.path.join(current_app.root_path, )
+            #     flow = client.flow_from_clientsecrets(
+            #         client_secrets_path,
+            #         scope=scopes,
+            #         redirect_uri=url_for('process_login.oauth2callback', _external=True))
+            #
+            #     if 'code' not in request.args:
+            #         auth_uri = flow.step1_get_authorize_url()
+            #         return redirect(auth_uri)
+            #     else:
+            #         auth_code = request.args.get('code')
+            #         credentials = flow.step2_exchange(auth_code)
+            #         session['credentials'] = credentials.to_json()
 
             return render_template('dashboard.html')
     except:
@@ -100,23 +111,23 @@ def vc_page():
         if 'credentials' not in session:
             return redirect(url_for('basic_page.la_page'))
         else:
-            credentials = client.OAuth2Credentials.from_json(session['credentials'])
-
-            # If credentials have expired refresh them
-            if credentials.access_token_expired:
-                client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret.json')
-                flow = client.flow_from_clientsecrets(
-                    client_secrets_path,
-                    scope=scopes,
-                    redirect_uri=url_for('process_login.oauth2callback', _external=True))
-
-                if 'code' not in request.args:
-                    auth_uri = flow.step1_get_authorize_url()
-                    return redirect(auth_uri)
-                else:
-                    auth_code = request.args.get('code')
-                    credentials = flow.step2_exchange(auth_code)
-                    session['credentials'] = credentials.to_json()
+            # credentials = client.OAuth2Credentials.from_json(session['credentials'])
+            #
+            # # If credentials have expired refresh them
+            # if credentials.access_token_expired:
+            #     client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret.json')
+            #     flow = client.flow_from_clientsecrets(
+            #         client_secrets_path,
+            #         scope=scopes,
+            #         redirect_uri=url_for('process_login.oauth2callback', _external=True))
+            #
+            #     if 'code' not in request.args:
+            #         auth_uri = flow.step1_get_authorize_url()
+            #         return redirect(auth_uri)
+            #     else:
+            #         auth_code = request.args.get('code')
+            #         credentials = flow.step2_exchange(auth_code)
+            #         session['credentials'] = credentials.to_json()
 
             return render_template('cards.html')
     except:
@@ -135,43 +146,52 @@ def lo_page():
 
 # GOOGLE API INTERACTIONS
 @google_api.route('/process-login', methods=['GET', 'POST'])
+def process_login():
+    try:
+        # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
+        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
+
+        flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
+
+        authorization_url, state = flow.authorization_url(
+            access_type='offline' # Refresh an access token without re-prompting the user for permission.
+            , include_granted_scopes='true' # Enable incremental authorization
+        )
+
+        # Store the state so the callback can verify the auth server response.
+        session['state'] = state
+
+        return redirect(authorization_url)
+
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+@google_api.route('/oauth2callback')
 def oauth2callback():
     try:
-        client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret.json')
-        if 'credentials' not in session:
-            flow = client.flow_from_clientsecrets(
-                client_secrets_path,
-                scope=scopes,
-                redirect_uri=url_for('google_api.oauth2callback', _external=True))
+        # Specify the state when creating the flow in the callback so that it can
+        # verified in the authorization server response.
+        state = session['state']
 
-            if 'code' not in request.args:
-                auth_uri = flow.step1_get_authorize_url()
-                return redirect(auth_uri)
-            else:
-                auth_code = request.args.get('code')
-                credentials = flow.step2_exchange(auth_code)
-                session['credentials'] = credentials.to_json()
-                pl.process_login()
-                return redirect(url_for('internal_page.dashboard_page'))
+        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+            CLIENT_SECRETS_FILE
+            , scopes=SCOPES
+            , state=state
+        )
 
-        credentials = client.OAuth2Credentials.from_json(session['credentials'])
+        flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
 
-        if credentials.access_token_expired:
-            flow = client.flow_from_clientsecrets(
-                client_secrets_path,
-                scope=scopes,
-                redirect_uri=url_for('google_api.oauth2callback', _external=True))
+        # Use the authorization server's response to fetch the OAuth 2.0 tokens.
+        authorization_response = request.url
+        flow.fetch_token(authorization_response=authorization_response)
 
-            if 'code' not in request.args:
-                auth_uri = flow.step1_get_authorize_url()
-                return redirect(auth_uri)
-            else:
-                auth_code = request.args.get('code')
-                credentials = flow.step2_exchange(auth_code)
-                session['credentials'] = credentials.to_json()
-                return redirect(url_for('internal_page.dashboard_page'))
-        else:
-            return redirect(url_for('internal_page.dashboard_page'))
+        # Store credentials in the session.
+        credentials = flow.credentials
+        session['credentials'] = pl.credentials_to_dict(credentials)
+        pl.process_login()
+
+        return redirect(url_for('internal_page.dashboard_page'))
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
@@ -250,7 +270,8 @@ def output_card_data():
         return jsonify(results)
     except:
         print(pl.generate_error_message(sys.exc_info()))
-        return message
+        return redirect(url_for('basic_page.er_page'))
+
 
 # @drive_access.route('/drive-access', methods=['GET'])
 # def get_drive_access():

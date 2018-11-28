@@ -17,4 +17,4 @@ if __name__ == '__main__':
 
     # Parse arguemnts and run the app.
     args = parser.parse_args()
-    app.run(debug=args.debug, host=args.host, port=args.port)
+    app.run(debug=args.debug, host=args.host, port=args.port, ssl_context=('cert.pem', 'key.pem'))

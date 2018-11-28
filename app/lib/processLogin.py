@@ -4,43 +4,24 @@ import json
 from datetime import datetime
 from flask import session
 
-from apiclient.discovery import build
-import httplib2
-from oauth2client import client
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
 
 from app.lib.models import Base, app_user, db_session
 
-# def check_token_valid(scopes, client_secrets_path):
-#     # If no credentials (i.e. user is logged out), kick user to landing page
-#     if 'credentials' not in session:
-#         return redirect(url_for('basic_page.la_page'))
-#
-#     else:
-#         credentials = client.OAuth2Credentials.from_json(session['credentials'])
-#         # If credentials have expired refresh them
-#         if credentials.access_token_expired:
-#             client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret.json')
-#             flow = client.flow_from_clientsecrets(
-#                 client_secrets_path,
-#                 scope=scopes,
-#                 redirect_uri=url_for('process_login.oauth2callback', _external=True))
-#
-#             if 'code' not in request.args:
-#                 auth_uri = flow.step1_get_authorize_url()
-#                 return redirect(auth_uri)
-#             else:
-#                 auth_code = request.args.get('code')
-#                 credentials = flow.step2_exchange(auth_code)
-#                 session['credentials'] = credentials.to_json()
-#
-#         return render_template('dashboard.html')
 
 def process_login():
 
-    credentials = client.OAuth2Credentials.from_json(session['credentials'])
-    http = credentials.authorize(http=httplib2.Http())
-    service = build('plus', 'v1', http=http)
+    # Get credentials from session
+    credentials = Credentials(**session['credentials'])
+
+    # Create access object
+    service = build('plus', 'v1', credentials=credentials)
+
+    # Get profile info
     profile_info = service.people().get(userId='me').execute()
+
+    print(profile_info)
 
     # Parse Information
     email = profile_info['emails'][0].get('value')
@@ -76,6 +57,18 @@ def process_login():
     # Save User ID to Session
     session['au_id'] = current_user.au_id
     session['email'] = email
+
+    # Save credentials back in case the access token was refreshed
+    session['credentials'] = credentials_to_dict(credentials)
+
+
+def credentials_to_dict(credentials):
+  return {'token': credentials.token,
+          'refresh_token': credentials.refresh_token,
+          'token_uri': credentials.token_uri,
+          'client_id': credentials.client_id,
+          'client_secret': credentials.client_secret,
+          'scopes': credentials.scopes}
 
 def generate_error_message(sys_info):
     message = "ERROR FOUND\nError Type: \"" + str(sys_info[0]) + "\"\nError Value: \"" + str(

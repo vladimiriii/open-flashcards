@@ -10,12 +10,11 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO
 
-from apiclient.discovery import build
-
-import httplib2
-from oauth2client import client
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
 
 from app.lib.models import Base, sheet, db_session
+from app.lib.processLogin import credentials_to_dict
 
 ###############################################
 # Functions                                   #
@@ -24,10 +23,14 @@ from app.lib.models import Base, sheet, db_session
 def initialize_reporting():
 
     try:
-        credentials = client.OAuth2Credentials.from_json(session['credentials'])
-        http = credentials.authorize(httplib2.Http())
-        discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?version=v4')
-        service = build('sheets', 'v4', http=http, discoveryServiceUrl=discoveryUrl)
+        # Get credentials from session
+        credentials = Credentials(**session['credentials'])
+
+        # Create access object
+        service = build('sheets', 'v4', credentials=credentials)
+
+        # Save credentials back in case the access token was refreshed
+        session['credentials'] = credentials_to_dict(credentials)
 
         return service
 
@@ -52,7 +55,7 @@ def process_data(response):
 
 
 def get_data():
-    
+
     # Get Data
     service_object = initialize_reporting()
     response = query_API(service=service_object, sheet_id=session['google_id'])
