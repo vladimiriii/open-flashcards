@@ -4,11 +4,10 @@ from datetime import date
 import pandas as pd
 import os
 import sys
-import httplib2
 import requests
 import argparse
 
-# Google Outh2
+# Google API
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery

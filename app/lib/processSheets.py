@@ -5,9 +5,11 @@ from datetime import datetime
 from flask import session
 from sqlalchemy import update
 
+# Google API
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 
+# Custom Libraries
 from app.lib.models import Base, sheet, view, app_user_rel_sheet, db_session
 from app.lib.processLogin import credentials_to_dict
 

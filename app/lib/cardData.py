@@ -4,17 +4,21 @@ import os, shutil
 import json
 from flask import session
 
+# Google API
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
+
+# Custom Libraries
+from app.lib.models import Base, sheet, db_session
+from app.lib.processLogin import credentials_to_dict
+
 import sys
 if sys.version_info[0] < 3:
     from StringIO import StringIO
 else:
     from io import StringIO
 
-from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
 
-from app.lib.models import Base, sheet, db_session
-from app.lib.processLogin import credentials_to_dict
 
 ###############################################
 # Functions                                   #
