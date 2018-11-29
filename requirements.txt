@@ -5,7 +5,6 @@ sqlalchemy==1.2.14
 pandas==0.23.4
 configparser==3.5.0
 requests==2.20.1
-pyOpenSSL==18.0.0
 google-api-python-client==1.7.4
 google-auth-oauthlib==0.2.0
 google-auth-httplib2==0.0.3

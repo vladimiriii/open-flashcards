@@ -39,4 +39,8 @@ def load_config(app):
     config_filepath = app_dir + '/config.cfg'
     config.read(config_filepath)
 
+    # Add Server Port to App config
     app.config['SERVER_PORT'] = config.get('Application', 'SERVER_PORT')
+
+    # Add SSL certifcate/key paths
+    app.config['SSL'] = (config.get('SSL', 'CERT'), config.get('SSL', 'KEY'))
