@@ -140,7 +140,6 @@ def get_sheet_meta(g_id):
     for key in response:
         meta_data[key] = response[key]
 
-    print(meta_data)
     # Save credentials back in case the access token was refreshed
     session['credentials'] = credentials_to_dict(credentials)
 
@@ -244,10 +243,13 @@ def make_sheet_public(sheet_id):
     record = sheet.query.filter_by(s_id=sheet_id).first()
     google_id = record.s_google_id
 
+    # Get credentials from session
+    credentials = Credentials(**session['credentials'])
+
+    # Create access object
+    service = build('drive', 'v3', credentials=credentials)
+
     # Update Google Drive permissions
-    credentials = client.OAuth2Credentials.from_json(session['credentials'])
-    http = credentials.authorize(http=httplib2.Http())
-    service = build('drive', 'v3', http=http)
     permission_details = {
     'type': 'anyone',
     'role': 'reader',
@@ -262,3 +264,6 @@ def make_sheet_public(sheet_id):
     # Update Database
     record.s_shared = True
     db_session.commit()
+
+    # Save credentials back in case the access token was refreshed
+    session['credentials'] = credentials_to_dict(credentials)

@@ -80,25 +80,7 @@ def dashboard_page():
         # If no credentials (i.e. user is logged out), kick user to landing page
         if 'credentials' not in session:
             return redirect(url_for('basic_page.la_page'))
-
         else:
-            # credentials = client.OAuth2Credentials.from_json(session['credentials'])
-            # # If credentials have expired refresh them
-            # if credentials.access_token_expired:
-            #     client_secrets_path = os.path.join(current_app.root_path, )
-            #     flow = client.flow_from_clientsecrets(
-            #         client_secrets_path,
-            #         scope=scopes,
-            #         redirect_uri=url_for('process_login.oauth2callback', _external=True))
-            #
-            #     if 'code' not in request.args:
-            #         auth_uri = flow.step1_get_authorize_url()
-            #         return redirect(auth_uri)
-            #     else:
-            #         auth_code = request.args.get('code')
-            #         credentials = flow.step2_exchange(auth_code)
-            #         session['credentials'] = credentials.to_json()
-
             return render_template('dashboard.html')
     except:
         print(pl.generate_error_message(sys.exc_info()))
@@ -110,24 +92,6 @@ def vc_page():
         if 'credentials' not in session:
             return redirect(url_for('basic_page.la_page'))
         else:
-            # credentials = client.OAuth2Credentials.from_json(session['credentials'])
-            #
-            # # If credentials have expired refresh them
-            # if credentials.access_token_expired:
-            #     client_secrets_path = os.path.join(current_app.root_path, 'static/data/private/client_secret.json')
-            #     flow = client.flow_from_clientsecrets(
-            #         client_secrets_path,
-            #         scope=scopes,
-            #         redirect_uri=url_for('process_login.oauth2callback', _external=True))
-            #
-            #     if 'code' not in request.args:
-            #         auth_uri = flow.step1_get_authorize_url()
-            #         return redirect(auth_uri)
-            #     else:
-            #         auth_code = request.args.get('code')
-            #         credentials = flow.step2_exchange(auth_code)
-            #         session['credentials'] = credentials.to_json()
-
             return render_template('cards.html')
     except:
         print(pl.generate_error_message(sys.exc_info()))

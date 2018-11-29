@@ -51,7 +51,7 @@ def process_login():
         db_session.flush()
         db_session.commit()
         s_id = current_user.au_id
-        print("Current user ID: %d" % s_id)
+        
     else:
         current_user.au_last_sign_in = datetime.now()
         db_session.commit()
