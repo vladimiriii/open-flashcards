@@ -18,26 +18,27 @@
     <!-- jQuery plugin -->
     <script src="{{ url_for('static',filename='script/jquery/jquery-3.1.1.min.js') }}"></script>
 
-	<!-- Bootstrap -->
-	<link rel="stylesheet" href="{{ url_for('static',filename='style/bootstrap.min.css') }}">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
-    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.2/css/select.dataTables.min.css">
-    <script src="https://cdn.datatables.net/select/1.2.2/js/dataTables.select.min.js"></script>
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="{{ url_for('static',filename='style/bootstrap.min.css') }}">
+	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+	  <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+	  <link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.2/css/select.dataTables.min.css">
+	  <script src="https://cdn.datatables.net/select/1.2.2/js/dataTables.select.min.js"></script>
 
-	<!-- Font-awesome for sharing buttons -->
-	<link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+		<!-- Font-awesome for sharing buttons -->
+		<link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
-	<!-- Internal CSS -->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/baseStyle.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/dashboard.css') }}">
+		<!-- Internal CSS -->
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/baseStyle.css') }}">
+	  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/dashboard.css') }}">
 
-    <!-- Custom JavaScript -->
-    <script src="{{ url_for('static',filename='script/custom/dashboard.js') }}"></script>
-    <script src="{{ url_for('static',filename='script/custom/dashboardMeta.js') }}"></script>
+	  <!-- Custom JavaScript -->
+	  <script src="{{ url_for('static',filename='script/custom/dashboardOnLoad.js') }}"></script>
+		<script src="{{ url_for('static',filename='script/custom/dashboardFunctions.js') }}"></script>
+	  <script src="{{ url_for('static',filename='script/custom/dashboardMeta.js') }}"></script>
 
-	<!-- Google Analytics -->
+		<!-- Google Analytics -->
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -167,11 +168,11 @@
 		                        <a href="http://brettromero.com" data-toggle="tooltip" title="brettromero.com" target="_blank" class="share-btn home">
 		                            <i class="fa fa-home"></i>
 		                        </a>
-                                <br>
-                                <br>
-                                <p class='document-links'>
-                                    <a href='./privacy-policy'>Privacy Policy</a> | <a href='./terms-conditions'>Terms &amp; Conditions</a>
-                                </p>
+                            <br>
+                            <br>
+                            <p class='document-links'>
+                                <a href='./privacy-policy'>Privacy Policy</a> | <a href='./terms-conditions'>Terms &amp; Conditions</a>
+                            </p>
 		                    </div>
 		                </div>
 		            </div>
@@ -191,7 +192,7 @@
     	                <div class="modal-body">
                             <table id="full-list" class="display">
                             </table>
-    					</div>
+    									</div>
     	            </div>
     	        </div>
     	    </div>
@@ -212,7 +213,7 @@
                                 <button type="button" class="btn btn-success" onclick="getAdditionalScope()">Proceed</button>
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                             </div>
-    					</div>
+    									</div>
     	            </div>
     	        </div>
     	    </div>
@@ -232,7 +233,7 @@
                             <div class="row" style="text-align:center">
                                 <button type="button" class="btn btn-success" id="share-sheet-success-btn">OK</button>
                             </div>
-    					</div>
+    									</div>
     	            </div>
     	        </div>
     	    </div>
@@ -249,7 +250,7 @@
     	                </div>
     	                <div class="modal-body">
                             <p>This feature is still under development. Please check back soon!
-    					</div>
+    									</div>
     	            </div>
     	        </div>
     	    </div>

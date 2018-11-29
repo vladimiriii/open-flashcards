@@ -164,6 +164,25 @@ def get_sheet_rows(g_id):
     return len(result.get('values', []))
 
 def import_sheet_data(google_id):
+    
+    state = session['state']
+
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE
+        , scopes=SCOPES
+        , state=state
+    )
+
+    flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
+
+    # Use the authorization server's response to fetch the OAuth 2.0 tokens.
+    authorization_response = request.url
+    flow.fetch_token(authorization_response=authorization_response)
+
+    # Store credentials in the session.
+    credentials = flow.credentials
+    session['credentials'] = pl.credentials_to_dict(credentials)
+
     # Get sheet metadata
     meta_data = get_sheet_meta(google_id)
     sheet_name = meta_data['name']
