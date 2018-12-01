@@ -18,12 +18,9 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO
 
-
-
 ###############################################
 # Functions                                   #
 ###############################################
-
 def initialize_reporting():
 
     try:
@@ -42,7 +39,6 @@ def initialize_reporting():
         message = "{\"Error Type\": \"" + str(sys.exc_info()[0]) + "\", \"Error Value\": \"" + str(sys.exc_info()[1]) + "\", \"Error Traceback\": \"" + str(sys.exc_info()[2]) + "\"}"
         print(message)
 
-
 def query_API(service, sheet_id):
 
     rangeName = 'A1:J'
@@ -52,11 +48,12 @@ def query_API(service, sheet_id):
     return values
 
 def process_data(response):
+
     results = {}
     results['headers'] = response[0]
     results['data'] = response[1:len(response)]
+    
     return results
-
 
 def get_data():
 

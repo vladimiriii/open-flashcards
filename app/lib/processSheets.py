@@ -16,7 +16,6 @@ from app.lib.processLogin import credentials_to_dict
 ###############################################
 # Functions                                   #
 ###############################################
-
 def get_user_sheets():
 
     # Query database
@@ -163,8 +162,40 @@ def get_sheet_rows(g_id):
 
     return len(result.get('values', []))
 
+
+def update_sheet_meta(sheet_id, google_id):
+
+    # Get latest sheet meta data
+    meta_data = get_sheet_meta(google_id)
+    sheet_name = meta_data['name']
+    last_modified = meta_data['modifiedTime']
+    row_count = get_sheet_rows(google_id)
+    owner_status = meta_data['ownedByMe']
+
+    # Update sheet record with latest metadata
+    sheet_record = sheet.query.filter_by(s_id=sheet_id).first()
+    sheet_record.s_sheet_name = sheet_name
+    sheet_record.s_row_count = row_count
+    sheet_record.s_last_modified = last_modified
+
+    # Commit changes to the database
+    db_session.commit()
+
+
+def add_view_record(sheet_id, google_id):
+
+    # Add new record to view table
+    view_record = view(v_au_id = session['au_id'],
+                v_s_id = sheet_id,
+                v_date = datetime.now())
+
+    # Commit changes to the database
+    db_session.add(view_record)
+    db_session.commit()
+
+
 def import_sheet_data(google_id):
-    
+
     state = session['state']
 
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
@@ -231,30 +262,6 @@ def import_sheet_data(google_id):
     db_session.bulk_save_objects([rel_record, view_record])
     db_session.commit()
     return s_id
-
-
-def save_sheet_info(sheet_id, google_id):
-    # Get latest sheet meta data
-    meta_data = get_sheet_meta(google_id)
-    sheet_name = meta_data['name']
-    last_modified = meta_data['modifiedTime']
-    row_count = get_sheet_rows(google_id)
-    owner_status = meta_data['ownedByMe']
-
-    # Update sheet record with latest metadata
-    sheet_record = sheet.query.filter_by(s_id=sheet_id).first()
-    sheet_record.s_sheet_name = sheet_name
-    sheet_record.s_row_count = row_count
-    sheet_record.s_last_modified = last_modified
-
-    # Add new record to view table
-    view_record = view(v_au_id = session['au_id'],
-                v_s_id = sheet_id,
-                v_date = datetime.now())
-
-    # Save to database
-    db_session.bulk_save_objects([sheet_record, view_record])
-    db_session.commit()
 
 
 def make_sheet_public(sheet_id):

@@ -32,7 +32,7 @@ SCOPES = [
     'https://www.googleapis.com/auth/plus.me'
     , 'https://www.googleapis.com/auth/userinfo.email'
     , 'https://www.googleapis.com/auth/spreadsheets.readonly'
-    , 'https://www.googleapis.com/auth/drive'
+    # , 'https://www.googleapis.com/auth/drive'
     ]
 
 # BASIC PAGES
@@ -52,6 +52,7 @@ def la_page():
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
+
 @basic_page.route('/privacy-policy', methods=['GET'])
 def pp_page():
     try:
@@ -60,6 +61,7 @@ def pp_page():
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
+
 @basic_page.route('/terms-conditions', methods=['GET'])
 def tc_page():
     try:
@@ -67,6 +69,7 @@ def tc_page():
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
+
 
 @basic_page.route('/error', methods=['GET'])
 def er_page():
@@ -86,6 +89,7 @@ def dashboard_page():
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
+
 @internal_page.route('/view-cards', methods=['GET'])
 def vc_page():
     try:
@@ -96,6 +100,7 @@ def vc_page():
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
+
 
 @internal_page.route('/logout', methods=['GET'])
 def lo_page():
@@ -130,6 +135,7 @@ def process_login():
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
+
 @google_api.route('/oauth2callback')
 def oauth2callback():
     try:
@@ -159,25 +165,50 @@ def oauth2callback():
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
-@google_api.route('/get-sheets', methods=['GET', 'POST'])
-def get_lists():
+
+@google_api.route('/get-sheet-lists', methods=['GET'])
+def get_sheet_lists():
     try:
-        # Determine request type
-        inputs = json.loads(request.data)
-        request_type = inputs['requestType']
+        # Get lists of available sheets
+        user_list = ps.get_user_sheets()
+        public_list = ps.get_public_sheets()
+        results = {"user_list": user_list, "public_list": public_list}
+        return jsonify(results)
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
 
-        # Return Account Map and Selected Sheet ID (if it exists)
-        if request_type == 'initial view':
-            user_list = ps.get_user_sheets()
-            public_list = ps.get_public_sheets()
-            results = {"user_list": user_list, "public_list": public_list}
-            return jsonify(results)
 
+@google_api.route('/view-sheet', methods=['POST'])
+def save_page():
+    try:
         # Saves Sheet ID to Session
-        elif request_type == 'full list':
-            sheet_list = ps.get_full_list()
-            results = {"sheets": sheet_list}
-            return jsonify(results)
+        inputs = json.loads(request.data)
+        session['sheet_id'] = inputs['sheetID']
+        session['google_id'] = inputs['googleID']
+        session.modified = True
+
+        # Add record of views
+        ps.add_view_record(session['sheet_id'], session['google_id'])
+
+        # If scope present, update sheet meta
+        scope_present = 'https://www.googleapis.com/auth/drive' in session['credentials']['scopes']
+        if scope_present:
+            ps.update_sheet_meta(session['sheet_id'], session['google_id'])
+
+        return jsonify({"status": "Success"})
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
+@google_api.route('/get-import-options', methods=['GET'])
+def get_import_list():
+    try:
+        # Get a list of sheets from user's drive that can be imported
+        sheet_list = ps.get_full_list()
+        results = {"sheets": sheet_list}
+        return jsonify(results)
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
@@ -197,21 +228,8 @@ def imp_sheet():
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
-@google_api.route('/save-sheet', methods=['GET', 'POST'])
-def save_page():
-    try:
-        # Saves Sheet ID to Session
-        inputs = json.loads(request.data)
-        session['sheet_id'] = inputs['sheetID']
-        session['google_id'] = inputs['googleID']
-        session.modified = True
-        ps.save_sheet_info(session['sheet_id'], session['google_id'])
-        return jsonify({"status": "Success"})
-    except:
-        print(pl.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
 
-@google_api.route('/open-sheet', methods=['GET', 'POST'])
+@google_api.route('/make-sheet-public', methods=['POST'])
 def open_sheet_permissions():
     try:
         if request.data is not None:
@@ -226,6 +244,7 @@ def open_sheet_permissions():
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
+
 @google_api.route('/card-data', methods=['GET'])
 def output_card_data():
     try:
@@ -234,7 +253,6 @@ def output_card_data():
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
-
 
 # @drive_access.route('/drive-access', methods=['GET'])
 # def get_drive_access():

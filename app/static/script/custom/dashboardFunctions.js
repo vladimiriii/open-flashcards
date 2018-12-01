@@ -1,21 +1,53 @@
 /*---------------------------------------
 View Select
 ---------------------------------------*/
-function getSheetList(requestType) {
+function getSheetLists() {
     $("#spinner").show();
-    var queryType = {"requestType": requestType};
+
+    return $.ajax({
+        type: "GET",
+        url: '/get-sheet-lists',
+        success: function(result) {
+            userSheetList = result['user_list'];
+            publicSheetList = result['public_list'];
+            $("#spinner").hide();
+        },
+        error: function(msg){
+            console.log(msg);
+            $("#spinner").hide();
+        }
+    });
+};
+
+function viewSheet(id, googleID) {
+    $("#spinner").show();
+    var dataJson = {"sheetID": id, "googleID": googleID};
     return $.ajax({
         type: "POST",
-        url: '/get-sheets',
-        data: JSON.stringify(queryType),
+        url: '/view-sheet',
+        data: JSON.stringify(dataJson),
         contentType: 'application/json',
         success: function(result) {
-            if (requestType == 'initial view') {
-                userSheetList = result['user_list'];
-                publicSheetList = result['public_list'];
-            } else if (requestType == 'full list') {
-                fullSheetList = result['sheets'];
+            if(result['status'] === "Success") {
+                window.location = "./view-cards";
             };
+            $("#spinner").hide();
+        },
+        error: function(msg){
+            console.log(msg);
+            $("#spinner").hide();
+        }
+    });
+};
+
+function getImportList() {
+    $("#spinner").show();
+
+    return $.ajax({
+        type: "GET",
+        url: '/get-import-options',
+        success: function(result) {
+            fullSheetList = result['sheets'];
             $("#spinner").hide();
         },
         error: function(msg){
@@ -28,6 +60,7 @@ function getSheetList(requestType) {
 function importSheetInfo(googleSheetID) {
     $("#spinner").show();
     var dataJson = {"sheetID": googleSheetID};
+
     return $.ajax({
         type: "POST",
         url: '/import-sheet',
@@ -46,34 +79,12 @@ function importSheetInfo(googleSheetID) {
     });
 };
 
-function postSheetID(id, googleID) {
-    $("#spinner").show();
-    var dataJson = {"sheetID": id, "googleID": googleID};
-    return $.ajax({
-        type: "POST",
-        url: '/save-sheet',
-        data: JSON.stringify(dataJson),
-        contentType: 'application/json',
-        success: function(result) {
-            if(result['status'] === "Success") {
-                window.location = "./view-cards";
-            };
-            $("#spinner").hide();
-        },
-        error: function(msg){
-            console.log(msg);
-            $("#spinner").hide();
-        }
-    });
-};
-
-
 function openSheetAccess(sheetID) {
     $("#spinner").show();
     var dataJSON = {"sheetID": sheetID};
     return $.ajax({
         type: "POST",
-        url: '/open-sheet',
+        url: '/make-sheet-public',
         data: JSON.stringify(dataJSON),
         contentType: 'application/json',
         success: function(result) {
@@ -133,7 +144,7 @@ function selectRow(div, row_id, sheet_id) {
             // View Button
             var view_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
                        + 'id="' + div + '-accept"'
-                       + 'onclick="confirmPrivateSelection(' + sheet_id + ', event)">'
+                       + 'onclick="confirmSelection(' + sheet_id + ', event)">'
                        + '<span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>'
 
             // Share Button
@@ -150,7 +161,7 @@ function selectRow(div, row_id, sheet_id) {
             // View Button
             var view_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
                        + 'id="' + div + '-accept"'
-                       + 'onclick="confirmPublicSelection(' + sheet_id + ', event)">'
+                       + 'onclick="confirmSelection(' + sheet_id + ', event)">'
                        + '<span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>'
 
            // Append Button
@@ -170,16 +181,10 @@ function selectRow(div, row_id, sheet_id) {
     };
 };
 
-function confirmPrivateSelection(id, event) {
+function confirmSelection(id, event) {
     event.stopPropagation();
     var googleID = getGoogleID(id, userSheetList);
-    postSheetID(id, googleID);
-};
-
-function confirmPublicSelection(id, event) {
-    event.stopPropagation();
-    var googleID = getGoogleID(id, publicSheetList);
-    postSheetID(id, googleID);
+    viewSheet(id, googleID);
 };
 
 function importSheet(id, event) {

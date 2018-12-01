@@ -9,7 +9,7 @@ var userSheetList,
 $(document).ready(function(){
 
     // Get Account Structure Data
-    $.when(getSheetList('initial view')).done( function() {
+    $.when(getSheetLists('initial view')).done( function() {
         generateSheetList("user-most-viewed", userSheetList);
         $('#user-most-viewed').DataTable({
             'order': [[ 2, "desc" ]],
@@ -37,7 +37,7 @@ $(document).ready(function(){
     $("#import-sheet").on('click', function() {
         // Only import full list once
         if (!importComplete) {
-            $.when(getSheetList('full list')).done( function() {
+            $.when(getSheetLists('full list')).done( function() {
                 generateSheetList("full-list", fullSheetList);
                 $('#full-list').DataTable({
                     'order': [[ 1, "desc" ]],
@@ -57,7 +57,7 @@ $(document).ready(function(){
         $('#share-btn-success-modal').modal('hide');
 
         // Refresh Public Data Table
-        $.when(getSheetList('initial view')).done( function() {
+        $.when(getSheetLists('initial view')).done( function() {
             generateSheetList("public-most-viewed", publicSheetList);
 
             $("#public-most-viewed .table-row").on('click', function () {
