@@ -64,7 +64,11 @@ function getImportList() {
         url: '/get-import-options',
         success: function(result) {
             fullSheetList = result['sheets'];
-            $("#spinner").hide();
+            $.when(generateSheetList("full-list", fullSheetList)).done(function () {
+                importComplete = true;
+                initializeFullList();
+                $("#spinner").hide();
+            });
         },
         error: function(msg){
             console.log(msg);
@@ -151,6 +155,20 @@ function generateSheetList(div, data) {
 };
 
 
+function initializeFullList() {
+  // Initialize table and click handler if import list
+  $('#full-list').DataTable({
+    'order': [[ 1, "desc" ]],
+    'lengthChange': false,
+    'select': 'single'
+  });
+
+  $("#full-list .table-row").on('click', function () {
+    selectRow('full-list', this.id, $(this).attr('data-value'));
+  });
+};
+
+
 function selectRow(div, row_id, sheet_id) {
     $("td.confirm-col").empty();
     var cellID = "#" + String(row_id) + "-opt";
@@ -206,20 +224,28 @@ function confirmSelection(id, event) {
 function generateImportButton(driveAccessFlag) {
 
     if (driveAccessFlag == 'True') {
-      importButton = `<div class="image-btn">
-          <a id="import-sheet" href="#full-list-modal" data-toggle="modal"><span class="div-link"></span></a>
-          <img class="image-btn-link" src="./static/img/import.png">
-          <span class="image-btn-text">Import Cards</span>
-      </div>`
+        importButton = `<div class="image-btn">
+            <a id="import-sheet" href="#full-list-modal" data-toggle="modal"><span class="div-link"></span></a>
+            <img class="image-btn-link" src="./static/img/import.png">
+            <span class="image-btn-text">Import Cards</span>
+        </div>`
     } else {
-      importButton = `<div class="image-btn">
-          <a id="import-sheet" href="./add-drive-read-scope" data-toggle="modal"><span class="div-link"></span></a>
-          <img class="image-btn-link" src="./static/img/import.png">
-          <span class="image-btn-text">Allow Imports</span>
-      </div>`
-    }
+        importButton = `<div class="image-btn">
+            <a id="import-sheet" href="./add-drive-read-scope" data-toggle="modal"><span class="div-link"></span></a>
+            <img class="image-btn-link" src="./static/img/import.png">
+            <span class="image-btn-text">Allow Imports</span>
+        </div>`
+    };
 
     $('#import-btn').append(importButton);
+
+    // On Click Events
+    $("#import-sheet").on('click', function() {
+        // Only import full list once
+        if (!importComplete) {
+            getImportList(generateSheetList);
+        };
+    });
 }
 
 function importSheet(id, event) {

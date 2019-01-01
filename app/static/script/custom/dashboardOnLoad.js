@@ -37,26 +37,6 @@ $(document).ready(function(){
     // Check scopes to see if import option is available and generate button
     checkScopes('read_scope_present', generateImportButton);
 
-    // On Click Events
-    $("#import-sheet").on('click', function() {
-        // Only import full list once
-        if (!importComplete) {
-            $.when(getImportList()).done( function() {
-                generateSheetList("full-list", fullSheetList);
-                $('#full-list').DataTable({
-                    'order': [[ 1, "desc" ]],
-                    'lengthChange': false,
-                    'select': 'single'
-                });
-                importComplete = true;
-
-                $("#full-list .table-row").on('click', function () {
-                    selectRow('full-list', this.id, $(this).attr('data-value'));
-                });
-            });
-        };
-    });
-
     $('#share-sheet-success-btn').on('click', function() {
         $('#share-btn-success-modal').modal('hide');
 

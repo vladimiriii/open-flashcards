@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, jsonify, json, render_template, session, redirect, url_for, current_app, request
-from datetime import date
-import pandas as pd
+from flask import Blueprint, jsonify, json, render_template, session, redirect, url_for, request  # , current_app
+# from datetime import date
+# import pandas as pd
 import os
 import sys
-import requests
-import argparse
+# import requests
+# import argparse
 
 # Google API
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
-import googleapiclient.discovery
+# import googleapiclient.discovery
 
 # Custom Libraries
 import app.lib.cardData as cd
@@ -32,9 +32,9 @@ CLIENT_SECRETS_FILE = "app/static/data/private/client_secret.json"
 # authenticated user's account and requires requests to use an SSL connection.
 SCOPES = {
     "initial": [
-        'https://www.googleapis.com/auth/plus.me'
-        , 'https://www.googleapis.com/auth/userinfo.email'
-        , 'https://www.googleapis.com/auth/spreadsheets.readonly'
+        'https://www.googleapis.com/auth/plus.me',
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/spreadsheets.readonly'
     ],
     "add": [
         'https://www.googleapis.com/auth/drive.readonly'
@@ -44,12 +44,13 @@ SCOPES = {
     ]
 }
 
+
 # BASIC PAGES
 @basic_page.route('/', methods=['GET'])
 def la_page():
     try:
         if 'credentials' in session:
-            credentials = google.oauth2.credentials.Credentials(**flask.session['credentials'])
+            credentials = google.oauth2.credentials.Credentials(**session['credentials'])
 
             if not credentials.access_token_expired:
                 return redirect(url_for('internal_page.dashboard_page'))
@@ -131,8 +132,8 @@ def process_login():
         flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
 
         authorization_url, state = flow.authorization_url(
-            access_type='offline' # Refresh an access token without re-prompting the user for permission.
-            , include_granted_scopes='true' # Enable incremental authorization
+            access_type='offline',  # Refresh an access token without re-prompting the user for permission.
+            include_granted_scopes='true'  # Enable incremental authorization
         )
 
         # Store the state so the callback can verify the auth server response.
@@ -155,8 +156,8 @@ def get_drive_read_scope():
         flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
 
         authorization_url, state = flow.authorization_url(
-            access_type='offline' # Refresh an access token without re-prompting the user for permission.
-            , include_granted_scopes='true' # Enable incremental authorization
+            access_type='offline',  # Refresh an access token without re-prompting the user for permission.
+            include_granted_scopes='true'  # Enable incremental authorization
         )
 
         # Store the state so the callback can verify the auth server response.
@@ -179,8 +180,8 @@ def get_drive_share_scope():
         flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
 
         authorization_url, state = flow.authorization_url(
-            access_type='offline' # Refresh an access token without re-prompting the user for permission.
-            , include_granted_scopes='true' # Enable incremental authorization
+            access_type='offline',  # Refresh an access token without re-prompting the user for permission.
+            include_granted_scopes='true'  # Enable incremental authorization
         )
 
         # Store the state so the callback can verify the auth server response.
@@ -203,9 +204,9 @@ def oauth2callback():
         status = session['scope_status']
 
         flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-            CLIENT_SECRETS_FILE
-            , scopes=SCOPES[status]
-            , state=state
+            CLIENT_SECRETS_FILE,
+            scopes=SCOPES[status],
+            state=state
         )
 
         flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
