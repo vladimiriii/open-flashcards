@@ -1,4 +1,4 @@
-/*---------------------------------------
+  /*---------------------------------------
 View Select
 ---------------------------------------*/
 function getSheetLists() {
@@ -32,6 +32,22 @@ function viewSheet(id, googleID) {
                 window.location = "./view-cards";
             };
             $("#spinner").hide();
+        },
+        error: function(msg){
+            console.log(msg);
+            $("#spinner").hide();
+        }
+    });
+};
+
+function checkScopes(scope, callback) {
+    return $.ajax({
+        type: "GET",
+        url: '/check-drive-scopes',
+        contentType: 'application/json',
+        success: function(result) {
+          scope_status = result[scope];
+          callback(scope_status)
         },
         error: function(msg){
             console.log(msg);
@@ -186,6 +202,25 @@ function confirmSelection(id, event) {
     var googleID = getGoogleID(id, userSheetList);
     viewSheet(id, googleID);
 };
+
+function generateImportButton(driveAccessFlag) {
+
+    if (driveAccessFlag == 'True') {
+      importButton = `<div class="image-btn">
+          <a id="import-sheet" href="#full-list-modal" data-toggle="modal"><span class="div-link"></span></a>
+          <img class="image-btn-link" src="./static/img/import.png">
+          <span class="image-btn-text">Import Cards</span>
+      </div>`
+    } else {
+      importButton = `<div class="image-btn">
+          <a id="import-sheet" href="./add-drive-read-scope" data-toggle="modal"><span class="div-link"></span></a>
+          <img class="image-btn-link" src="./static/img/import.png">
+          <span class="image-btn-text">Allow Imports</span>
+      </div>`
+    }
+
+    $('#import-btn').append(importButton);
+}
 
 function importSheet(id, event) {
     event.stopPropagation();

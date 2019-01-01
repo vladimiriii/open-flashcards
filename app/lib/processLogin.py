@@ -23,8 +23,6 @@ def process_login():
     # Get profile info
     profile_info = service.people().get(userId='me').execute()
 
-    print(profile_info)
-
     # Parse Information
     email = profile_info['emails'][0].get('value')
     first_name = profile_info['name'].get('givenName')
@@ -51,7 +49,7 @@ def process_login():
         db_session.flush()
         db_session.commit()
         s_id = current_user.au_id
-        
+
     else:
         current_user.au_last_sign_in = datetime.now()
         db_session.commit()

@@ -4,12 +4,13 @@ View Select
 var userSheetList,
     publicSheetList,
     fullSheetList,
+    scope_status,
     importComplete = false;
 
 $(document).ready(function(){
 
     // Get Account Structure Data
-    $.when(getSheetLists('initial view')).done( function() {
+    $.when(getSheetLists()).done( function() {
         generateSheetList("user-most-viewed", userSheetList);
         $('#user-most-viewed').DataTable({
             'order': [[ 2, "desc" ]],
@@ -33,11 +34,14 @@ $(document).ready(function(){
         });
     });
 
+    // Check scopes to see if import option is available and generate button
+    checkScopes('read_scope_present', generateImportButton);
 
+    // On Click Events
     $("#import-sheet").on('click', function() {
         // Only import full list once
         if (!importComplete) {
-            $.when(getSheetLists('full list')).done( function() {
+            $.when(getImportList()).done( function() {
                 generateSheetList("full-list", fullSheetList);
                 $('#full-list').DataTable({
                     'order': [[ 1, "desc" ]],

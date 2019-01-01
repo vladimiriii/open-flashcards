@@ -17,6 +17,8 @@ import app.lib.cardData as cd
 import app.lib.processLogin as pl
 import app.lib.processSheets as ps
 
+os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = 'YES'
+
 # Define the blueprint:
 basic_page = Blueprint('basic_page', __name__)
 internal_page = Blueprint('internal_page', __name__)
@@ -28,12 +30,19 @@ CLIENT_SECRETS_FILE = "app/static/data/private/client_secret.json"
 
 # This OAuth 2.0 access scope allows for full read/write access to the
 # authenticated user's account and requires requests to use an SSL connection.
-SCOPES = [
-    'https://www.googleapis.com/auth/plus.me'
-    , 'https://www.googleapis.com/auth/userinfo.email'
-    , 'https://www.googleapis.com/auth/spreadsheets.readonly'
-    # , 'https://www.googleapis.com/auth/drive'
+SCOPES = {
+    "initial": [
+        'https://www.googleapis.com/auth/plus.me'
+        , 'https://www.googleapis.com/auth/userinfo.email'
+        , 'https://www.googleapis.com/auth/spreadsheets.readonly'
+    ],
+    "add": [
+        'https://www.googleapis.com/auth/drive.readonly'
+    ],
+    "share": [
+        'https://www.googleapis.com/auth/drive'
     ]
+}
 
 # BASIC PAGES
 @basic_page.route('/', methods=['GET'])
@@ -113,11 +122,11 @@ def lo_page():
 
 
 # GOOGLE API INTERACTIONS
-@google_api.route('/process-login', methods=['GET', 'POST'])
+@google_api.route('/process-login', methods=['GET'])
 def process_login():
     try:
         # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
-        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
+        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES['initial'])
 
         flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
 
@@ -128,6 +137,55 @@ def process_login():
 
         # Store the state so the callback can verify the auth server response.
         session['state'] = state
+        session['scope_status'] = 'initial'
+
+        return redirect(authorization_url)
+
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
+@google_api.route('/add-drive-read-scope', methods=['GET'])
+def get_drive_read_scope():
+    try:
+        # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
+        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES['add'])
+
+        flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
+
+        authorization_url, state = flow.authorization_url(
+            access_type='offline' # Refresh an access token without re-prompting the user for permission.
+            , include_granted_scopes='true' # Enable incremental authorization
+        )
+
+        # Store the state so the callback can verify the auth server response.
+        session['state'] = state
+        session['scope_status'] = 'add'
+
+        return redirect(authorization_url)
+
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
+@google_api.route('/add-drive-share-scope', methods=['GET'])
+def get_drive_share_scope():
+    try:
+        # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
+        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES['share'])
+
+        flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
+
+        authorization_url, state = flow.authorization_url(
+            access_type='offline' # Refresh an access token without re-prompting the user for permission.
+            , include_granted_scopes='true' # Enable incremental authorization
+        )
+
+        # Store the state so the callback can verify the auth server response.
+        session['state'] = state
+        session['scope_status'] = 'share'
 
         return redirect(authorization_url)
 
@@ -142,10 +200,11 @@ def oauth2callback():
         # Specify the state when creating the flow in the callback so that it can
         # verified in the authorization server response.
         state = session['state']
+        status = session['scope_status']
 
         flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
             CLIENT_SECRETS_FILE
-            , scopes=SCOPES
+            , scopes=SCOPES[status]
             , state=state
         )
 
@@ -197,6 +256,21 @@ def save_page():
             ps.update_sheet_meta(session['sheet_id'], session['google_id'])
 
         return jsonify({"status": "Success"})
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
+@google_api.route('/check-drive-scopes', methods=['GET'])
+def check_scopes():
+    try:
+        read_scope_present = 'https://www.googleapis.com/auth/drive.readonly' in session['credentials']['scopes']
+        modify_scope_present = 'https://www.googleapis.com/auth/drive' in session['credentials']['scopes']
+        return jsonify({
+            "read_scope_present": str(read_scope_present),
+            "modify_scope_present": str(modify_scope_present)
+            })
+
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
