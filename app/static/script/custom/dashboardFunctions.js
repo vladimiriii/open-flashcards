@@ -19,6 +19,7 @@ function getSheetLists() {
     });
 };
 
+
 function viewSheet(id, googleID) {
     $("#spinner").show();
     var dataJson = {"sheetID": id, "googleID": googleID};
@@ -40,6 +41,7 @@ function viewSheet(id, googleID) {
     });
 };
 
+
 function checkScopes(scope, callback) {
     return $.ajax({
         type: "GET",
@@ -55,6 +57,7 @@ function checkScopes(scope, callback) {
         }
     });
 };
+
 
 function getImportList() {
     $("#spinner").show();
@@ -77,6 +80,7 @@ function getImportList() {
     });
 };
 
+
 function importSheetInfo(googleSheetID) {
     $("#spinner").show();
     var dataJson = {"sheetID": googleSheetID};
@@ -98,6 +102,7 @@ function importSheetInfo(googleSheetID) {
         }
     });
 };
+
 
 function openSheetAccess(sheetID) {
     $("#spinner").show();
@@ -215,11 +220,13 @@ function selectRow(div, row_id, sheet_id) {
     };
 };
 
+
 function confirmSelection(id, event) {
     event.stopPropagation();
     var googleID = getGoogleID(id, userSheetList);
     viewSheet(id, googleID);
 };
+
 
 function generateImportButton(driveAccessFlag) {
 
@@ -248,10 +255,12 @@ function generateImportButton(driveAccessFlag) {
     });
 }
 
+
 function importSheet(id, event) {
     event.stopPropagation();
     importSheetInfo(id);
 };
+
 
 function getGoogleID(id, data) {
     for (row in data) {
