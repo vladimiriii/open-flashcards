@@ -5,9 +5,9 @@ from app import create_app
 app = create_app()
 app.secret_key = 'BesosElCantoDelLoco2006Espana'
 
-#-------------------------------------------
+# -------------------------------------------
 # Run the App
-#-------------------------------------------
+# -------------------------------------------
 if __name__ == '__main__':
     # Define the arguments.
     parser = argparse.ArgumentParser()

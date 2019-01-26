@@ -7,16 +7,16 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Facebook Open Graph tags -->
-    <meta property="og:title" content="Open Flashcards" />
-    <meta property="og:site_name" content="Open Flashcards"/>
-    <meta property="og:image" content="http://openflashcards.com/static/img/index.jpg"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:url" content="http://openflashcards.com"/>
-    <meta property="og:description" content="A free online application for creating, viewing and sharing flashcards by quickly and easily importing information from Google Sheets."/>
+  <!-- Facebook Open Graph tags -->
+  <meta property="og:title" content="Open Flashcards" />
+  <meta property="og:site_name" content="Open Flashcards"/>
+  <meta property="og:image" content="http://openflashcards.com/static/img/index.jpg"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="http://openflashcards.com"/>
+  <meta property="og:description" content="A free online application for creating, viewing and sharing flashcards by quickly and easily importing information from Google Sheets."/>
 
-    <!-- jQuery plugin -->
-    <script src="{{ url_for('static',filename='script/jquery/jquery-3.1.1.min.js') }}"></script>
+  <!-- jQuery plugin -->
+  <script src="{{ url_for('static',filename='script/jquery/jquery-3.1.1.min.js') }}"></script>
 
 	<!-- Bootstrap -->
 	<link rel="stylesheet" href="{{ url_for('static',filename='style/bootstrap.min.css') }}">
@@ -27,10 +27,10 @@
 
 	<!-- Internal CSS -->
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/baseStyle.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/index.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/index.css') }}">
 
-    <!-- Custom JavaScript -->
-    <script src="{{ url_for('static',filename='script/custom/login.js') }}"></script>
+  <!-- Custom JavaScript -->
+  <script src="{{ url_for('static',filename='script/custom/login.js') }}"></script>
 
 	<!-- Google Analytics -->
     <script>
@@ -45,54 +45,56 @@
 
 </head>
 <body>
-    <div id="spinner" class="spinner" style="display:none;">
-        <div class="sk-folding-cube">
-            <div class="sk-cube1 sk-cube"></div>
-            <div class="sk-cube2 sk-cube"></div>
-            <div class="sk-cube4 sk-cube"></div>
-            <div class="sk-cube3 sk-cube"></div>
-        </div>
-    </div>
+  <div id="spinner" class="spinner" style="display:none;">
+      <div class="sk-folding-cube">
+          <div class="sk-cube1 sk-cube"></div>
+          <div class="sk-cube2 sk-cube"></div>
+          <div class="sk-cube4 sk-cube"></div>
+          <div class="sk-cube3 sk-cube"></div>
+      </div>
+  </div>
 	<!-- Content -->
 	<div class="container-fluid">
-        <div class="row" id="initial-view">
-            <div id="primary-image">
-            </div>
-            <div id="text-overlay">
-        		<div class="row" id="header-row">
-                    <h1 id="primary-header">Welcome to Open Flashcards</h1>
-                </div>
-                <div class="row" id="btn-row">
-        			<a id="login-btn"><button type="button" class="btn btn-default btn-lg">Login with Google</button></a>
-                </div>
-            </div>
+	    <div class="row" id="initial-view">
+		      <div id="primary-image"></div>
+		      <div class="col-md-12" id="text-overlay">
+						<div class="row" id="header-row">
+				    	<h1 id="primary-header">Open Flashcards</h1>
+		      	</div>
+						<div class="row" id="tag-line-row">
+							<h3 id="tag-line">Turning your Google Sheets into flashcards since 1887!</h3>
+		        </div>
+		        <div class="row" id="btn-row">
+							<a id="login-btn"><button type="button" class="btn btn-default btn-lg">Login with Google</button></a>
+		        </div>
+			    </div>
+	    </div>
+	    <div class="row" id="second-view">
+		      <div class="col-md-12 landing-page-col">
+		        <h2 class="section-header">What is this?</h2>
+		        <p>Open Flashcards is a free tool that allows you to generate and view sets of flashcards, one of the most effective tools for improving your memory. Flashcards are very flexible and can be used for a range of purposes including improving your vocabulary in a new language, learning times tables, memorizing an important speech through prompts, or just about any other purpose you can think of.</p>
+		      </div>
+	    </div>
+    <div class="row" id="third-view">
+        <div class="col-md-12 landing-page-col">
+            <h2 class="section-header">How does it work?</h2>
+            <p>Open Flashcards works by making use of your existing Google Sheets. Taking the information from the Sheets that you import, a set of flashcards will automatically be generated. As the application does not store the information in any sheet, any updates to your sheet will automatically be reflected when you view the card on Open Flashcards.</p>
+            <p>Within the application you also have a range of options for managing and interacting with your Sheets. Any Sheets that you currently have access to in your Google Drive will be available for viewing in the application. Furthermore, the permissions set in your Drive will also be reflected here. If you have shared a Sheet with someone, they will also be able to view the Sheet when they log into Open Flashcards. Correspondingly, you will also be able to view all files others have shared with you.</p>
+            <p>Finally, you also have the option to share your Sheet publicly. This will update the permissions in Google Drive so that anyone with the correct link can view the file, and so that anyone who logs into Open Flashcards will be able to view (but not alter) your Sheet to create flashcards.</p>
         </div>
-        <div class="row" id="second-view">
-            <div class="col-md-12 landing-page-col">
-                <h2 class="section-header">What Is This?</h2>
-                <p>Open Flashcards is a free tool that allows people to generate and view sets of flashcards, one of the most effective tools for improving your memory. Flashcards are very flexible and can be used for a range of purposes including improving your vocabulary in a new language, learning times tables, memorizing an important speech through prompts, or just about any other purpose you can think of.</p>
-            </div>
+    </div>
+    <div class="row" id="fourth-view">
+        <div class="col-md-12 landing-page-col">
+            <h2 class="section-header">Getting Started</h2>
+            <p>To get started, firstly use the button at the top of the page to login with your Google account. Once logged in, there are several options available:</p>
+            <ul>
+                <li>Import an existing Google Sheet from your Google Drive. The Sheet only needs to have two columns (one with the values for the front of the cards, one for the backs). Don't worry if the Sheet has more than two columns, you will have the option to select which columns are used and how.</li>
+                <li>View one of the public Google Sheets shared by other users. Keep an eye out for new features coming soon that will allow you to rate and comment on public sets.</li>
+                <li>Create a new Google Sheet through this application (coming soon).</li>
+            </ul>
         </div>
-        <div class="row" id="third-view">
-            <div class="col-md-12 landing-page-col">
-                <h2 class="section-header">How Does it Work?</h2>
-                <p>Open Flashcards works by making use of your existing Google Sheets. Taking the information from the Sheets that you import, a set of flashcards will automatically be generated by the application. As the application does not store the information in any sheet, any updates to your sheet will automatically be reflected when you view the card on Open Flashcards.</p>
-                <p>Within the application you also have a range of options for managing and interacting with your Sheets. Any Sheets that you currently have access to in your Google Drive will be available for viewing in the application. Furthermore, the permissions set in your Drive will also be reflected here. If you have shared a a Sheet with someone, they will also be able to view the Sheet when they log into Open Flashcards. Correspondingly, you will also be able to view all files others have shared with you.</p>
-                <p>Finally, you also have the option to share your Sheet publicly. This will update the permissions in your Google Drive so that anyone with the correct link can view the file, and so that anyone who logs into Open Flashcards will be able to view (but not alter) your Sheet to create flashcards.</p>
-            </div>
-        </div>
-        <div class="row" id="fourth-view">
-            <div class="col-md-12 landing-page-col">
-                <h2 class="section-header">Getting Started</h2>
-                <p>To get started, firstly use the button at the top of the page to login with your Google account. Once logged in, there are several options available:</p>
-                <ul>
-                    <li>Import an existing Google Sheet from your Google Drive. The Sheet only needs to have two columns (one with the values for the front of the cards, one for the backs). Don't worry if the Sheet has more than two columns, you will have the option to select which columns are used and how.</li>
-                    <li>View one of the public Google Sheets shared by other users. Keep an eye out for new features coming soon that will allow you to rate and comment on public sets.</li>
-                    <li>Create a new Google Sheet through this application (coming soon).</li>
-                </ul>
-            </div>
-        </div>
-        <!-- Footer -->
+    </div>
+    <!-- Footer -->
 		<div class="row">
 		    <footer>
 		        <div class="page-footer">

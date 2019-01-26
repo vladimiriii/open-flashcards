@@ -1,12 +1,24 @@
+@font-face {
+  font-family: "custom";
+  src: url("/static/fonts/MrsSheppards-Regular.ttf");
+  /* src: url("/static/fonts/Handlee-Regular.ttf"); */
+}
+
 #initial-view {
     width: 100%;
     height: 100vh;
 }
 
 #primary-header {
-    font-size: 80px;
+    font-size: 160px;
+    font-family: custom;
     text-align: center;
-    color: #000000;
+    color: #FF5500;
+}
+
+#tag-line {
+  text-align: center;
+  font-style: italic;
 }
 
 #header-row {
@@ -29,9 +41,11 @@
     width: 100%;
     height: 100%;
     position: absolute;
-    background-image: url("../img/index.jpg");
-    background-position: center;
-    opacity: 0.8;
+    background-image: url("../img/neurons.jpg");
+    background-position:  center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.4;
     z-index: 1;
 }
 
@@ -56,5 +70,9 @@
     .landing-page-col {
         padding-right: 20px;
         padding-left: 20px;
+    }
+
+    #primary-header {
+        font-size: 80px;
     }
 }
