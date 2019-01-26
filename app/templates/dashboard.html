@@ -93,7 +93,20 @@
                 </ul>
             </div>
             <div class="tab-content">
-                <div class="tab-pane active" id="private">
+								<div class="tab-pane active" id="public">
+										<div class="row text-btn-row">
+												<div class="col-md-12">
+														<div class="row">
+																<h4>Select cards to use</h4>
+														</div>
+														<div class="row">
+																<table id="public-most-viewed" class="display">
+																</table>
+														</div>
+												</div>
+										</div>
+								</div>
+                <div class="tab-pane" id="private">
                     <div class="row text-btn-row">
                         <div class="col-md-12">
                             <div class="row">
@@ -110,19 +123,6 @@
                                     <img class="image-btn-link" src="{{ url_for('static',filename='img/create.png') }}">
                                     <span class="image-btn-text">Create New Cards</span>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane" id="public">
-                    <div class="row text-btn-row">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <h4>Select cards to use</h4>
-                            </div>
-                            <div class="row">
-                                <table id="public-most-viewed" class="display">
-                                </table>
                             </div>
                         </div>
                     </div>

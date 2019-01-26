@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import os, shutil
-import json
 from datetime import datetime
 from flask import session
 
@@ -9,7 +7,7 @@ from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 
 # Custom Libraries
-from app.lib.models import Base, app_user, db_session
+from app.lib.models import app_user, db_session
 
 
 def process_login():
@@ -35,20 +33,19 @@ def process_login():
 
     if current_user is None:
         current_user = app_user(
-            au_aur_id = 2,
-            au_email = email,
-            au_first_name = first_name,
-            au_last_name = last_name,
-            au_gender = gender,
-            au_profile_url = profile_url,
-            au_first_sign_in = datetime.now(),
-            au_last_sign_in = datetime.now(),
-            au_is_deleted = False
+            au_aur_id=2,
+            au_email=email,
+            au_first_name=first_name,
+            au_last_name=last_name,
+            au_gender=gender,
+            au_profile_url=profile_url,
+            au_first_sign_in=datetime.now(),
+            au_last_sign_in=datetime.now(),
+            au_is_deleted=False
         )
         db_session.add(current_user)
         db_session.flush()
         db_session.commit()
-        s_id = current_user.au_id
 
     else:
         current_user.au_last_sign_in = datetime.now()
@@ -63,12 +60,14 @@ def process_login():
 
 
 def credentials_to_dict(credentials):
-  return {'token': credentials.token,
-          'refresh_token': credentials.refresh_token,
-          'token_uri': credentials.token_uri,
-          'client_id': credentials.client_id,
-          'client_secret': credentials.client_secret,
-          'scopes': credentials.scopes}
+    return {
+        'token': credentials.token,
+        'refresh_token': credentials.refresh_token,
+        'token_uri': credentials.token_uri,
+        'client_id': credentials.client_id,
+        'client_secret': credentials.client_secret,
+        'scopes': credentials.scopes}
+
 
 def generate_error_message(sys_info):
     message = "ERROR FOUND\nError Type: \"" + str(sys_info[0]) + "\"\nError Value: \"" + str(

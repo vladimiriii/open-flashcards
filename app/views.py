@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, jsonify, json, render_template, session, redirect, url_for, request  # , current_app
-# from datetime import date
-# import pandas as pd
+from flask import Blueprint, jsonify, json, render_template, session, redirect, url_for, request
 import os
 import sys
 # import requests
@@ -267,10 +265,8 @@ def check_scopes():
     try:
         read_scope_present = 'https://www.googleapis.com/auth/drive.readonly' in session['credentials']['scopes']
         modify_scope_present = 'https://www.googleapis.com/auth/drive' in session['credentials']['scopes']
-        return jsonify({
-            "read_scope_present": str(read_scope_present),
-            "modify_scope_present": str(modify_scope_present)
-            })
+        return jsonify({"read_scope_present": str(read_scope_present),
+                        "modify_scope_present": str(modify_scope_present)})
 
     except:
         print(pl.generate_error_message(sys.exc_info()))

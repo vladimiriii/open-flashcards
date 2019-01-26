@@ -1,6 +1,4 @@
 import os
-import sys
-from datetime import datetime
 import configparser
 
 # CREATE DATABASE openflashcards;
