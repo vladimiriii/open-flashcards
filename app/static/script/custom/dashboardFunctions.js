@@ -1,6 +1,3 @@
-  /*---------------------------------------
-View Select
----------------------------------------*/
 function getSheetLists() {
     $("#spinner").show();
 
@@ -42,45 +39,6 @@ function viewSheet(id, googleID) {
 };
 
 
-function checkScopes(scope, callback) {
-    return $.ajax({
-        type: "GET",
-        url: '/check-drive-scopes',
-        contentType: 'application/json',
-        success: function(result) {
-          scope_status = result[scope];
-          callback(scope_status)
-        },
-        error: function(msg){
-            console.log(msg);
-            $("#spinner").hide();
-        }
-    });
-};
-
-
-function getImportList() {
-    $("#spinner").show();
-
-    return $.ajax({
-        type: "GET",
-        url: '/get-import-options',
-        success: function(result) {
-            fullSheetList = result['sheets'];
-            $.when(generateSheetList("full-list", fullSheetList)).done(function () {
-                importComplete = true;
-                initializeFullList();
-                $("#spinner").hide();
-            });
-        },
-        error: function(msg){
-            console.log(msg);
-            $("#spinner").hide();
-        }
-    });
-};
-
-
 function importSheetInfo(googleSheetID) {
     $("#spinner").show();
     var dataJson = {"sheetID": googleSheetID};
@@ -93,28 +51,6 @@ function importSheetInfo(googleSheetID) {
         success: function(result) {
             if(result['status'] === "Success") {
                 window.location = "./view-cards";
-            };
-            $("#spinner").hide();
-        },
-        error: function(msg){
-            console.log(msg);
-            $("#spinner").hide();
-        }
-    });
-};
-
-
-function openSheetAccess(sheetID) {
-    $("#spinner").show();
-    var dataJSON = {"sheetID": sheetID};
-    return $.ajax({
-        type: "POST",
-        url: '/make-sheet-public',
-        data: JSON.stringify(dataJSON),
-        contentType: 'application/json',
-        success: function(result) {
-            if (result['status'] == 'sheet shared') {
-                $('#share-btn-success-modal').modal('show');
             };
             $("#spinner").hide();
         },
@@ -160,43 +96,12 @@ function generateSheetList(div, data) {
 };
 
 
-function initializeFullList() {
-  // Initialize table and click handler if import list
-  $('#full-list').DataTable({
-    'order': [[ 1, "desc" ]],
-    'lengthChange': false,
-    'select': 'single'
-  });
-
-  $("#full-list .table-row").on('click', function () {
-    selectRow('full-list', this.id, $(this).attr('data-value'));
-  });
-};
-
-
 function selectRow(div, row_id, sheet_id) {
     $("td.confirm-col").empty();
     var cellID = "#" + String(row_id) + "-opt";
     if (!$("#" + String(row_id)).hasClass("selected")) {
         // Users Private List
-        if (div == 'user-most-viewed') {
-            // View Button
-            var view_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
-                       + 'id="' + div + '-accept"'
-                       + 'onclick="confirmSelection(' + sheet_id + ', event)">'
-                       + '<span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>'
-
-            // Share Button
-            var share_button = '<button type="button" class="btn btn-warning btn-sm confirm-col-btn"'
-                       + ' id="make-public" onclick="openSheetAccess(' + sheet_id + ', event)">'
-                       + '<span class="glyphicon glyphicon-share" aria-hidden="true"></span></button>'
-
-            // Append Buttons
-            $(cellID).append(view_button);
-            $(cellID).append(share_button);
-
-        // Public Sheets List
-        } else if (div == 'public-most-viewed') {
+        if (div == 'public-most-viewed') {
             // View Button
             var view_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
                        + 'id="' + div + '-accept"'
@@ -205,60 +110,16 @@ function selectRow(div, row_id, sheet_id) {
 
            // Append Button
            $(cellID).append(view_button);
-
-        // Import Sheet List
-        } else if (div == 'full-list') {
-            // Import Button
-            var import_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
-                       + 'id="' + div + '-accept"'
-                       + 'onclick="importSheet(\'' + sheet_id + '\', event)">'
-                       + '<span class="glyphicon glyphicon-save" aria-hidden="true"></span></button>'
-
-            // Append Button
-            $(cellID).append(import_button);
         };
     };
 };
 
 
 function confirmSelection(id, event) {
+
     event.stopPropagation();
-    var googleID = getGoogleID(id, userSheetList);
+    var googleID = getGoogleID(id, publicSheetList);
     viewSheet(id, googleID);
-};
-
-
-function generateImportButton(driveAccessFlag) {
-
-    if (driveAccessFlag == 'True') {
-        importButton = `<div class="image-btn">
-            <a id="import-sheet" href="#full-list-modal" data-toggle="modal"><span class="div-link"></span></a>
-            <img class="image-btn-link" src="./static/img/import.png">
-            <span class="image-btn-text">Import Cards</span>
-        </div>`
-    } else {
-        importButton = `<div class="image-btn">
-            <a id="import-sheet" href="./add-drive-read-scope" data-toggle="modal"><span class="div-link"></span></a>
-            <img class="image-btn-link" src="./static/img/import.png">
-            <span class="image-btn-text">Allow Imports</span>
-        </div>`
-    };
-
-    $('#import-btn').append(importButton);
-
-    // On Click Events
-    $("#import-sheet").on('click', function() {
-        // Only import full list once
-        if (!importComplete) {
-            getImportList(generateSheetList);
-        };
-    });
-}
-
-
-function importSheet(id, event) {
-    event.stopPropagation();
-    importSheetInfo(id);
 };
 
 

@@ -1,6 +1,3 @@
-/*-----------------------------------
-FUNCTIONS
------------------------------------*/
 function getSheetData() {
     $("#spinner").show();
     return $.ajax({
@@ -162,7 +159,6 @@ function updateColumnMapping() {
 
     // Get Category and Language Lists
     const categories = cards.categoryList;
-    console.log(categories);
     buildIndicatorList("category-list", categories);
 
     // Get Random numbers

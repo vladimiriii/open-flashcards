@@ -1,32 +1,24 @@
-/*---------------------------------------
-View Select
----------------------------------------*/
-var userSheetList,
-    publicSheetList,
+/*-----------------------------------
+Global Variables
+-----------------------------------*/
+var publicSheetList,
     fullSheetList,
     scope_status,
     importComplete = false;
 
+/*-----------------------------------
+On Page Load
+-----------------------------------*/
 $(document).ready(function(){
 
     // Get Account Structure Data
     $.when(getSheetLists()).done( function() {
-        generateSheetList("user-most-viewed", userSheetList);
-        $('#user-most-viewed').DataTable({
-            'order': [[ 2, "desc" ]],
-            'lengthChange': false,
-            'select': 'single'
-        });
 
         generateSheetList("public-most-viewed", publicSheetList);
         $('#public-most-viewed').DataTable({
             'order': [[ 1, "desc" ]],
             'lengthChange': false,
             'select': 'single'
-        });
-
-        $("#user-most-viewed .table-row").on('click', function () {
-            selectRow("user-most-viewed", this.id, $(this).attr('data-value'));
         });
 
         $("#public-most-viewed .table-row").on('click', function () {
@@ -48,7 +40,5 @@ $(document).ready(function(){
                 selectRow("public-most-viewed", this.id, $(this).attr('data-value'));
             });
         });
-
     });
-
 });

@@ -3,22 +3,39 @@ from flask import session
 
 # Google API
 from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
+import google.oauth2.service_account
 
 # Custom Libraries
 from app.lib.processLogin import credentials_to_dict
 
 import sys
 
+# Service Account Key and Scopes
+SERVICE_ACCOUNT_FILE = "app/static/data/private/service_account.json"
+SCOPES = {
+    "initial": [
+        'https://www.googleapis.com/auth/spreadsheets.readonly'
+    ]
+}
 
-###############################################
-# Functions                                   #
-###############################################
+
+def get_data():
+
+    # Get Data
+    service_object = initialize_reporting()
+    response = query_API(service=service_object, sheet_id=session['google_id'])
+    final_data = process_data(response)
+
+    return final_data
+
+
 def initialize_reporting():
 
     try:
-        # Get credentials from session
-        credentials = Credentials(**session['credentials'])
+
+        credentials = google.oauth2.service_account.Credentials.from_service_account_file(
+            SERVICE_ACCOUNT_FILE,
+            scopes=SCOPES['initial'])
 
         # Create access object
         service = build('sheets', 'v4', credentials=credentials)
@@ -50,13 +67,3 @@ def process_data(response):
     results['data'] = response[1:len(response)]
 
     return results
-
-
-def get_data():
-
-    # Get Data
-    service_object = initialize_reporting()
-    response = query_API(service=service_object, sheet_id=session['google_id'])
-    final_data = process_data(response)
-
-    return final_data

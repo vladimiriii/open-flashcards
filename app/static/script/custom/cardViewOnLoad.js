@@ -1,16 +1,12 @@
 /*-----------------------------------
 Global Variables
 -----------------------------------*/
-var cards,
-    catIndex,
-    languages;
+var cards
 
 var category = "All",
-    randomFlag = false,
+    cardCount = 4,
     correct = 0,
     wrong = 0,
-    cardCount = 4,
-    allIds = [],
     defaultFontSize = 40,
     currentIds;
 
@@ -18,7 +14,6 @@ var category = "All",
 On Page Load
 -----------------------------------*/
 $(document).ready(function(){
-    const indices = {'langaugeOne': null, 'langaugeTwo': null, 'langaugeThree': null, 'categories': null}
 
     // Check Random Button
     $('input[id=random][name=or-radio]').prop("checked", true).change();

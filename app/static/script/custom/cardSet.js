@@ -93,14 +93,11 @@ class cardSet {
 
 
     saveIndexMap(map) {
-        console.log(map);
-        console.log(this.rawData['headers']);
         const result = {};
         result['languageOne'] = this.rawData['headers'].indexOf(map['languageOne']);
         result['languageTwo'] = this.rawData['headers'].indexOf(map['languageTwo']);
         result['languageThree'] = this.rawData['headers'].indexOf(map['languageThree']);
         result['categories'] = this.rawData['headers'].indexOf(map['categories']);
-        console.log(result);
         this._indexMapping = result;
     }
 
@@ -129,10 +126,10 @@ class cardSet {
 
 
     get categoryList() {
-        // console.log(this._indexMapping);
+
         const finalList = ["All"];
         let category;
-        console.log(this._indexMapping['categories']);
+
         if (this._indexMapping['categories'] != -1) {
             for (let row in this.rawData['data']) {
                 category = this.rawData['data'][row][this._indexMapping['categories']];

@@ -18,25 +18,25 @@
     <!-- jQuery plugin -->
     <script src="{{ url_for('static',filename='script/jquery/jquery-3.1.1.min.js') }}"></script>
 
-		<!-- Bootstrap -->
-		<link rel="stylesheet" href="{{ url_for('static',filename='style/bootstrap.min.css') }}">
-	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-	  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
-	  <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-	  <link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.2/css/select.dataTables.min.css">
-	  <script src="https://cdn.datatables.net/select/1.2.2/js/dataTables.select.min.js"></script>
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="{{ url_for('static',filename='style/bootstrap.min.css') }}">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+	<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.2/css/select.dataTables.min.css">
+	<script src="https://cdn.datatables.net/select/1.2.2/js/dataTables.select.min.js"></script>
 
-		<!-- Font-awesome for sharing buttons -->
-		<link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+	<!-- Font-awesome for sharing buttons -->
+	<link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
-		<!-- Internal CSS -->
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/baseStyle.css') }}">
-	  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/dashboard.css') }}">
+	<!-- Internal CSS -->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/baseStyle.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/dashboard.css') }}">
 
-	  <!-- Custom JavaScript -->
-	  <script src="{{ url_for('static',filename='script/custom/dashboardOnLoad.js') }}"></script>
-		<script src="{{ url_for('static',filename='script/custom/dashboardFunctions.js') }}"></script>
-	  <script src="{{ url_for('static',filename='script/custom/dashboardMeta.js') }}"></script>
+	<!-- Custom JavaScript -->
+	<script src="{{ url_for('static',filename='script/custom/dashboardOnLoad.js') }}"></script>
+	<script src="{{ url_for('static',filename='script/custom/dashboardFunctions.js') }}"></script>
+	<script src="{{ url_for('static',filename='script/custom/dashboardMeta.js') }}"></script>
 
 		<!-- Google Analytics -->
     <script>
@@ -86,170 +86,54 @@
         </div>
 		<div class="row" id="sheets-panel">
             <div class="col-md-12">
-                <ul class="nav nav-tabs nav-justified">
-									<li class="active"><a href="#public" data-toggle="tab">Public Cards</a></li>
-                    <li><a href="#private" data-toggle="tab">Your Cards</a></li>
-                    <li><a href="#featured" data-toggle="tab">Featured Cards</a></li>
-                </ul>
-            </div>
-            <div class="tab-content">
-								<div class="tab-pane active" id="public">
-										<div class="row text-btn-row">
-												<div class="col-md-12">
-														<div class="row">
-																<h4>Select cards to use</h4>
-														</div>
-														<div class="row">
-																<table id="public-most-viewed" class="display">
-																</table>
-														</div>
-												</div>
-										</div>
-								</div>
-                <div class="tab-pane" id="private">
-                    <div class="row text-btn-row">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <h4>Select cards to use</h4>
-                            </div>
-                            <div class="row">
-                                <table id="user-most-viewed" class="display">
-                                </table>
-                            </div>
-                            <div class="row" id="import-btn" style="text-align: center">
-                                <h4>Not seeing the cards you want?</h4>
-                                <div class="image-btn">
-                                    <a id="create-sheet" href="#create-data-modal" data-toggle="modal"><span class="div-link"></span></a>
-                                    <img class="image-btn-link" src="{{ url_for('static',filename='img/create.png') }}">
-                                    <span class="image-btn-text">Create New Cards</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane" id="featured">
-                    <div class="row text-btn-row">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <h4>This feature is still under development - please check back soon!</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-           </div>
+				<div class="row text-btn-row">
+					<div class="col-md-12">
+						<div class="row">
+							<h4>Select cards to use</h4>
+						</div>
+						<div class="row">
+							<table id="public-most-viewed" class="display"></table>
+						</div>
+					</div>
+				</div>
+			</div>
         </div>
         <br>
         <br>
         <!-- Footer -->
-				<div class="row">
-				    <footer>
-				        <div class="page-footer">
-				            <div class="container">
-				                <div class="row">
-				                    <div class="footer-col col-md-12">
-				                        <br>
-				                        <h4>Get in touch!</h4>
-				                        <!-- Twitter -->
-				                        <a href="https://twitter.com/mrbrettromero" data-toggle="tooltip" title="Twitter" target="_blank" class="share-btn twitter">
-				                            <i class="fa fa-twitter"></i>
-				                        </a>
+		<div class="row">
+		    <footer>
+		        <div class="page-footer">
+		            <div class="container">
+		                <div class="row">
+		                    <div class="footer-col col-md-12">
+		                        <br>
+		                        <h4>Get in touch!</h4>
+		                        <!-- Twitter -->
+		                        <a href="https://twitter.com/mrbrettromero" data-toggle="tooltip" title="Twitter" target="_blank" class="share-btn twitter">
+		                            <i class="fa fa-twitter"></i>
+		                        </a>
 
-				                        <!-- Facebook -->
-				                        <a href="https://www.facebook.com/brett.romero.9" data-toggle="tooltip" title="Facebook" target="_blank" class="share-btn facebook">
-				                            <i class="fa fa-facebook"></i>
-				                        </a>
+		                        <!-- Facebook -->
+		                        <a href="https://www.facebook.com/brett.romero.9" data-toggle="tooltip" title="Facebook" target="_blank" class="share-btn facebook">
+		                            <i class="fa fa-facebook"></i>
+		                        </a>
 
-				                        <!-- Page -->
-				                        <a href="http://brettromero.com" data-toggle="tooltip" title="brettromero.com" target="_blank" class="share-btn home">
-				                            <i class="fa fa-home"></i>
-				                        </a>
-			                          <br>
-			                          <br>
-			                          <p class='document-links'>
-			                              <a href='./privacy-policy'>Privacy Policy</a> | <a href='./terms-conditions'>Terms &amp; Conditions</a>
-			                          </p>
-				                    </div>
-				                </div>
-				            </div>
-				        </div>
-				    </footer>
-				</div>
-			  <!-- Data Download Modal -->
-				<div class="row">
-				    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="full-list-modal" role="dialog">
-				        <div class="modal-dialog">
-				            <!-- Modal content-->
-				            <div class="modal-content">
-				                <div class="navbar-collapse modal-header">
-				                    <button type="button" class="btn btn-default" style="float:right" data-dismiss="modal">Close</button>
-				                    <h4>Import New Sheet</h4>
-				                </div>
-				                <div class="modal-body">
-			                        <table id="full-list" class="display">
-			                        </table>
-												</div>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-			  <!-- Share Button Modal -->
-				<div class="row">
-				    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="share-btn-modal" role="dialog">
-				        <div class="modal-dialog" id="placeholder">
-				            <!-- Modal content-->
-				            <div class="modal-content">
-				                <div class="navbar-collapse modal-header">
-				                    <button type="button" class="btn btn-default" style="float:right" data-dismiss="modal">Close</button>
-				                    <h4>Sharing Your Sheet</h4>
-				                </div>
-				                <div class="modal-body">
-			                        <p>In order to share your card set publically, Open Flashcards needs access to your Google drive to change the file permissions. Do you want to proceed?</p>
-			                        <div class="row" style="text-align:center">
-			                            <button type="button" class="btn btn-success" onclick="getAdditionalScope()">Proceed</button>
-			                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-			                        </div>
-												</div>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-			  <!-- Share Button Success Modal -->
-				<div class="row">
-				    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="share-btn-success-modal" role="dialog">
-				        <div class="modal-dialog" id="placeholder">
-				            <!-- Modal content-->
-				            <div class="modal-content">
-				                <div class="navbar-collapse modal-header">
-				                    <button type="button" class="btn btn-default" style="float:right" data-dismiss="modal">Close</button>
-				                    <h4>Success!</h4>
-				                </div>
-				                <div class="modal-body">
-			                        <p>Your cards are now available for everyone to use!</p>
-			                        <div class="row" style="text-align:center">
-			                            <button type="button" class="btn btn-success" id="share-sheet-success-btn">OK</button>
-			                        </div>
-												</div>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-			  <!-- Create Set Placeholder Modal -->
-				<div class="row">
-				    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="create-data-modal" role="dialog">
-				        <div class="modal-dialog" id="placeholder">
-				            <!-- Modal content-->
-				            <div class="modal-content">
-				                <div class="navbar-collapse modal-header">
-				                    <button type="button" class="btn btn-default" style="float:right" data-dismiss="modal">Close</button>
-				                    <h4>Create New Sheet</h4>
-				                </div>
-				                <div class="modal-body">
-			                        <p>This feature is still under development. Please check back soon!
-												</div>
-				            </div>
-				        </div>
-				    </div>
-				</div>
+		                        <!-- Page -->
+		                        <a href="http://brettromero.com" data-toggle="tooltip" title="brettromero.com" target="_blank" class="share-btn home">
+		                            <i class="fa fa-home"></i>
+		                        </a>
+	                          <br>
+	                          <br>
+	                          <p class='document-links'>
+	                              <a href='./privacy-policy'>Privacy Policy</a> | <a href='./terms-conditions'>Terms &amp; Conditions</a>
+	                          </p>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </footer>
+		</div>
   	</div>
 </body>
 </html>
