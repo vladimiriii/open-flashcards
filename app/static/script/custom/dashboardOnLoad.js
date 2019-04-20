@@ -26,9 +26,6 @@ $(document).ready(function(){
         });
     });
 
-    // Check scopes to see if import option is available and generate button
-    checkScopes('read_scope_present', generateImportButton);
-
     $('#share-sheet-success-btn').on('click', function() {
         $('#share-btn-success-modal').modal('hide');
 

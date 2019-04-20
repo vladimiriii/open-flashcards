@@ -4,7 +4,6 @@ from flask import session
 
 # Google API
 from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
 
 # Custom Libraries
 from app.lib.models import sheet, db_session  # view, app_user_rel_sheet
@@ -49,10 +48,7 @@ def get_public_sheets():
     return file_list
 
 
-def get_sheet_meta(g_id):
-
-    # Get credentials from session
-    credentials = Credentials(**session['credentials'])
+def get_sheet_meta(credentials, g_id):
 
     # Create access object
     service = build('drive', 'v3', credentials=credentials)
@@ -70,10 +66,7 @@ def get_sheet_meta(g_id):
     return meta_data
 
 
-def get_sheet_rows(g_id):
-
-    # Get credentials from session
-    credentials = Credentials(**session['credentials'])
+def get_sheet_rows(credentials, g_id):
 
     # Create access object
     service = build('sheets', 'v4', credentials=credentials)
@@ -82,19 +75,16 @@ def get_sheet_rows(g_id):
     rangeName = 'A1:Z'
     result = service.spreadsheets().values().get(spreadsheetId=g_id, range=rangeName).execute()
 
-    # Save credentials back in case the access token was refreshed
-    session['credentials'] = credentials_to_dict(credentials)
-
     return len(result.get('values', []))
 
 
-def update_sheet_meta(sheet_id, google_id):
+def update_sheet_meta(credentials, sheet_id, google_id):
 
     # Get latest sheet meta data
-    meta_data = get_sheet_meta(google_id)
+    meta_data = get_sheet_meta(credentials, google_id)
     sheet_name = meta_data['name']
     last_modified = meta_data['modifiedTime']
-    row_count = get_sheet_rows(google_id)
+    row_count = get_sheet_rows(credentials, google_id)
     # owner_status = meta_data['ownedByMe']
 
     # Update sheet record with latest metadata
