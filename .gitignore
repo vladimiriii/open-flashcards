@@ -7,3 +7,5 @@ app.wsgi
 app/static/data/private/*.*
 app/lib/__pycache__/*.*
 Python-3.5.2/
+
+mockups/*
