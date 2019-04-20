@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cards | Open Flashcards</title>
+
+	{% include 'includes/basic-meta.html' %}
+
+	<!-- Page Specific Styling -->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/cards.css') }}">
+
+	<!-- Custom JavaScript -->
+	<script>
+   		var sheetId = '{{ sheet_id }}';
+ 	</script>
+	<script src="{{ url_for('static',filename='script/custom/cardSet.js') }}"></script>
+	<script src="{{ url_for('static',filename='script/custom/cardViewFunctions.js') }}"></script>
+	<script src="{{ url_for('static',filename='script/custom/cardViewOnLoad.js') }}"></script>
+
+</head>
+<body>
+    {% include 'includes/spinner.html' %}
+	<!-- Content -->
+	<div class="container-fluid">
+        {% include 'includes/navbar.html' %}
+        <!-- Page Content -->
+        <div class="row">
+            <!-- Tool Bar -->
+            <div class="col-md-2" id="toolbar">
+                <div class="row" style="text-align: center">
+                    <p class="toolbar-text">Category</p>
+                </div>
+                <div class="row">
+                    <div id="category-select" class="form-group">
+                        <select id="category-list" class="form-control eco-select"></select>
+                    </div>
+                </div>
+                <div class="row" style="text-align: center">
+                    <div style="display-inline;">
+    		            <div class="no-checkedselector" style="text-align:center;">
+    		                <div id="order-radio" class="toggle-container">
+                                <input type="radio" class="toggle" name="or-radio" id="ordered" value="ordered">
+                                    <label for="ordered" class="btn order-btn">
+                                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                                         In Order
+                                    </label>
+                                </input>
+                                <input type="radio" class="toggle" name="or-radio" id="random" value="random">
+                                    <label for="random" class="btn order-btn">
+                                        <span class="glyphicon glyphicon-random" aria-hidden="true"></span>
+                                         Random
+                                    </label>
+                                </input>
+                            </div>
+                        </div>
+                    </div>
+        		</div>
+                <br>
+                <div class="row" style="text-align: center">
+                    <button type="button" class="btn btn-default" id="refresh-btn">
+                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> New Cards
+                    </button>
+                </div>
+                <div class="row" style="text-align: center">
+                    <h3>Score</h3>
+                    <div class="row">
+                        <div class="col-xs-6" id="correct-count">
+                            <p>Correct</p>
+                        </div>
+                        <div class="col-xs-6" id="wrong-count">
+                            <p>Incorrect</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button type="button" class="btn btn-default" id="reset-score">Reset Scores</button>
+                    </div>
+                </div>
+                <br>
+                <div class="row" style="text-align: center">
+                    <a id="change-columns" data-toggle="modal" data-target="#column-select">
+                        <button type="button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span> Card Orientation
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <!-- Flip Cards -->
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-6 card-div">
+                        <section class="card-container">
+                            <div class="card" id="card1">
+                                <div class="front"></div>
+                                <div class="back" id="card1-back">
+                                    <div class="row card-back-row1" id="card1-back1">
+                                    </div>
+                                    <div class="row card-back-row2" id="card1-back2">
+                                    </div>
+                                    <div class="row card-back-row3">
+                                        <button type="button" class="btn btn-default correct-btn">
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-default wrong-btn">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-md-6 card-div">
+                        <section class="card-container">
+                            <div class="card" id="card2">
+                                <div class="front"></div>
+                                <div class="back" id="card2-back">
+                                    <div class="row card-back-row1" id="card2-back1">
+                                    </div>
+                                    <div class="row card-back-row2" id="card2-back2">
+                                    </div>
+                                    <div class="row card-back-row3">
+                                        <button type="button" class="btn btn-default correct-btn">
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-default wrong-btn">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 card-div">
+                        <section class="card-container">
+                            <div class="card" id="card3">
+                                <div class="front"></div>
+                                <div class="back" id="card3-back">
+                                    <div class="row card-back-row1" id="card3-back1">
+                                    </div>
+                                    <div class="row card-back-row2" id="card3-back2">
+                                    </div>
+                                    <div class="row card-back-row3">
+                                        <button type="button" class="btn btn-default correct-btn">
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-default wrong-btn">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-md-6 card-div">
+                        <section class="card-container">
+                            <div class="card" id="card4">
+                                <div class="front"></div>
+                                <div class="back" id="card4-back">
+                                    <div class="row card-back-row1" id="card4-back1">
+                                    </div>
+                                    <div class="row card-back-row2" id="card4-back2">
+                                    </div>
+                                    <div class="row card-back-row3">
+                                        <button type="button" class="btn btn-default correct-btn">
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-default wrong-btn">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include 'includes/footer.html' %}
+      	<!-- About Modal -->
+    	<div class="row">
+    	    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="column-select" role="dialog">
+    	        <div class="modal-dialog">
+    	            <!-- Modal content-->
+    	            <div class="modal-content">
+    	                <div class="navbar-collapse modal-header">
+    	                    <h4 style="text-align: center">Select Columns</h4>
+    	                </div>
+    	                <div class="modal-body">
+    						<div class="row modal-row">
+	                          	<div class="col-md-6">
+                                  <p>Front of Card: </p>
+	                            </div>
+	                            <div class="col-md-6">
+			                        <div id="primary-language" class="form-group">
+			                            <select id="primary-list" class="form-control eco-select"></select>
+			                        </div>
+	                            </div>
+	                        </div>
+	                      	<div class="row modal-row">
+	                      		<div class="col-md-6">
+	                          		<p>Back of Card (Primary): </p>
+	                          	</div>
+	                          	<div class="col-md-6">
+	                              	<div id="secondary-language" class="form-group">
+	                                  	<select id="secondary-list" class="form-control eco-select"></select>
+	                              	</div>
+	                          	</div>
+	                      	</div>
+	                      	<div class="row modal-row">
+	                          	<div class="col-md-6">
+	                              	<p>Back of Card (Secondary - optional): </p>
+	                          	</div>
+	                          	<div class="col-md-6">
+	                              	<div id="tertiary-language" class="form-group">
+	                                  	<select id="tertiary-list" class="form-control eco-select"></select>
+	                              	</div>
+	                          	</div>
+	                      	</div>
+	                      	<div class="row modal-row">
+	                      		<div class="col-md-6">
+	                              	<p>Categories (Optional): </p>
+	                          	</div>
+	                          	<div class="col-md-6">
+	                              	<div id="modal-categories" class="form-group">
+	                                  	<select id="modal-categories-list" class="form-control eco-select"></select>
+	                              	</div>
+	                          	</div>
+	                      	</div>
+	                      	<div class="row">
+	                          	<button type="button" class="btn btn-default" id="confirm-btn">Confirm</button>
+	                      	</div>
+						</div>
+	            	</div>
+    	        </div>
+    	    </div>
+    	</div>
+		<div class="row">
+    	    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="error-modal" role="dialog">
+    	        <div class="modal-dialog">
+    	            <!-- Modal content-->
+    	            <div class="modal-content">
+    	                <div class="navbar-collapse modal-header" id="error-modal-header">
+    	                </div>
+    	                <div class="modal-body">
+    						<div class="row modal-row">
+	                          	<div class="col-md-12" id="error-modal-content">
+							  	</div>
+							</div>
+	                      	<div class="row">
+	                          	<a href="/"><button type="button" class="btn btn-default">Go to home page</button></a>
+	                      	</div>
+						</div>
+	            	</div>
+    	        </div>
+    	    </div>
+    	</div>
+
+	</div>
+</body>
+</html>

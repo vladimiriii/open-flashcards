@@ -10,6 +10,15 @@ class cardSet {
         this.fulListLength = null;
     }
 
+    dataFound() {
+        if ('error' in this.rawData) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
 
     suggestColumns() {
 
@@ -122,7 +131,7 @@ class cardSet {
 
         this.idList = allIds;
         this._fullListLength = allIds.length;
-    };
+    }
 
 
     get categoryList() {
@@ -139,7 +148,7 @@ class cardSet {
             };
         };
         return finalList;
-    };
+    }
 
 
     get nextCards() {

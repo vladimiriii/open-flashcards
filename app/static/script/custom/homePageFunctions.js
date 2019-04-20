@@ -17,41 +17,15 @@ function getSheetLists() {
 };
 
 
-function viewSheet(id, googleID) {
+function registerSheetView(id, googleID) {
     $("#spinner").show();
     var dataJson = {"sheetID": id, "googleID": googleID};
     return $.ajax({
         type: "POST",
-        url: '/view-sheet',
+        url: '/register-sheet-view',
         data: JSON.stringify(dataJson),
         contentType: 'application/json',
         success: function(result) {
-            if(result['status'] === "Success") {
-                window.location = "./view-cards";
-            };
-            $("#spinner").hide();
-        },
-        error: function(msg){
-            console.log(msg);
-            $("#spinner").hide();
-        }
-    });
-};
-
-
-function importSheetInfo(googleSheetID) {
-    $("#spinner").show();
-    var dataJson = {"sheetID": googleSheetID};
-
-    return $.ajax({
-        type: "POST",
-        url: '/import-sheet',
-        data: JSON.stringify(dataJson),
-        contentType: 'application/json',
-        success: function(result) {
-            if(result['status'] === "Success") {
-                window.location = "./view-cards";
-            };
             $("#spinner").hide();
         },
         error: function(msg){
@@ -119,8 +93,12 @@ function confirmSelection(id, event) {
 
     event.stopPropagation();
     var googleID = getGoogleID(id, publicSheetList);
-    viewSheet(id, googleID);
-};
+
+    // Register the click and redirect
+    $.when(registerSheetView(id, googleID)).done( function() {
+        window.location = "./flashcards/" + String(id);
+    })
+}
 
 
 function getGoogleID(id, data) {

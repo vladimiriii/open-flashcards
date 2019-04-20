@@ -61,10 +61,10 @@ def er_page():
 
 
 # LOGGED IN PAGES
-@internal_page.route('/view-cards', methods=['GET'])
-def vc_page():
+@basic_page.route('/flashcards/<sheet_id>')
+def show_blog(sheet_id):
     try:
-        return render_template('cards.html')
+        return render_template('flashcards-template.html', sheet_id=sheet_id)
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
@@ -92,7 +92,7 @@ def get_sheet_lists():
 
 
 # DATA ROUTES
-@google_api.route('/view-sheet', methods=['POST'])
+@google_api.route('/register-sheet-view', methods=['POST'])
 def save_page():
     try:
         # Saves Sheet ID to Session
@@ -114,10 +114,12 @@ def save_page():
         return redirect(url_for('basic_page.er_page'))
 
 
-@google_api.route('/card-data', methods=['GET'])
+@google_api.route('/card-data', methods=['POST'])
 def output_card_data():
     try:
-        results = cd.get_data()
+        inputs = json.loads(request.data)
+        sheet_id = inputs['sheetID']
+        results = cd.get_data(sheet_id)
         return jsonify(results)
     except:
         print(pl.generate_error_message(sys.exc_info()))

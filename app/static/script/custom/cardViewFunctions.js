@@ -1,8 +1,11 @@
-function getSheetData() {
+function getSheetData(id) {
     $("#spinner").show();
+    const dataJson = JSON.stringify({"sheetID": id});
+
     return $.ajax({
-        type: "GET",
+        type: "POST",
         url: '/card-data',
+        data: dataJson,
         contentType: 'application/json',
         success: function(result) {
             cards = new cardSet(result);
@@ -170,7 +173,7 @@ function updateColumnMapping() {
 
         // Populate Cards
         populateCards(cardsToDisplay);
-    }, 250);    
+    }, 250);
 }
 
 
@@ -281,3 +284,19 @@ function getResizedFont(text, language) {
     };
     return Math.max(fontSize, 16);
 };
+
+function showErrorModal() {
+    $("#error-modal-header").empty();
+    $("#error-modal-content").empty();
+
+    errorInfo = cards.rawData['error'];
+    const headerText = '<h4 style="text-align: center">' + errorInfo['modalHeader'] + '</h4>'
+
+
+    const contentText = "<p>" + errorInfo['modalText'] + "</p>"
+
+    $("#error-modal-header").append(headerText);
+    $("#error-modal-header").append(contentText);
+
+    $('#error-modal').modal('show');
+}

@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
-from flask import session
-# from sqlalchemy import update
-
 # Google API
 from googleapiclient.discovery import build
 
 # Custom Libraries
 from app.lib.models import sheet, db_session  # view, app_user_rel_sheet
-from app.lib.processLogin import credentials_to_dict
 
 
 def get_public_sheets():
@@ -59,9 +55,6 @@ def get_sheet_meta(credentials, g_id):
     meta_data = {}
     for key in response:
         meta_data[key] = response[key]
-
-    # Save credentials back in case the access token was refreshed
-    session['credentials'] = credentials_to_dict(credentials)
 
     return meta_data
 

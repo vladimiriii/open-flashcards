@@ -19,13 +19,17 @@ $(document).ready(function(){
     $('input[id=random][name=or-radio]').prop("checked", true).change();
 
     // Get Card Data
-    $.when(getSheetData()).done( function() {
+    $.when(getSheetData(sheetId)).done( function() {
 
-        // Populate Modal Drop Downs
-        $('#column-select').modal('show');
-        let columnLookup = cards.suggestColumns();
-        populateModalDropdowns(columnLookup);
-
+        if (cards.dataFound()) {
+            // Populate Modal Drop Downs
+            $('#column-select').modal('show');
+            let columnLookup = cards.suggestColumns();
+            populateModalDropdowns(columnLookup);
+        }
+        else {
+            showErrorModal()
+        }
     });
 
     // Modal Accept Button
