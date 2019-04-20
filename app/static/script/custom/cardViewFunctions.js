@@ -147,6 +147,8 @@ UPDATE FUNCTIONS
 -------------------------------------------------*/
 function updateColumnMapping() {
 
+    unflipCards();
+
     const indexMapping = {};
     indexMapping['languageOne'] = $("#primary-list").val();
     indexMapping['languageTwo'] = $("#secondary-list").val();
@@ -161,12 +163,14 @@ function updateColumnMapping() {
     const categories = cards.categoryList;
     buildIndicatorList("category-list", categories);
 
-    // Get Random numbers
-    cards.refreshIdList();
-    const cardsToDisplay = cards.nextCards;
+    setTimeout(function() {
+        // Get Random numbers
+        cards.refreshIdList();
+        const cardsToDisplay = cards.nextCards;
 
-    // Populate Cards
-    populateCards(cardsToDisplay);
+        // Populate Cards
+        populateCards(cardsToDisplay);
+    }, 250);    
 }
 
 
