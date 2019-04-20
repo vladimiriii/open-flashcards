@@ -4,11 +4,15 @@
   /* src: url("/static/fonts/Handlee-Regular.ttf"); */
 }
 
+/* Nav bar */
+.navbar {
+    margin-bottom: 0px
+}
 
 /* Header Section */
 #initial-view {
     width: 100%;
-    height: 50vh;
+    height: 60vh;
 }
 
 #primary-header {
@@ -35,14 +39,14 @@
 
 #text-overlay {
     width: 100%;
-    height: 50%;
+    height: 60%;
     position: absolute;
     z-index: 2;
 }
 
 #primary-image {
     width: 100%;
-    height: 50%;
+    height: 60%;
     position: absolute;
     background-image: url("../img/neurons.jpg");
     background-position:  center;
