@@ -60,7 +60,6 @@ def er_page():
     return render_template('error.html')
 
 
-# LOGGED IN PAGES
 @basic_page.route('/flashcards/<sheet_id>')
 def show_blog(sheet_id):
     try:
@@ -70,6 +69,16 @@ def show_blog(sheet_id):
         return redirect(url_for('basic_page.er_page'))
 
 
+# @basic_page.route('/admin')
+# def admin_page():
+#     try:
+#         return render_template('admin-login.html')
+#     except:
+#         print(pl.generate_error_message(sys.exc_info()))
+#         return redirect(url_for('basic_page.er_page'))
+
+
+# LOGGED IN PAGES
 @internal_page.route('/logout', methods=['GET'])
 def lo_page():
     try:

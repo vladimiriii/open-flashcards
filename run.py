@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import argparse
 from app import create_app
 
@@ -18,7 +19,7 @@ if __name__ == '__main__':
     # Parse arguemnts and run the app.
     args = parser.parse_args()
     app.run(debug=args.debug
-        , host=args.host
-        , port=args.port
-        , ssl_context=app.config['SSL']
-        )
+            , host=args.host
+            , port=args.port
+            , ssl_context=app.config['SSL']
+            )
