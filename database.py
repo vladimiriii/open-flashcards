@@ -14,15 +14,16 @@ import app.lib.models as md
 engine = create_engine(URL(**DATABASE))
 
 # Drop Old Tables
-drop_query = ('DROP TABLE app_user_rel_sheet; '
-              'DROP TABLE subcategory; '
-              'DROP TABLE category; '
-              'DROP TABLE rating; '
-              'DROP TABLE comment; '
-              'DROP TABLE view; '
-              'DROP TABLE sheet; '
-              'DROP TABLE app_user; '
-              'DROP TABLE app_user_role;')
+drop_query = ("""DROP TABLE app_user_rel_sheet;
+              DROP TABLE subcategory;
+              DROP TABLE category;
+              DROP TABLE rating;
+              DROP TABLE comment;
+              DROP TABLE view;
+              DROP TABLE sheet;
+              DROP TABLE app_user;
+              DROP TABLE app_user_role;""")
+
 engine.execute(drop_query)
 md.Base.metadata.drop_all(bind=engine)
 

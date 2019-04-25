@@ -6,6 +6,7 @@ import sys
 # Google API
 import google.oauth2.credentials
 import google.oauth2.service_account
+import google_auth_oauthlib.flow
 
 # Custom Libraries
 import app.lib.cardData as cd
@@ -20,6 +21,7 @@ internal_page = Blueprint('internal_page', __name__)
 google_api = Blueprint('google_api', __name__)
 
 # Service Account Key and Scopes
+CLIENT_SECRETS_FILE = "app/static/data/private/client_secret.json"
 SERVICE_ACCOUNT_FILE = "app/static/data/private/service_account.json"
 SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets.readonly',
@@ -29,9 +31,12 @@ SCOPES = [
 
 # BASIC PAGES
 @basic_page.route('/', methods=['GET'])
-def la_page():
+def landing_page():
     try:
-        return render_template('index.html')
+        if 'credentials' in session:
+            return redirect(url_for('internal_page.dashboard_page'))
+        else:
+            return render_template('index.html')
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
@@ -69,21 +74,88 @@ def show_blog(sheet_id):
         return redirect(url_for('basic_page.er_page'))
 
 
-# @basic_page.route('/admin')
-# def admin_page():
-#     try:
-#         return render_template('admin-login.html')
-#     except:
-#         print(pl.generate_error_message(sys.exc_info()))
-#         return redirect(url_for('basic_page.er_page'))
+@basic_page.route('/admin')
+def admin_page():
+    try:
+        return render_template('admin-login.html')
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
+# GOOGLE API INTERACTIONS
+@google_api.route('/process-login', methods=['GET'])
+def process_login():
+    try:
+        # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
+        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
+
+        flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
+
+        authorization_url, state = flow.authorization_url(
+            access_type='offline',  # Refresh an access token without re-prompting the user for permission.
+            include_granted_scopes='true'  # Enable incremental authorization
+        )
+
+        # Store the state so the callback can verify the auth server response.
+        session['state'] = state
+
+        return redirect(authorization_url)
+
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
+@google_api.route('/oauth2callback')
+def oauth2callback():
+    try:
+        # Specify the state when creating the flow in the callback so that it can
+        # verified in the authorization server response.
+        state = session['state']
+
+        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+            CLIENT_SECRETS_FILE,
+            scopes=SCOPES,
+            state=state
+        )
+
+        flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
+
+        # Use the authorization server's response to fetch the OAuth 2.0 tokens.
+        authorization_response = request.url
+        flow.fetch_token(authorization_response=authorization_response)
+
+        # Store credentials in the session.
+        credentials = flow.credentials
+        session['credentials'] = pl.credentials_to_dict(credentials)
+        pl.process_login()
+
+        return redirect(url_for('internal_page.dashboard_page'))
+
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
 
 
 # LOGGED IN PAGES
+@internal_page.route('/dashboard', methods=['GET'])
+def dashboard_page():
+    try:
+        if 'credentials' in session:
+            return render_template('dashboard.html')
+        else:
+            return redirect(url_for('basic_page.landing_page'))
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
 @internal_page.route('/logout', methods=['GET'])
 def lo_page():
     try:
         session.clear()
-        return redirect(url_for('basic_page.la_page'))
+        return redirect(url_for('basic_page.landing_page'))
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
