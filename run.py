@@ -4,7 +4,7 @@ from app import create_app
 
 # Create the flask app.
 app = create_app()
-app.secret_key = 'BesosElCantoDelLoco2006Espana'
+app.secret_key = app.config['FN_FLASK_SECRET_KEY']
 
 # -------------------------------------------
 # Run the App

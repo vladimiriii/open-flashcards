@@ -6,6 +6,7 @@ from flask import Flask
 # Custom Libraries
 # import app.lib.database as dbse
 
+
 def create_app():
     # Create the Flask app.
     app = Flask(__name__)
@@ -15,6 +16,7 @@ def create_app():
     init_modules(app)
 
     return app
+
 
 def init_modules(app):
     # Import a module / component using its blueprint handler variable
@@ -26,6 +28,7 @@ def init_modules(app):
     app.register_blueprint(basic_page)
     app.register_blueprint(google_api)
     app.register_blueprint(internal_page)
+
 
 # Read config file
 def load_config(app):
@@ -41,6 +44,9 @@ def load_config(app):
 
     # Add Server Port to App config
     app.config['SERVER_PORT'] = config.get('Application', 'SERVER_PORT')
+
+    # Add Secret Key
+    app.config['FN_FLASK_SECRET_KEY'] = config.get('Application', 'FN_FLASK_SECRET_KEY')
 
     # Add SSL certifcate/key paths
     app.config['SSL'] = (config.get('SSL', 'CERT'), config.get('SSL', 'KEY'))

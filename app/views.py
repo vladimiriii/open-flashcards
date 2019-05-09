@@ -24,8 +24,9 @@ google_api = Blueprint('google_api', __name__)
 CLIENT_SECRETS_FILE = "app/static/data/private/client_secret.json"
 SERVICE_ACCOUNT_FILE = "app/static/data/private/service_account.json"
 SCOPES = [
+    'openid email profile',
     'https://www.googleapis.com/auth/spreadsheets.readonly',
-    'https://www.googleapis.com/auth/drive'
+    'https://www.googleapis.com/auth/drive.readonly'
 ]
 
 
