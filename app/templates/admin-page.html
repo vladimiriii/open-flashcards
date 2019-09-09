@@ -19,34 +19,10 @@
 	{% include 'includes/spinner.html' %}
 	<!-- Content -->
 	<div class="container-fluid">
-		{% if value == 'super_user' %}
-			{% include 'includes/admin-navbar.html' %}
-		{% else %}
-			{% include 'includes/loggedin-navbar.html' %}
-		{% endif %}
-	    <div class="row" id="initial-view">
-			<div id="primary-image"></div>
-			<div class="col-md-12" id="text-overlay">
-				<div class="row" id="header-row">
-					<h1 id="primary-header">Open Flashcards</h1>
-				</div>
-				<div class="row" id="tag-line-row">
-					<h2 id="tag-line">Turn your Google Sheets into online flashcards</h2>
-				</div>
-			</div>
-	    </div>
+		{% include 'includes/admin-navbar.html' %}
 		<div class="row" id="sheets-panel">
             <div class="col-md-12">
-				<div class="row text-btn-row">
-					<div class="col-md-12">
-						<div class="row">
-							<h4>Select cards to use</h4>
-						</div>
-						<div class="row">
-							<table id="public-most-viewed" class="display"></table>
-						</div>
-					</div>
-				</div>
+				<h2>The admin page!</h2>
 			</div>
         </div>
     	{% include 'includes/footer.html' %}

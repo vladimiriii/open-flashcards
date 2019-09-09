@@ -75,15 +75,6 @@ def show_blog(sheet_id):
         return redirect(url_for('basic_page.er_page'))
 
 
-@basic_page.route('/admin')
-def admin_page():
-    try:
-        return render_template('admin-login.html')
-    except:
-        print(pl.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
-
-
 # GOOGLE API INTERACTIONS
 @google_api.route('/process-login', methods=['GET'])
 def process_login():
@@ -144,9 +135,29 @@ def oauth2callback():
 def dashboard_page():
     try:
         if 'credentials' in session:
-            return render_template('dashboard.html')
+            permission_level = pl.check_user_role()
+            return render_template('dashboard.html', value=permission_level)
         else:
             return redirect(url_for('basic_page.landing_page'))
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
+@internal_page.route('/admin')
+def admin_page():
+    try:
+        if 'credentials' in session:
+            permission_level = pl.check_user_role()
+
+            if permission_level == 'super_user':
+                return render_template('admin-page.html')
+            else:
+                return redirect(url_for('internal_page.dashboard_page'))
+
+        else:
+            return redirect(url_for('basic_page.landing_page'))
+
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
