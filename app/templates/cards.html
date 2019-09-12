@@ -1,87 +1,33 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title>Cards | Open Flashcards</title>
+    <title>Cards | Open Flashcards</title>
 
-	<!-- Encoding -->
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% include 'includes/basic-meta.html' %}
+    {% include 'includes/base-scripts.html' %}
 
-    <!-- Facebook Open Graph tags -->
-    <meta property="og:title" content="Open Flashcards" />
-    <meta property="og:site_name" content="Open Flashcards"/>
-    <meta property="og:image" content="http://openflashcards.com/static/img/index.jpg"/>
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="http://openflashcards.com"/>
-    <meta property="og:description" content="An online application for creating, viewing and sharing flashcards by quickly and easily importing information from Google Sheets."/>
+    <!-- Page Specific Styling -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/cards.css') }}">
 
-    <!-- jQuery plugin -->
-    <script src="{{ url_for('static',filename='script/jquery/jquery-3.1.1.min.js') }}"></script>
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static',filename='script/custom/cardSet.js') }}"></script>
+    <script src="{{ url_for('static',filename='script/custom/cardViewFunctions.js') }}"></script>
+    <script src="{{ url_for('static',filename='script/custom/cardViewOnLoad.js') }}"></script>
 
-	<!-- Bootstrap -->
-	<link rel="stylesheet" href="{{ url_for('static',filename='style/bootstrap.min.css') }}">
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-
-	<!-- Font-awesome for sharing buttons -->
-	<link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
-	<!-- Internal CSS -->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/baseStyle.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/cards.css') }}">
-
-	<!-- Custom JavaScript -->
-	<script src="{{ url_for('static',filename='script/custom/cardSet.js') }}"></script>
-	<script src="{{ url_for('static',filename='script/custom/cardViewFunctions.js') }}"></script>
-	<script src="{{ url_for('static',filename='script/custom/cardViewOnLoad.js') }}"></script>
-
-
-		<!-- Google Analytics -->
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-        ga('create', 'UA-60963697-4', 'auto');
-        ga('send', 'pageview');
-    </script>
 </head>
+
 <body>
-    <div id="spinner" class="spinner" style="display:none;">
-        <div class="sk-cube-grid">
-            <div class="sk-cube sk-cube1"></div>
-            <div class="sk-cube sk-cube2"></div>
-            <div class="sk-cube sk-cube3"></div>
-            <div class="sk-cube sk-cube4"></div>
-            <div class="sk-cube sk-cube5"></div>
-            <div class="sk-cube sk-cube6"></div>
-            <div class="sk-cube sk-cube7"></div>
-            <div class="sk-cube sk-cube8"></div>
-            <div class="sk-cube sk-cube9"></div>
-        </div>
-    </div>
-	<!-- Content -->
-	<div class="container-fluid">
-        <!-- Navbar -->
-        <div class="row">
-            <nav class="navbar navbar-default">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="./">Open Flashcards</a>
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapse-right" aria-expanded="false">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div>
-                <div class="collapse navbar-collapse" id="collapse-right">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="./dashboard">Change Sheet</a></li>
-                        <li><a href="./logout">Logout</a></li>
-                    </ul> <!-- navbar-collapse -->
-                </div>
-            </nav>
-        </div>
+    {% include 'includes/spinner.html' %}
+    <!-- Content -->
+    <div class="container-fluid">
+        {% if permission_level == 'super_user' %}
+        		{% include 'includes/admin-navbar.html' %}
+        {% else if permission_level == 'user' %}
+        		{% include 'includes/loggedin-navbar.html' %}
+        {% else %}
+        		{% include 'includes/navbar.html' %}
+        {% endif %}
         <!-- Page Content -->
         <div class="row">
             <!-- Tool Bar -->
@@ -96,24 +42,24 @@
                 </div>
                 <div class="row" style="text-align: center">
                     <div style="display-inline;">
-    		            <div class="no-checkedselector" style="text-align:center;">
-    		                <div id="order-radio" class="toggle-container">
+                        <div class="no-checkedselector" style="text-align:center;">
+                            <div id="order-radio" class="toggle-container">
                                 <input type="radio" class="toggle" name="or-radio" id="ordered" value="ordered">
-                                    <label for="ordered" class="btn order-btn">
-                                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-                                         In Order
-                                    </label>
+                                <label for="ordered" class="btn order-btn">
+                                    <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                                    In Order
+                                </label>
                                 </input>
                                 <input type="radio" class="toggle" name="or-radio" id="random" value="random">
-                                    <label for="random" class="btn order-btn">
-                                        <span class="glyphicon glyphicon-random" aria-hidden="true"></span>
-                                         Random
-                                    </label>
+                                <label for="random" class="btn order-btn">
+                                    <span class="glyphicon glyphicon-random" aria-hidden="true"></span>
+                                    Random
+                                </label>
                                 </input>
                             </div>
                         </div>
                     </div>
-		        		</div>
+                </div>
                 <br>
                 <div class="row" style="text-align: center">
                     <button type="button" class="btn btn-default" id="refresh-btn">
@@ -236,97 +182,66 @@
             </div>
         </div>
         <!-- Footer -->
-			<div class="row">
-			    <footer>
-			        <div class="page-footer">
-			            <div class="container">
-			                <div class="row">
-			                    <div class="footer-col col-md-12">
-			                        <br>
-			                        <h4>Get in touch!</h4>
-			                        <!-- Twitter -->
-			                        <a href="https://twitter.com/mrbrettromero" data-toggle="tooltip" title="Twitter" target="_blank" class="share-btn twitter">
-			                            <i class="fa fa-twitter"></i>
-			                        </a>
-
-			                        <!-- Facebook -->
-			                        <a href="https://www.facebook.com/brett.romero.9" data-toggle="tooltip" title="Facebook" target="_blank" class="share-btn facebook">
-			                            <i class="fa fa-facebook"></i>
-			                        </a>
-
-			                        <!-- Page -->
-			                        <a href="http://brettromero.com" data-toggle="tooltip" title="brettromero.com" target="_blank" class="share-btn home">
-			                            <i class="fa fa-home"></i>
-			                        </a>
-                              <br>
-                              <br>
-                              <p class='document-links'>
-                                  <a href='./privacy-policy'>Privacy Policy</a> | <a href='./terms-conditions'>Terms &amp; Conditions</a>
-                              </p>
-			                    </div>
-			                </div>
-			            </div>
-			        </div>
-			    </footer>
-			</div>
-      <!-- About Modal -->
-    	<div class="row">
-    	    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="column-select" role="dialog">
-    	        <div class="modal-dialog">
-    	            <!-- Modal content-->
-    	            <div class="modal-content">
-    	                <div class="navbar-collapse modal-header">
-    	                    <h4 style="text-align: center">Select Columns</h4>
-    	                </div>
-    	                <div class="modal-body">
-    											<div class="row modal-row">
-	                          	<div class="col-md-6">
-                                  <p>Front of Card: </p>
-                              </div>
-                              <div class="col-md-6">
-                                  <div id="primary-language" class="form-group">
-                                      <select id="primary-list" class="form-control eco-select"></select>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="row modal-row">
-                              <div class="col-md-6">
-                                  <p>Back of Card (Primary): </p>
-                              </div>
-                              <div class="col-md-6">
-                                  <div id="secondary-language" class="form-group">
-                                      <select id="secondary-list" class="form-control eco-select"></select>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="row modal-row">
-                              <div class="col-md-6">
-                                  <p>Back of Card (Secondary - optional): </p>
-                              </div>
-                              <div class="col-md-6">
-                                  <div id="tertiary-language" class="form-group">
-                                      <select id="tertiary-list" class="form-control eco-select"></select>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="row modal-row">
-                              <div class="col-md-6">
-                                  <p>Categories (Optional): </p>
-                              </div>
-                              <div class="col-md-6">
-                                  <div id="modal-categories" class="form-group">
-                                      <select id="modal-categories-list" class="form-control eco-select"></select>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="row">
-                              <button type="button" class="btn btn-default" id="confirm-btn">Confirm</button>
-                          </div>
-    									</div>
-    	            </div>
-    	        </div>
-    	    </div>
-    	</div>
-	</div>
+        {% include 'includes/footer.html' %}
+        <!-- About Modal -->
+        <div class="row">
+            <div class="modal fade" data-backdrop="static" data-keyboard="false" id="column-select" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="navbar-collapse modal-header">
+                            <h4 style="text-align: center">Select Columns</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row modal-row">
+                                <div class="col-md-6">
+                                    <p>Front of Card: </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="primary-language" class="form-group">
+                                        <select id="primary-list" class="form-control eco-select"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row modal-row">
+                                <div class="col-md-6">
+                                    <p>Back of Card (Primary): </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="secondary-language" class="form-group">
+                                        <select id="secondary-list" class="form-control eco-select"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row modal-row">
+                                <div class="col-md-6">
+                                    <p>Back of Card (Secondary - optional): </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="tertiary-language" class="form-group">
+                                        <select id="tertiary-list" class="form-control eco-select"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row modal-row">
+                                <div class="col-md-6">
+                                    <p>Categories (Optional): </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="modal-categories" class="form-group">
+                                        <select id="modal-categories-list" class="form-control eco-select"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <button type="button" class="btn btn-default" id="confirm-btn">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>

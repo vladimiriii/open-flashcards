@@ -25,8 +25,8 @@ CLIENT_SECRETS_FILE = "app/static/data/private/client_secret.json"
 SERVICE_ACCOUNT_FILE = "app/static/data/private/service_account.json"
 SCOPES = [
     'openid email profile',
-    'https://www.googleapis.com/auth/spreadsheets.readonly',
-    'https://www.googleapis.com/auth/drive.readonly'
+    # 'https://www.googleapis.com/auth/spreadsheets.readonly',
+    # 'https://www.googleapis.com/auth/drive.readonly'
 ]
 
 
@@ -69,7 +69,12 @@ def er_page():
 @basic_page.route('/flashcards/<sheet_id>')
 def show_blog(sheet_id):
     try:
-        return render_template('flashcards-template.html', sheet_id=sheet_id)
+        if 'credentials' in session:
+            permission_level = pl.check_user_role()
+        else:
+            permission_level = 'guest'
+
+        return render_template('flashcards-template.html', sheet_id=sheet_id, permission_level=permission_level)
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
@@ -168,6 +173,20 @@ def lo_page():
     try:
         session.clear()
         return redirect(url_for('basic_page.landing_page'))
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+# Card Creation Options
+@internal_page.route('/create-flashcards', methods=['GET'])
+def create_flashcards_page():
+    try:
+        if 'credentials' in session:
+            permission_level = pl.check_user_role()
+            return render_template('create-flashcards.html', permission_level=permission_level)
+        else:
+            return redirect(url_for('basic_page.landing_page'))
+
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))

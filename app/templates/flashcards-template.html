@@ -1,27 +1,36 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title>Cards | Open Flashcards</title>
+    <title>Cards | Open Flashcards</title>
 
-	{% include 'includes/basic-meta.html' %}
+    {% include 'includes/basic-meta.html' %}
+    {% include 'includes/base-scripts.html' %}
 
-	<!-- Page Specific Styling -->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/cards.css') }}">
+    <!-- Page Specific Styling -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/cards.css') }}">
 
-	<!-- Custom JavaScript -->
-	<script>
-   		var sheetId = '{{ sheet_id }}';
- 	</script>
-	<script src="{{ url_for('static',filename='script/custom/cardSet.js') }}"></script>
-	<script src="{{ url_for('static',filename='script/custom/cardViewFunctions.js') }}"></script>
-	<script src="{{ url_for('static',filename='script/custom/cardViewOnLoad.js') }}"></script>
+    <!-- Custom JavaScript -->
+    <script>
+        var sheetId = '{{ sheet_id }}';
+    </script>
+    <script src="{{ url_for('static',filename='script/custom/cardSet.js') }}"></script>
+    <script src="{{ url_for('static',filename='script/custom/cardViewFunctions.js') }}"></script>
+    <script src="{{ url_for('static',filename='script/custom/cardViewOnLoad.js') }}"></script>
 
 </head>
+
 <body>
     {% include 'includes/spinner.html' %}
-	<!-- Content -->
-	<div class="container-fluid">
-        {% include 'includes/navbar.html' %}
+    <!-- Content -->
+    <div class="container-fluid">
+        {% if permission_level == 'super_user' %}
+            {% include 'includes/admin-navbar.html' %}
+        {% elif permission_level == 'user' %}
+            {% include 'includes/loggedin-navbar.html' %}
+        {% else %}
+            {% include 'includes/navbar.html' %}
+        {% endif %}
         <!-- Page Content -->
         <div class="row">
             <!-- Tool Bar -->
@@ -36,24 +45,24 @@
                 </div>
                 <div class="row" style="text-align: center">
                     <div style="display-inline;">
-    		            <div class="no-checkedselector" style="text-align:center;">
-    		                <div id="order-radio" class="toggle-container">
+                        <div class="no-checkedselector" style="text-align:center;">
+                            <div id="order-radio" class="toggle-container">
                                 <input type="radio" class="toggle" name="or-radio" id="ordered" value="ordered">
-                                    <label for="ordered" class="btn order-btn">
-                                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-                                         In Order
-                                    </label>
+                                <label for="ordered" class="btn order-btn">
+                                    <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                                    In Order
+                                </label>
                                 </input>
                                 <input type="radio" class="toggle" name="or-radio" id="random" value="random">
-                                    <label for="random" class="btn order-btn">
-                                        <span class="glyphicon glyphicon-random" aria-hidden="true"></span>
-                                         Random
-                                    </label>
+                                <label for="random" class="btn order-btn">
+                                    <span class="glyphicon glyphicon-random" aria-hidden="true"></span>
+                                    Random
+                                </label>
                                 </input>
                             </div>
                         </div>
                     </div>
-        		</div>
+                </div>
                 <br>
                 <div class="row" style="text-align: center">
                     <button type="button" class="btn btn-default" id="refresh-btn">
@@ -176,85 +185,86 @@
             </div>
         </div>
         {% include 'includes/footer.html' %}
-      	<!-- About Modal -->
-    	<div class="row">
-    	    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="column-select" role="dialog">
-    	        <div class="modal-dialog">
-    	            <!-- Modal content-->
-    	            <div class="modal-content">
-    	                <div class="navbar-collapse modal-header">
-    	                    <h4 style="text-align: center">Select Columns</h4>
-    	                </div>
-    	                <div class="modal-body">
-    						<div class="row modal-row">
-	                          	<div class="col-md-6">
-                                  <p>Front of Card: </p>
-	                            </div>
-	                            <div class="col-md-6">
-			                        <div id="primary-language" class="form-group">
-			                            <select id="primary-list" class="form-control eco-select"></select>
-			                        </div>
-	                            </div>
-	                        </div>
-	                      	<div class="row modal-row">
-	                      		<div class="col-md-6">
-	                          		<p>Back of Card (Primary): </p>
-	                          	</div>
-	                          	<div class="col-md-6">
-	                              	<div id="secondary-language" class="form-group">
-	                                  	<select id="secondary-list" class="form-control eco-select"></select>
-	                              	</div>
-	                          	</div>
-	                      	</div>
-	                      	<div class="row modal-row">
-	                          	<div class="col-md-6">
-	                              	<p>Back of Card (Secondary - optional): </p>
-	                          	</div>
-	                          	<div class="col-md-6">
-	                              	<div id="tertiary-language" class="form-group">
-	                                  	<select id="tertiary-list" class="form-control eco-select"></select>
-	                              	</div>
-	                          	</div>
-	                      	</div>
-	                      	<div class="row modal-row">
-	                      		<div class="col-md-6">
-	                              	<p>Categories (Optional): </p>
-	                          	</div>
-	                          	<div class="col-md-6">
-	                              	<div id="modal-categories" class="form-group">
-	                                  	<select id="modal-categories-list" class="form-control eco-select"></select>
-	                              	</div>
-	                          	</div>
-	                      	</div>
-	                      	<div class="row">
-	                          	<button type="button" class="btn btn-default" id="confirm-btn">Confirm</button>
-	                      	</div>
-						</div>
-	            	</div>
-    	        </div>
-    	    </div>
-    	</div>
-		<div class="row">
-    	    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="error-modal" role="dialog">
-    	        <div class="modal-dialog">
-    	            <!-- Modal content-->
-    	            <div class="modal-content">
-    	                <div class="navbar-collapse modal-header" id="error-modal-header">
-    	                </div>
-    	                <div class="modal-body">
-    						<div class="row modal-row">
-	                          	<div class="col-md-12" id="error-modal-content">
-							  	</div>
-							</div>
-	                      	<div class="row">
-	                          	<a href="/"><button type="button" class="btn btn-default">Go to home page</button></a>
-	                      	</div>
-						</div>
-	            	</div>
-    	        </div>
-    	    </div>
-    	</div>
+        <!-- About Modal -->
+        <div class="row">
+            <div class="modal fade" data-backdrop="static" data-keyboard="false" id="column-select" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="navbar-collapse modal-header">
+                            <h4 style="text-align: center">Select Columns</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row modal-row">
+                                <div class="col-md-6">
+                                    <p>Front of Card: </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="primary-language" class="form-group">
+                                        <select id="primary-list" class="form-control eco-select"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row modal-row">
+                                <div class="col-md-6">
+                                    <p>Back of Card (Primary): </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="secondary-language" class="form-group">
+                                        <select id="secondary-list" class="form-control eco-select"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row modal-row">
+                                <div class="col-md-6">
+                                    <p>Back of Card (Secondary - optional): </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="tertiary-language" class="form-group">
+                                        <select id="tertiary-list" class="form-control eco-select"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row modal-row">
+                                <div class="col-md-6">
+                                    <p>Categories (Optional): </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="modal-categories" class="form-group">
+                                        <select id="modal-categories-list" class="form-control eco-select"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <button type="button" class="btn btn-default" id="confirm-btn">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="modal fade" data-backdrop="static" data-keyboard="false" id="error-modal" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="navbar-collapse modal-header" id="error-modal-header">
+                        </div>
+                        <div class="modal-body">
+                            <div class="row modal-row">
+                                <div class="col-md-12" id="error-modal-content">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <a href="/"><button type="button" class="btn btn-default">Go to home page</button></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-	</div>
+    </div>
 </body>
+
 </html>
