@@ -1,12 +1,6 @@
 import os
 import configparser
 
-# CREATE DATABASE openflashcards;
-# CREATE USER username WITH PASSWORD 'password';
-# GRANT ALL PRIVILEGES ON DATABASE openflashcards TO username;
-# SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'
-# DROP TABLE comment; DROP TABLE rating; DROP TABLE view;  DROP TABLE sheet; DROP TABLE app_user; DROP TABLE app_user_role; DROP TABLE subcategory; DROP TABLE category;
-
 # Get Configuration Settings
 par_dir = os.path.join(__file__, "../..")
 par_dir_abs_path = os.path.abspath(par_dir)

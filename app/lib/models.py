@@ -69,26 +69,32 @@ class sheet(Base):
     s_id = Column(Integer, primary_key=True)
     s_ca_id = Column(Integer)  # ForeignKey(schema_name + '.category.ca_id'), nullable=False)
     s_sca_id = Column(Integer)  # ForeignKey(schema_name + '.subcategory.sca_id'), nullable=False)
-    s_sheet_name = Column(Text)
     s_google_id = Column(String(120), index=True)
+    s_sheet_name = Column(Text)
+    s_owner_name = Column(Text)
+    s_owner_email = Column(Text)
     s_row_count = Column(Integer)
-    s_last_modified = Column(DateTime)
-    s_shared = Column(Boolean)
-    s_date_shared = Column(DateTime)
-    s_hide_sharer = Column(Boolean)
+    s_created_date = Column(DateTime)
+    s_imported_date = Column(DateTime)
+    s_last_modified_date = Column(DateTime)
+    s_is_public = Column(Boolean)
+    s_made_public_date = Column(DateTime)
 
     def __init__(self, s_ca_id=None, s_sca_id=None, s_google_id=None,
-                 s_sheet_name=None, s_row_count=None, s_last_modified=None,
-                 s_shared=None, s_date_shared=None, s_hide_sharer=None):
+                 s_sheet_name=None, s_owner_name=None, s_owner_email=None,
+                 s_row_count=None, s_created_date=None, s_imported_date=None,
+                 s_last_modified_date=None, s_is_public=None, s_made_public_date=None):
         self.s_ca_id = s_ca_id
         self.s_sca_id = s_sca_id
         self.s_google_id = s_google_id
         self.s_sheet_name = s_sheet_name
+        self.s_owner_name = s_owner_name
+        self.s_owner_email = s_owner_email
         self.s_row_count = s_row_count
-        self.s_last_modified = s_last_modified
-        self.s_shared = s_shared
-        self.s_date_shared = s_date_shared
-        self.s_hide_sharer = s_hide_sharer
+        self.s_created_date = s_created_date
+        self.s_last_modified_date = s_last_modified_date
+        self.s_is_public = s_is_public
+        self.s_made_public_date = s_made_public_date
 
 
 class app_user_rel_sheet(Base):

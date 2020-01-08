@@ -10,7 +10,7 @@ from google.oauth2.credentials import Credentials
 from app.lib.models import app_user, app_user_role, db_session
 
 
-def process_login():
+def get_profile_info():
 
     # Get credentials from session
     credentials = Credentials(**session['credentials'])
@@ -20,6 +20,14 @@ def process_login():
 
     # Get profile info
     profile_info = service.userinfo().get().execute()
+
+    return profile_info
+
+
+def process_login():
+
+    # Get profile info
+    profile_info = get_profile_info()
 
     # Parse Information
     email = profile_info['email']
@@ -44,29 +52,21 @@ def process_login():
         db_session.add(current_user)
         db_session.flush()
         db_session.commit()
-
     else:
         current_user.au_last_sign_in = datetime.now()
         db_session.commit()
 
     # Save credentials back in case the access token was refreshed
-    session['credentials'] = credentials_to_dict(credentials)
+    session['au_id'] = current_user.au_id
+    session['email'] = email
+    session['credentials'] = credentials_to_dict(Credentials(**session['credentials']))
 
 
 def check_user_role():
 
-    # Get credentials from session
-    credentials = Credentials(**session['credentials'])
-
-    # Create access object
-    service = build('oauth2', 'v2', credentials=credentials)
-
-    # Get profile info
-    profile_info = service.userinfo().get().execute()
-
     # Check DB for role
     user_role = (db_session.query(app_user, app_user_role)
-                           .filter(app_user.au_email == profile_info['email'])
+                           .filter(app_user.au_email == session['email'])
                            .filter(app_user.au_aur_id == app_user_role.aur_id)
                            .first()).app_user_role.aur_role_name
 

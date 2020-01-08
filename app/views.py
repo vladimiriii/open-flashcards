@@ -66,20 +66,6 @@ def er_page():
     return render_template('error.html')
 
 
-@basic_page.route('/flashcards/<sheet_id>')
-def show_blog(sheet_id):
-    try:
-        if 'credentials' in session:
-            permission_level = pl.check_user_role()
-        else:
-            permission_level = 'guest'
-
-        return render_template('flashcards-template.html', sheet_id=sheet_id, permission_level=permission_level)
-    except:
-        print(pl.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
-
-
 # GOOGLE API INTERACTIONS
 @google_api.route('/process-login', methods=['GET'])
 def process_login():
@@ -130,6 +116,20 @@ def oauth2callback():
 
         return redirect(url_for('internal_page.dashboard_page'))
 
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
+@basic_page.route('/flashcards/<sheet_id>')
+def show_blog(sheet_id):
+    try:
+        if 'credentials' in session:
+            permission_level = pl.check_user_role()
+        else:
+            permission_level = 'guest'
+
+        return render_template('flashcards-template.html', sheet_id=sheet_id, permission_level=permission_level)
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
@@ -204,6 +204,17 @@ def get_sheet_lists():
 
 
 # DATA ROUTES
+@google_api.route('/register-sheet', methods=['POST'])
+def register_sheet():
+    try:
+        google_id = request.data.decode('UTF-8')
+        response = ps.import_new_sheet(google_id)
+        return jsonify(response)
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
 @google_api.route('/register-sheet-view', methods=['POST'])
 def save_page():
     try:
@@ -213,12 +224,8 @@ def save_page():
         session['google_id'] = inputs['googleID']
         session.modified = True
 
-        credentials = google.oauth2.service_account.Credentials.from_service_account_file(
-            SERVICE_ACCOUNT_FILE,
-            scopes=SCOPES)
-
-        # If scope present, update sheet meta
-        ps.update_sheet_meta(credentials, session['sheet_id'], session['google_id'])
+        ps.update_sheet_metadata(session['sheet_id'], session['google_id'])
+        ps.add_sheet_view(session['sheet_id'])
 
         return jsonify({"status": "Success"})
     except:
