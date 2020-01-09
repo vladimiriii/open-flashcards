@@ -3,9 +3,6 @@ import configparser
 import os
 from flask import Flask
 
-# Custom Libraries
-# import app.lib.database as dbse
-
 
 def create_app():
     # Create the Flask app.

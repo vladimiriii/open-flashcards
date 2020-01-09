@@ -78,6 +78,7 @@ def get_sheet_metadata(google_id):
     metadata['owner_email'] = raw_metadata['owners'][0]['emailAddress']
     metadata['owner_name'] = raw_metadata['owners'][0]['displayName']
     metadata['row_count'] = get_sheet_row_count(google_id)
+    metadata['is_owner'] = metadata['owner_email'] == session['email']
 
     return metadata
 
@@ -99,10 +100,11 @@ def add_new_sheet_entry(metadata):
                          )
     db_session.add(sheet_record)
     db_session.flush()
-    sheet_id = sheet_record.s_id
 
-    # Add Record to User Sheet Rel Table
-    is_owner = metadata['owner_email'] == session['email']
+    return sheet_record.s_id
+
+
+def add_new_user_rel_sheet_entry(sheet_id, is_owner):
     rel_record = app_user_rel_sheet(aurs_au_id=session['au_id'],
                                     aurs_s_id=sheet_id,
                                     aurs_first_view=datetime.now(),
@@ -112,7 +114,8 @@ def add_new_sheet_entry(metadata):
     db_session.add(rel_record)
     db_session.commit()
 
-    return sheet_id
+    return rel_record.aurs_id
+
 
 def update_sheet_metadata(sheet_id, google_id):
 
@@ -144,31 +147,43 @@ def add_sheet_view(sheet_id):
     db_session.add(view_record)
     db_session.commit()
 
+    return view_record.v_id
+
 
 def import_new_sheet(google_id):
     response = {}
-    # Look for existing record in sheet table
     current_sheet = sheet.query.filter_by(s_google_id=google_id).first()
 
-    if current_sheet is None:
-        try:
-            metadata = get_sheet_metadata(google_id)
+    try:
+        metadata = get_sheet_metadata(google_id)
+
+        if current_sheet is None:
             sheet_id = add_new_sheet_entry(metadata)
+            add_new_user_rel_sheet_entry(sheet_id, metadata['is_owner'])
             response['status'] = 'sheet_imported'
-            response['sheetId'] = str(sheet_id)
-        except HttpError as e:
-            if e.resp.status == 404:
-                response['status'] = 'sheet_not_exist'
-            elif e.resp.status == 400:
-                response['status'] = 'invalid_url'
+        else:
+            sheet_id = current_sheet.s_id
+            update_sheet_metadata(sheet_id, google_id)
+
+            # Check if this user already has relationship to this sheet
+            sheet_rel_user = app_user_rel_sheet.query.filter_by(aurs_s_id=sheet_id, aurs_au_id=session['au_id']).first()
+            if sheet_rel_user is None:
+                add_new_user_rel_sheet_entry(sheet_id, metadata['is_owner'])
+                response['status'] = 'sheet_imported'
             else:
-                response['status'] = 'unknown_error'
-        except Exception as e:
+                response['status'] = 'sheet_already_imported'
+
+        response['sheetId'] = str(sheet_id)
+
+    except HttpError as e:
+        if e.resp.status == 404:
+            response['status'] = 'sheet_not_exist'
+        elif e.resp.status == 400:
+            response['status'] = 'invalid_url'
+        else:
             response['status'] = 'unknown_error'
-    else:
-        sheet_id = current_sheet.s_id
-        update_sheet_metadata(sheet_id, google_id)
-        response['status'] = 'sheet_already_imported'
+    except Exception as e:
+        response['status'] = 'unknown_error'
 
     return response
 

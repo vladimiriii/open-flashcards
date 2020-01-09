@@ -53,7 +53,7 @@ function generateResponseModal(response) {
     const bodyText = "<p>" + responseMap[status]['body'] + "</p>";
     $("#modal-body").append(bodyText);
 
-    if (status == 'sheet_imported') {
+    if (['sheet_imported', 'sheet_already_imported'].includes(status)) {
         const sheetId = response['sheetId'];
         const viewButton = '<a href="./flashcards/' + sheetId + '"><button type="button" class="btn btn-success" id="success-btn">View Cards</button></a>';
         $("#modal-footer").prepend(viewButton);
@@ -88,6 +88,6 @@ responseMap = {
     },
     'sheet_already_imported': {
         'header': "Already Done!",
-        'body': "Looks like someone already imported this sheet!"
+        'body': "Looks like you have already imported this sheet!"
     }
 };
