@@ -12,7 +12,7 @@ On Page Load
 $(document).ready(function(){
 
     // Get Account Structure Data
-    $.when(getSheetLists()).done( function() {
+    $.when(getSheetLists(false)).done( function() {
 
         generateSheetList("public-cards", publicSheetList);
         $('#public-cards').DataTable({
@@ -23,17 +23,6 @@ $(document).ready(function(){
 
         $("#public-cards .table-row").on('click', function () {
             showViewButton("public-cards", this.id, $(this).attr('data-value'));
-        });
-
-        generateSheetList("user-cards", userSheetList);
-        $('#user-cards').DataTable({
-            'order': [[ 1, "desc" ]],
-            'lengthChange': false,
-            'select': 'single'
-        });
-
-        $("#user-cards .table-row").on('click', function () {
-            showViewButton("user-cards", this.id, $(this).attr('data-value'));
         });
     });
 

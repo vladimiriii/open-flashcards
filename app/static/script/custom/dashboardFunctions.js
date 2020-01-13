@@ -1,13 +1,19 @@
-function getSheetLists() {
+function getSheetLists(user_data_needed) {
     $("#spinner").show();
+
+    const data = {"user_data": user_data_needed};
 
     return $.ajax({
         type: "GET",
         url: '/get-sheet-lists',
+        data: data,
         success: function(result) {
             console.log(result);
-            userSheetList = result['user_list'];
             publicSheetList = result['public_list'];
+            if (user_data_needed) {
+                userSheetList = result['user_list'];
+            }
+
             $("#spinner").hide();
         },
         error: function(msg){

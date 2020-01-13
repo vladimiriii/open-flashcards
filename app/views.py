@@ -195,9 +195,12 @@ def create_flashcards_page():
 @google_api.route('/get-sheet-lists', methods=['GET'])
 def get_sheet_lists():
     try:
+        user_data_required = True if request.args['user_data'].lower() == 'true' else False
         public_list = ps.get_public_sheets()
-        user_list = ps.get_user_sheets(session['au_id'])
-        results = {"user_list": user_list, "public_list": public_list}
+        results = {"public_list": public_list, "user_list": None}
+        if user_data_required:
+            user_list = ps.get_user_sheets(session['au_id'])
+            results["user_list"] = user_list
         return jsonify(results)
     except:
         print(pl.generate_error_message(sys.exc_info()))
@@ -220,7 +223,7 @@ def register_sheet():
 def save_page():
     try:
         # Saves Sheet ID to Session
-        inputs = json.loads(request.data)
+        inputs = json.loads(request.json)
         session['sheet_id'] = inputs['sheetID']
         session['google_id'] = inputs['googleID']
         session.modified = True
