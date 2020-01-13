@@ -156,7 +156,7 @@ def admin_page():
             permission_level = pl.check_user_role()
 
             if permission_level == 'super_user':
-                return render_template('admin-page.html')
+                return render_template('sheet-management.html')
             else:
                 return redirect(url_for('internal_page.dashboard_page'))
 
