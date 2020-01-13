@@ -21,7 +21,7 @@ SCOPES = [
 def get_public_sheets():
 
     # Query database
-    public_query = ("""
+    query = ("""
         SELECT s_id,
             s_google_id,
             s_sheet_name,
@@ -40,11 +40,55 @@ def get_public_sheets():
         WHERE s_is_public;
         """)
 
-    public_data = db_session.execute(public_query)
+    data = db_session.execute(query)
 
     # Process Results
     file_list = []
-    for row in public_data:
+    for row in data:
+        file_list.append({
+            'id': row[0],
+            'google_id': row[1],
+            'sheet_name': row[2],
+            'row_count': row[3],
+            'views': row[4],
+            'modified': row[5]})
+
+    return file_list
+
+
+def get_user_sheets(user_id):
+
+    # Query database
+    query = (f"""
+        SELECT s_id,
+            s_google_id,
+            s_sheet_name,
+            s_row_count,
+            COALESCE(views, 0),
+            s_last_modified_date
+        FROM sheet AS s
+        INNER JOIN (
+            SELECT aurs_s_id
+            FROM public.app_user_rel_sheet
+            WHERE aurs_au_id = {user_id}
+            AND NOT aurs_deleted 
+        ) AS aurs
+        ON aurs_s_id = s_id
+        LEFT JOIN (
+            SELECT v_s_id,
+                COUNT(v_id) AS views
+            FROM public.view
+            GROUP BY v_s_id
+            ORDER BY views DESC
+            ) AS vs
+        ON s.s_id = vs.v_s_id;
+        """)
+
+    data = db_session.execute(query)
+
+    # Process Results
+    file_list = []
+    for row in data:
         file_list.append({
             'id': row[0],
             'google_id': row[1],

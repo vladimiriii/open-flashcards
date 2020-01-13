@@ -196,7 +196,8 @@ def create_flashcards_page():
 def get_sheet_lists():
     try:
         public_list = ps.get_public_sheets()
-        results = {"user_list": None, "public_list": public_list}
+        user_list = ps.get_user_sheets(session['au_id'])
+        results = {"user_list": user_list, "public_list": public_list}
         return jsonify(results)
     except:
         print(pl.generate_error_message(sys.exc_info()))

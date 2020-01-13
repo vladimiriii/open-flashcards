@@ -5,6 +5,7 @@ function getSheetLists() {
         type: "GET",
         url: '/get-sheet-lists',
         success: function(result) {
+            console.log(result);
             userSheetList = result['user_list'];
             publicSheetList = result['public_list'];
             $("#spinner").hide();
@@ -44,8 +45,8 @@ function generateSheetList(div, data) {
         colName;
 
     // Create Header
-    for (col in tableMappings[div]["cleanNames"]) {
-        colHeader = tableMappings[div]["cleanNames"][col];
+    for (col in tableMappings["cleanNames"]) {
+        colHeader = tableMappings["cleanNames"][col];
         header = header + '<th>' + colHeader + '</th>';
     }
     header = header + '<th class="confirm-head">Options</th></tr></thead>';
@@ -53,8 +54,8 @@ function generateSheetList(div, data) {
     // Create Data Rows
     for (sheet in data) {
         rows = rows + '<tr class="table-row" data-value="' + data[sheet]['id'] + '" id="' + div.substring(0, 2) + data[sheet]['id'] + '">'
-        for (key in tableMappings[div]["columns"]) {
-            colName = tableMappings[div]["columns"][key];
+        for (key in tableMappings["columns"]) {
+            colName = tableMappings["columns"][key];
             rows = rows + '<td>' + data[sheet][colName] + '</td>';
         };
 
@@ -70,21 +71,16 @@ function generateSheetList(div, data) {
 };
 
 
-function selectRow(div, row_id, sheet_id) {
-    $("td.confirm-col").empty();
+function showViewButton(div, row_id, sheet_id) {
+    $( "#" + div + "-accept").remove();
     var cellID = "#" + String(row_id) + "-opt";
     if (!$("#" + String(row_id)).hasClass("selected")) {
-        // Users Private List
-        if (div == 'public-most-viewed') {
-            // View Button
-            var view_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
-                       + 'id="' + div + '-accept"'
-                       + 'onclick="confirmSelection(' + sheet_id + ', event)">'
-                       + '<span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>'
+        var view_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
+                   + 'id="' + div + '-accept"'
+                   + 'onclick="confirmSelection(' + sheet_id + ', event)">'
+                   + '<span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>'
 
-           // Append Button
-           $(cellID).append(view_button);
-        };
+       $(cellID).append(view_button);
     };
 };
 

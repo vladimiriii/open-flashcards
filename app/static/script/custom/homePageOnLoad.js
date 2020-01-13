@@ -2,7 +2,7 @@
 Global Variables
 -----------------------------------*/
 var publicSheetList,
-    fullSheetList,
+    userSheetList,
     scope_status,
     importComplete = false;
 
@@ -14,28 +14,39 @@ $(document).ready(function(){
     // Get Account Structure Data
     $.when(getSheetLists()).done( function() {
 
-        generateSheetList("public-most-viewed", publicSheetList);
-        $('#public-most-viewed').DataTable({
+        generateSheetList("public-cards", publicSheetList);
+        $('#public-cards').DataTable({
             'order': [[ 1, "desc" ]],
             'lengthChange': false,
             'select': 'single'
         });
 
-        $("#public-most-viewed .table-row").on('click', function () {
-            selectRow("public-most-viewed", this.id, $(this).attr('data-value'));
+        $("#public-cards .table-row").on('click', function () {
+            showViewButton("public-cards", this.id, $(this).attr('data-value'));
+        });
+
+        generateSheetList("user-cards", userSheetList);
+        $('#user-cards').DataTable({
+            'order': [[ 1, "desc" ]],
+            'lengthChange': false,
+            'select': 'single'
+        });
+
+        $("#user-cards .table-row").on('click', function () {
+            showViewButton("user-cards", this.id, $(this).attr('data-value'));
         });
     });
 
-    $('#share-sheet-success-btn').on('click', function() {
-        $('#share-btn-success-modal').modal('hide');
-
-        // Refresh Public Data Table
-        $.when(getSheetLists('initial view')).done( function() {
-            generateSheetList("public-most-viewed", publicSheetList);
-
-            $("#public-most-viewed .table-row").on('click', function () {
-                selectRow("public-most-viewed", this.id, $(this).attr('data-value'));
-            });
-        });
-    });
+//    $('#share-sheet-success-btn').on('click', function() {
+//        $('#share-btn-success-modal').modal('hide');
+//
+//        // Refresh Public Data Table
+//        $.when(getSheetLists('initial view')).done( function() {
+//            generateSheetList("public-cards", publicSheetList);
+//
+//            $("#public-cards .table-row").on('click', function () {
+//                selectRow("public-cards", this.id, $(this).attr('data-value'));
+//            });
+//        });
+//    });
 });
