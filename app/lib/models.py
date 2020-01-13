@@ -202,3 +202,41 @@ class subcategory(Base):
         self.sca_cat_description = sca_cat_description
         self.sca_create_date = sca_create_date
         self.sca_last_modified = sca_last_modified
+
+
+class request(Base):
+    __tablename__ = 'request'
+    __table_args__ = {"schema": schema_name}
+    r_id = Column(Integer, primary_key=True)
+    r_s_id = Column(Integer, ForeignKey(schema_name + '.sheet.s_id'), nullable=False)
+    r_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
+    r_rt_id = Column(Integer, ForeignKey(schema_name + '.request_type.rt_id'), nullable=False)
+    r_create_date = Column(DateTime)
+    r_last_modified = Column(DateTime)
+
+    def __init__(self, r_s_id=None, r_au_id=None, r_rt_id=None,
+                 r_create_date=None, r_last_modified=None):
+        self.r_s_id = r_s_id
+        self.r_au_id = r_au_id
+        self.r_rt_id = r_rt_id
+        self.r_create_date = r_create_date
+        self.r_last_modified = r_last_modified
+
+
+class request_type(Base):
+    __tablename__ = 'request_type'
+    __table_args__ = {"schema": schema_name}
+    rt_id = Column(Integer, primary_key=True)
+    rt_name = Column(String(120))
+    rt_description = Column(Text)
+    rt_create_date = Column(DateTime)
+    rt_last_modified = Column(DateTime)
+
+    def __init__(self, rt_name=None, rt_description=None,
+                 rt_create_date=None, rt_last_modified=None):
+        self.rt_name = rt_name
+        self.rt_description = rt_description
+        self.rt_create_date = rt_create_date
+        self.rt_last_modified = rt_last_modified
+
+

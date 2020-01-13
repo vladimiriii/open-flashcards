@@ -44,6 +44,21 @@ def create_user_roles(eng):
     eng.execute(insert2)
 
 
+def create_request_types(eng):
+    # Create Tables
+    md.Base.metadata.create_all(bind=engine)
+
+    # Create Default User Roles
+    insert1 = md.request_type.__table__.insert().values(
+        rt_name='make_public',
+        rt_description="User has requested to make the sheet available publically.",
+        rt_create_date=datetime.now(),
+        rt_last_modified=datetime.now()
+    )
+
+    eng.execute(insert1)
+
+
 def create_default_users(eng):
     app_dir = os.getcwd()
     config_filepath = app_dir + '/config.cfg'
@@ -83,6 +98,7 @@ if __name__ == '__main__':
     try:
         engine = create_engine(URL(**DATABASE))
         create_user_roles(engine)
+        create_request_types(engine)
         create_default_users(engine)
     except Exception as e:
         print(e)
