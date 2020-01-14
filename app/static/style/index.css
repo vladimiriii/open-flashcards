@@ -11,30 +11,19 @@
 
 /* Header Section */
 #initial-view {
+    padding-left: 15px;
+    padding-right: 15px;
+    min-height: 70vh;
+}
+
+#primary-image {
     width: 100%;
-    height: 60vh;
-}
-
-#primary-header {
-    font-size: 160px;
-    font-family: custom;
-    text-align: center;
-    color: #FF5500;
-}
-
-#tag-line {
-  text-align: center;
-  font-style: italic;
-  font-family: custom;
-}
-
-#header-row {
-    margin-top: 100px;
-}
-
-#btn-row {
-    margin-top: 50px;
-    text-align: center;
+    background-image: url("../img/neurons.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.4;
+    z-index: 1;
 }
 
 #text-overlay {
@@ -42,27 +31,33 @@
     height: 60%;
     position: absolute;
     z-index: 2;
+    left: 50%;
+    transform: translate(-50%, 0);
 }
 
-#primary-image {
-    width: 100%;
-    height: 60%;
-    position: absolute;
-    background-image: url("../img/neurons.jpg");
-    background-position:  center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    opacity: 0.4;
-    z-index: 1;
+#header-row {
+    display: inline;
+    text-align: center;
 }
 
+#primary-header {
+    padding-top: 100px;
+    font-size: 160px;
+    font-family: custom;
+    color: #FF5500;
+}
+
+#tag-line-row {
+    display: inline;
+    text-align: center;
+}
+
+#tag-line {
+  font-style: italic;
+  font-family: custom;
+}
 
 /* Text Sections */
-.section-header {
-    text-align: center;
-    font-size: 50px;
-}
-
 .landing-page-col {
     padding-top: 50px;
     padding-right: 100px;
@@ -70,10 +65,17 @@
     padding-bottom: 50px;
 }
 
-#third-view {
+.section-header {
+    font-size: 50px;
+}
+
+#second-view {
     background-color: #FFFFFF;
 }
 
+#fourth-view {
+    background-color: #FFFFFF;
+}
 
 /* Vertical Alignment for Phones and Tablets */
 @media screen and (max-width: 992px) {
@@ -86,14 +88,17 @@
         font-size: 80px;
     }
 
-    .text-div {
-        text-align: center;
-    }
-    .btn-div {
-        text-align: center;
-    }
-
     .modal-dialog {
         width:95%;
+    }
+}
+
+@media screen and (max-width: 350px) {
+    #primary-header {
+        font-size: 50px;
+    }
+
+    #tag-line {
+      font-size: 20px;
     }
 }

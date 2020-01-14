@@ -26,10 +26,6 @@ function createTables(requirements, lists) {
             'lengthChange': false,
             'select': 'single'
         });
-
-        $("#public-cards .table-row").on('click', function () {
-            showViewButton("public-cards", this.id, $(this).attr('data-value'));
-        });
     }
 
     if (requirements['userSheets']) {
@@ -78,6 +74,8 @@ function generateSheetList(div, data) {
     // Append elements to the Table
     $('#' + div).append(header);
     $('#' + div).append(rows);
+
+    addViewButton(div);
 };
 
 
@@ -100,11 +98,39 @@ function registerSheetView(id, googleID) {
 };
 
 
+function addViewButton(div) {
+    $("#" + div + " .table-row").on('click', function () {
+        showViewButton(div, this.id, $(this).attr('data-value'));
+    });
+}
+
+
 function showViewButton(div, row_id, sheet_id) {
     $( "#" + div + "-accept").remove();
     var cellID = "#" + String(row_id) + "-opt";
     if (!$("#" + String(row_id)).hasClass("selected")) {
-        var view_button = '<button type="button" class="btn btn-success btn-sm confirm-col-btn" '
+        var view_button = '<button type="button" class="btn btn-outline-success btn-sm confirm-col-btn" '
+                   + 'id="' + div + '-accept"'
+                   + 'onclick="confirmSelection(' + sheet_id + ', event)">'
+                   + '<i class="fa fa-play-circle" aria-hidden="true"></i></button>'
+
+       $(cellID).append(view_button);
+    };
+};
+
+
+function addShareButton(div) {
+    $("#" + div + " .table-row").on('click', function () {
+            showShareButton(div, this.id, $(this).attr('data-value'));
+        });
+}
+
+
+function showShareButton(div, row_id, sheet_id) {
+    $( "#" + div + "-share").remove();
+    var cellID = "#" + String(row_id) + "-opt";
+    if (!$("#" + String(row_id)).hasClass("selected")) {
+        var view_button = '<button type="button" class="btn btn-warning btn-sm confirm-col-btn" '
                    + 'id="' + div + '-accept"'
                    + 'onclick="confirmSelection(' + sheet_id + ', event)">'
                    + '<span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>'

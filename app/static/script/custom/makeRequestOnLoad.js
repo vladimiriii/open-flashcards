@@ -7,6 +7,11 @@ On Page Load
 -----------------------------------*/
 $(document).ready(function(){
 
-    getSheetLists({"publicSheets": false, "userSheets": true})
+    $.when(getSheetLists({"publicSheets": false, "userSheets": true})).done(function() {
+
+        addViewButton('user-cards');
+        addShareButton('user-cards');
+
+    })
 
 });
