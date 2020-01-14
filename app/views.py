@@ -168,6 +168,18 @@ def admin_page():
         return redirect(url_for('basic_page.er_page'))
 
 
+@internal_page.route('/make-request')
+def make_request_page():
+    try:
+        if 'credentials' in session:
+            return render_template('make-request.html')
+        else:
+            return redirect(url_for('basic_page.landing_page'))
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
 @internal_page.route('/logout', methods=['GET'])
 def lo_page():
     try:
@@ -195,13 +207,19 @@ def create_flashcards_page():
 @google_api.route('/get-sheet-lists', methods=['GET'])
 def get_sheet_lists():
     try:
-        user_data_required = True if request.args['user_data'].lower() == 'true' else False
-        public_list = ps.get_public_sheets()
-        results = {"public_list": public_list, "user_list": None}
-        if user_data_required:
+        user_data_required = True if request.args['userSheets'].lower() == 'true' else False
+        public_data_required = True if request.args['publicSheets'].lower() == 'true' else False
+
+        if public_data_required:
+            public_list = ps.get_public_sheets()
+        else:
+            public_list = None
+        if user_data_required and 'au_id' in session:
             user_list = ps.get_user_sheets(session['au_id'])
-            results["user_list"] = user_list
-        return jsonify(results)
+        else:
+            user_list = None
+
+        return jsonify({"publicList": public_list, "userList": user_list})
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))

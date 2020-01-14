@@ -12,9 +12,9 @@
     <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/index.css') }}"> -->
 
     <!-- Custom JavaScript -->
+
     <script src="{{ url_for('static',filename='script/custom/dashboardOnLoad.js') }}"></script>
-    <script src="{{ url_for('static',filename='script/custom/dashboardFunctions.js') }}"></script>
-    <script src="{{ url_for('static',filename='script/custom/tableMeta.js') }}"></script>
+<!--    <script src="{{ url_for('static',filename='script/custom/dashboardFunctions.js') }}"></script>-->
 
 </head>
 
@@ -34,6 +34,7 @@
                 <h3>Public Flash Cards</h3>
                 <table id="public-cards" class="display"></table>
                 <h3><a href="/create-flashcards">Create New Cards</a></h3>
+                <h3><a href="/make-request">Make Cards Public</a></h3>
             </div>
         </div>
         {% include 'includes/footer.html' %}
