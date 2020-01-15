@@ -207,19 +207,14 @@ def create_flashcards_page():
 @google_api.route('/get-sheet-lists', methods=['GET'])
 def get_sheet_lists():
     try:
-        user_data_required = True if request.args['userSheets'].lower() == 'true' else False
-        public_data_required = True if request.args['publicSheets'].lower() == 'true' else False
-
-        if public_data_required:
-            public_list = ps.get_public_sheets()
+        data_type = request.args['table']
+        if data_type == "publicSheets":
+            data_rows = ps.get_public_sheets()
+        elif data_type == "userSheets" and 'au_id' in session:
+            data_rows = ps.get_user_sheets(session['au_id'])
         else:
-            public_list = None
-        if user_data_required and 'au_id' in session:
-            user_list = ps.get_user_sheets(session['au_id'])
-        else:
-            user_list = None
-
-        return jsonify({"publicList": public_list, "userList": user_list})
+            data_rows = None
+        return jsonify({"data": data_rows})
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
@@ -241,13 +236,10 @@ def register_sheet():
 def save_page():
     try:
         # Saves Sheet ID to Session
-        inputs = json.loads(request.json)
-        session['sheet_id'] = inputs['sheetID']
-        session['google_id'] = inputs['googleID']
-        session.modified = True
+        inputs = request.json
 
-        ps.update_sheet_metadata(session['sheet_id'], session['google_id'])
-        ps.add_sheet_view(session['sheet_id'])
+        ps.update_sheet_metadata(inputs['sheetID'])
+        ps.add_sheet_view(inputs['sheetID'])
 
         return jsonify({"status": "Success"})
     except:

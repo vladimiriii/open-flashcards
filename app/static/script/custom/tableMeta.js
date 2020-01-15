@@ -1,4 +1,4 @@
-var tableMappings = {
+const tableMappings = {
     "columns": [
         "sheet_name",
         "row_count",
@@ -12,3 +12,9 @@ var tableMappings = {
         "Last Modified"
     ]
 };
+
+const tableList = [
+    "publicSheets",
+    "userSheets"
+]
+

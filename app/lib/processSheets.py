@@ -71,7 +71,7 @@ def get_user_sheets(user_id):
             SELECT aurs_s_id
             FROM public.app_user_rel_sheet
             WHERE aurs_au_id = {user_id}
-            AND NOT aurs_deleted 
+            AND NOT aurs_deleted
         ) AS aurs
         ON aurs_s_id = s_id
         LEFT JOIN (
@@ -122,7 +122,7 @@ def get_sheet_metadata(google_id):
     metadata['owner_email'] = raw_metadata['owners'][0]['emailAddress']
     metadata['owner_name'] = raw_metadata['owners'][0]['displayName']
     metadata['row_count'] = get_sheet_row_count(google_id)
-    metadata['is_owner'] = metadata['owner_email'] == session['email']
+    metadata['is_owner'] = metadata['owner_email'] == session['email'] if 'email' in session else False
 
     return metadata
 
@@ -161,9 +161,10 @@ def add_new_user_rel_sheet_entry(sheet_id, is_owner):
     return rel_record.aurs_id
 
 
-def update_sheet_metadata(sheet_id, google_id):
+def update_sheet_metadata(sheet_id):
 
-    # Get latest sheet meta data
+    google_id = db_session.query(sheet.s_google_id).filter_by(s_id=sheet_id).scalar()
+
     metadata = get_sheet_metadata(google_id)
 
     # Update sheet record with latest metadata
@@ -183,7 +184,8 @@ def add_sheet_view(sheet_id):
                            v_s_id=sheet_id,
                            v_date=datetime.now())
     else:
-        view_record = view(v_au_id=session['au_id'],
+
+        view_record = view(v_au_id=1,
                            v_s_id=sheet_id,
                            v_date=datetime.now())
 
