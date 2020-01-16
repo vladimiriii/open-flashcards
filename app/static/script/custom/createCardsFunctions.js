@@ -55,7 +55,7 @@ function generateResponseModal(response) {
 
     if (['sheet_imported', 'sheet_already_imported'].includes(status)) {
         const sheetId = response['sheetId'];
-        const viewButton = '<a href="./flashcards/' + sheetId + '"><button type="button" class="btn btn-success" id="success-btn">View Cards</button></a>';
+        const viewButton = '<a href="./flashcards/' + sheetId + '"><button type="button" class="btn btn-outline-success" id="success-btn">View Cards</button></a>';
         $("#modal-footer").prepend(viewButton);
     }
 

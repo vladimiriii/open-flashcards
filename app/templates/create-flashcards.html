@@ -12,7 +12,7 @@
     <!-- Custom JavaScript -->
     <script src="{{ url_for('static',filename='script/custom/createCardsFunctions.js') }}"></script>
     <script src="{{ url_for('static',filename='script/custom/createCardsOnLoad.js') }}"></script>
-    
+
 </head>
 <body>
     {% include 'includes/spinner.html' %}
@@ -29,9 +29,7 @@
                 <h4>Option 1 — Google Drive</h4>
                 <textarea class="form-control text-input" id="url-input" rows="1" placeholder="Paste link to Google Sheet here"></textarea>
                 <br>
-                <button type="button" class="btn btn-default" id="submit-btn-opt-1">
-                    <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Submit
-                </button>
+                <button type="button" class="btn btn-outline-success" id="submit-btn-opt-1">Submit</button>
 <!--                <h4>Option 2 — Copy/Paste</h4>-->
 <!--                <textarea class="form-control text-input" rows="16" placeholder="Paste data here"></textarea>-->
 <!--                <br>-->
@@ -51,8 +49,8 @@
                         <div class="modal-body" id="modal-body">
                         </div>
                         <div class="modal-footer" id="modal-footer">
-                            <a href="./"><button type="button" class="btn btn-primary" id="home-btn">Back to Dashboard</button></a>
-                            <button type="button" class="btn btn-secondary" id="close-btn">Close</button>
+                            <a href="./"><button type="button" class="btn btn-outline-info" id="home-btn">Back to Dashboard</button></a>
+                            <button type="button" class="btn btn-outline-warning" id="close-btn">Close</button>
                         </div>
                     </div>
                 </div>

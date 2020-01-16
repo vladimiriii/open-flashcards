@@ -1,3 +1,10 @@
 .text-input {
   line-height: normal;
+  width: 50%;
+}
+
+@media screen and (max-width: 992px) {
+    .text-input {
+      width: 100%;
+    }
 }

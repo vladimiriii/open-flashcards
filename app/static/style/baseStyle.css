@@ -68,10 +68,12 @@ h3, h4, h5 {
     margin-bottom: 20px;
 }
 
+/* Mobile View */
 @media screen and (max-width: 992px) {
     .main-panel {
         padding-right: 20px;
         padding-left: 20px;
+    }
 }
 
 /* Spinner */
