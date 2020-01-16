@@ -31,7 +31,7 @@
     font-size: 25px;
 }
 
-.image-btn {
+/* .image-btn {
     position: relative;
     width: 175px;
     display: inline-block;
@@ -43,7 +43,7 @@
 
 .image-btn:hover {
     background-color: #f0f0f0
-}
+} */
 
 .div-link {
   position:absolute;

@@ -19,15 +19,19 @@
 	{% include 'includes/spinner.html' %}
 	<!-- Content -->
 	<div class="container-fluid">
-		{% include 'includes/loggedin-navbar.html' %}
+		{% if value == 'super_user' %}
+        {% include 'includes/admin-navbar.html' %}
+        {% else %}
+        {% include 'includes/loggedin-navbar.html' %}
+        {% endif %}
 		<div class="row main-panel">
-    	<div class="col-md-12">
-			<h2>Make a Card Set Public</h2>
-			<p>Do you really like your sets of flashcards and think others could really benefit from them? Make a request to release them publicly so that everyone can see them and benefit! Pending a quick review to make sure we protect our younger users, your cards will soon be made available for everyone!</p>
-			<h3>Your Flash Cards</h3>
-			<table id="user-cards" class="display"></table>
-		</div>
-    </div>
+	    	<div class="col-md-12">
+				<h2>Make a Card Set Public</h2>
+				<p>Do you really like your sets of flashcards and think others could really benefit from them? Make a request to release them publicly so that everyone can see them and benefit! Pending a quick review to make sure we protect our younger users, your cards will soon be made available for everyone!</p>
+				<h3>Your Flash Cards</h3>
+				<table id="userSheets" class="display"></table>
+			</div>
+    	</div>
     {% include 'includes/footer.html' %}
 	</div>
 </body>

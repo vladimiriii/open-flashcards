@@ -172,7 +172,8 @@ def admin_page():
 def make_request_page():
     try:
         if 'credentials' in session:
-            return render_template('make-request.html')
+            permission_level = pl.check_user_role()
+            return render_template('make-request.html', value=permission_level)
         else:
             return redirect(url_for('basic_page.landing_page'))
     except:

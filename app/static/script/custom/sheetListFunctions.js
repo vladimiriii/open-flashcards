@@ -1,11 +1,11 @@
-function getSheetLists(table) {
+function getSheetLists(table, additionalButtons) {
     $("#spinner").show();
     $.ajax({
         type: "GET",
         url: '/get-sheet-lists',
         data: {"table": table},
         success: function(result) {
-            createTables(table, result["data"])
+            createTables(table, result["data"], additionalButtons)
         },
         error: function(msg){
             console.log(msg);
@@ -14,7 +14,7 @@ function getSheetLists(table) {
 }
 
 
-function createTables(table, data) {
+function createTables(table, data, additionalButtons) {
     $.when(generateSheetList(table, data)).done(function(){
         $('#' + table).DataTable({
             'order': [[ 2, "desc" ]],
@@ -22,6 +22,12 @@ function createTables(table, data) {
             'select': 'single'
         });
         addViewButton(table);
+
+        if (typeof additionalButtons !== "undefined") {
+            if (additionalButtons.includes("shareButton")) {
+                addShareButton(table);
+            }
+        }
         $("#spinner").hide();
     });
 }
@@ -61,6 +67,7 @@ function generateSheetList(div, data) {
 }
 
 
+// VIEW BUTTON FUNCTIONS
 function addViewButton(div) {
     $("#" + div + " .table-row").on('click', function () {
         showViewButton(div, this.id, $(this).attr('data-value'));
@@ -69,41 +76,20 @@ function addViewButton(div) {
 
 
 function showViewButton(div, row_id, sheet_id) {
-    $( "#" + div + "-accept").remove();
-    var cellID = "#" + String(row_id) + "-opt";
+    $( "#" + div + "-view").remove();
+    const cellID = "#" + String(row_id) + "-opt";
     if (!$("#" + String(row_id)).hasClass("selected")) {
         var view_button = '<button type="button" class="btn btn-outline-success btn-sm confirm-col-btn" '
-                   + 'id="' + div + '-accept"'
-                   + 'onclick="confirmSelection(' + sheet_id + ', event)">'
-                   + '<i class="fa fa-play-circle" aria-hidden="true"></i></button>'
+                   + 'id="' + div + '-view"'
+                   + 'onclick="viewSheet(' + sheet_id + ', event)">'
+                   + '<i class="fa fa-play" aria-hidden="true"></i></button>'
 
        $(cellID).append(view_button);
     }
 }
 
 
-function addShareButton(div) {
-    $("#" + div + " .table-row").on('click', function () {
-            showShareButton(div, this.id, $(this).attr('data-value'));
-    });
-}
-
-
-function showShareButton(div, row_id, sheet_id) {
-    $( "#" + div + "-share").remove();
-    var cellID = "#" + String(row_id) + "-opt";
-    if (!$("#" + String(row_id)).hasClass("selected")) {
-        var view_button = '<button type="button" class="btn btn-warning btn-sm confirm-col-btn" '
-                   + 'id="' + div + '-accept"'
-                   + 'onclick="confirmSelection(' + sheet_id + ', event)">'
-                   + '<span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>'
-
-       $(cellID).append(view_button);
-    }
-}
-
-
-function confirmSelection(id, event) {
+function viewSheet(id, event) {
 
     event.stopPropagation();
     $.when(registerSheetView(id)).done( function() {
@@ -128,4 +114,31 @@ function registerSheetView(id) {
             $("#spinner").hide();
         }
     })
+}
+
+
+function addShareButton(div) {
+    $("#" + div + " .table-row").on('click', function () {
+            showShareButton(div, this.id, $(this).attr('data-value'));
+    });
+}
+
+// SHARE BUTTON FUNCTIONS
+function showShareButton(div, row_id, sheet_id) {
+    $( "#" + div + "-share").remove();
+    const cellID = "#" + String(row_id) + "-opt";
+    if (!$("#" + String(row_id)).hasClass("selected")) {
+        const share_button = '<button type="button" class="btn btn-outline-warning btn-sm confirm-col-btn" '
+                   + 'id="' + div + '-share"'
+                   + 'onclick="makeSheetPublic(' + sheet_id + ', event)">'
+                   + '<i class="fa fa-share-alt" aria-hidden="true"></i></button>'
+
+       $(cellID).append(share_button);
+    }
+}
+
+
+function makeSheetPublic(id, event) {
+    event.stopPropagation();
+    console.log("Pop up the modal!");
 }
