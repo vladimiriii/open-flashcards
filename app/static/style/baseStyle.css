@@ -15,6 +15,11 @@ body {
 }
 
 /* Body */
+.main-panel {
+    padding-right: 100px;
+    padding-left: 100px;
+}
+
 h3, h4, h5 {
   margin-top: 50px;
   margin-bottom: 30px;
@@ -27,6 +32,12 @@ h3, h4, h5 {
     width:100%;
     background-color: #FFFFFF;
     -webkit-box-shadow: inset 0 2px 0 rgba(255, 255, 255, .15), 0 2px 5px rgba(0, 0, 0, .075);
+}
+
+@media screen and (max-width: 992px) {
+    .main-panel {
+        padding-right: 20px;
+        padding-left: 20px;
 }
 
 .share-btn {

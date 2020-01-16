@@ -1,12 +1,16 @@
 /*-----------------------------------
 Global Variables
 -----------------------------------*/
+const page = 'dashboard'
 
 /*-----------------------------------
 On Page Load
 -----------------------------------*/
 $(document).ready(function(){
 
-    getSheetLists({"publicSheets": true, "userSheets": true})
+    $("#" + page).attr('class', 'active');
+
+    getSheetLists("publicSheets");
+    getSheetLists("userSheets");
 
 });
