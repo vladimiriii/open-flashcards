@@ -4,7 +4,7 @@ from googleapiclient.discovery import build
 import google.oauth2.service_account
 from googleapiclient.errors import HttpError
 
-from app.lib.models import db_session  # view, app_user_rel_sheet
+from app.lib.models import db_session, sheet
 from app.lib.errorLookup import error_lookup
 
 
@@ -40,25 +40,9 @@ def get_data(id):
     return final_data
 
 
-def get_google_id(id):
+def get_google_id(sheet_id):
 
-    # Query database
-    query = (f"""
-        SELECT s_google_id
-        FROM sheet
-        WHERE s_id = {id}
-        LIMIT 1;
-        """)
-
-    try:
-        query_data = db_session.execute(query).first()
-    except:
-        query_data = None
-
-    if query_data is not None:
-        google_id = query_data[0]
-    else:
-        google_id = None
+    google_id = db_session.query(sheet.s_google_id).filter_by(s_id=sheet_id).scalar()
 
     return google_id
 

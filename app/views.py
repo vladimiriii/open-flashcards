@@ -248,6 +248,17 @@ def save_page():
         return redirect(url_for('basic_page.er_page'))
 
 
+@google_api.route('/get-sheet-info', methods=['GET'])
+def sheet_data():
+    try:
+        sheet_id = request.args['sheetId']
+        google_id = cd.get_google_id(sheet_id)
+        return jsonify({"googleId": google_id})
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
 @google_api.route('/card-data', methods=['POST'])
 def output_card_data():
     try:

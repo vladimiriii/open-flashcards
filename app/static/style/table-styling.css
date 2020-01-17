@@ -70,3 +70,13 @@
 #placeholder {
     width: 40%;
 }
+
+#copy-icon {
+    color: blue;
+    cursor: pointer;
+    font-size: 17px;
+}
+
+#copy-icon:hover {
+    color: purple;
+}
