@@ -45,15 +45,25 @@ function generateShareModal(id) {
     generateSheetLink(id);
 
     // Submit Button
-    $("#modalSubmit").on("click", function() {
+    $('#modalSubmit:not(.bound)').addClass('bound').click(function() {
         submitShareRequest();
     });
 }
 
 
-function submitShareRequest(id) {
+function submitShareRequest() {
     const googleId = $("#modalSubmit").val();
-    console.log(googleId);
+    $.ajax({
+        type: "GET",
+        url: '/make-share-request',
+        data: {"googleId": googleId},
+        success: function(result) {
+            console.log(result);
+        },
+        error: function(msg){
+            console.log(msg);
+        }
+    })
 }
 
 

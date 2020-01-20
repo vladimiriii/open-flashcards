@@ -259,6 +259,17 @@ def sheet_data():
         return redirect(url_for('basic_page.er_page'))
 
 
+@google_api.route('/make-share-request', methods=['GET'])
+def make_share_request():
+    try:
+        google_id = request.args['googleId']
+        result = ps.check_sheet_availability(google_id)
+        return jsonify({"result": result})
+    except:
+        print(pl.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
 @google_api.route('/card-data', methods=['POST'])
 def output_card_data():
     try:

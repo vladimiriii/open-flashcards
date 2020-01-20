@@ -19,8 +19,6 @@ SCOPES = [
 
 
 def get_public_sheets():
-
-    # Query database
     query = ("""
         SELECT s_id,
             s_google_id,
@@ -57,8 +55,6 @@ def get_public_sheets():
 
 
 def get_user_sheets(user_id):
-
-    # Query database
     query = (f"""
         SELECT s_id,
             s_google_id,
@@ -101,13 +97,10 @@ def get_user_sheets(user_id):
 
 
 def get_sheet_metadata(google_id):
-
-    # Get Data
     credentials = google.oauth2.service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE,
         scopes=SCOPES)
 
-    # Create access object
     service = build('drive', 'v3', credentials=credentials)
 
     fields = "name, createdTime, modifiedTime, owners"
@@ -128,7 +121,6 @@ def get_sheet_metadata(google_id):
 
 
 def add_new_sheet_entry(metadata):
-
     sheet_record = sheet(s_ca_id=None,
                          s_sca_id=None,
                          s_google_id=metadata['google_id'],
@@ -162,7 +154,6 @@ def add_new_user_rel_sheet_entry(sheet_id, is_owner):
 
 
 def update_sheet_metadata(sheet_id):
-
     google_id = db_session.query(sheet.s_google_id).filter_by(s_id=sheet_id).scalar()
 
     metadata = get_sheet_metadata(google_id)
@@ -178,7 +169,6 @@ def update_sheet_metadata(sheet_id):
 
 
 def add_sheet_view(sheet_id):
-
     if 'au_id' in session:
         view_record = view(v_au_id=session['au_id'],
                            v_s_id=sheet_id,
@@ -235,12 +225,10 @@ def import_new_sheet(google_id):
 
 
 def get_sheet_row_count(google_id):
-
     credentials = google.oauth2.service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE,
         scopes=SCOPES)
 
-    # Create access object
     service = build('sheets', 'v4', credentials=credentials)
 
     # Get sheet row count
@@ -248,3 +236,19 @@ def get_sheet_row_count(google_id):
     result = service.spreadsheets().values().get(spreadsheetId=google_id, range=rangeName).execute()
 
     return len(result.get('values', []))
+
+
+def check_sheet_availability(google_id):
+    response = {}
+    try:
+        get_sheet_metadata(google_id)
+        response['status'] = "sheet_accessible"
+    except HttpError as e:
+        if e.resp.status == 404:
+            response['status'] = 'sheet_not_accessible'
+        else:
+            response['status'] = 'unknown_error'
+    except Exception:
+        response['status'] = 'unknown_error'
+
+    return response
