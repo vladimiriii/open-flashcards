@@ -30,6 +30,7 @@ function makeSheetPublic(id, event) {
 
 function generateShareModal(id) {
     $("#service-account").empty();
+    $("#sheet-link").empty();
     const handle = "guest-user";
     const domain = "flashcard-app-166512.iam.gserviceaccount.com";
     $("#service-account").append(handle + "@" + domain);
@@ -40,26 +41,33 @@ function generateShareModal(id) {
         navigator.clipboard.writeText(value);
     });
 
+    // Generate sheet link
+    generateSheetLink(id);
+
     // Submit Button
     $("#modalSubmit").on("click", function() {
-        submitShareRequest(id);
+        submitShareRequest();
     });
 }
 
 
 function submitShareRequest(id) {
-    $.when(getSheetInfo(id)).done(function() {
-        console.log("Done!");
-    })
+    const googleId = $("#modalSubmit").val();
+    console.log(googleId);
 }
 
-function getSheetInfo(id) {
+
+function generateSheetLink(id) {
+    const base_url = "https://docs.google.com/spreadsheets/d/";
     $.ajax({
         type: "GET",
         url: '/get-sheet-info',
         data: {"sheetId": id},
         success: function(result) {
-            console.log(result);
+            const url = base_url + result['googleId'];
+            const html = 'Link to Spreadsheet: <a target="_blank" href=' + url + '>' + url + '</a>';
+            $("#sheet-link").append(html);
+            $("#modalSubmit").val(result['googleId']);
         },
         error: function(msg){
             console.log(msg);
