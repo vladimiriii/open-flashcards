@@ -35,7 +35,7 @@ def get_public_sheets():
             ORDER BY views DESC
             ) AS vs
         ON s.s_id = vs.v_s_id
-        WHERE s_is_public;
+        WHERE s_ss_id = 3;
         """)
 
     data = db_session.execute(query)
@@ -65,7 +65,7 @@ def get_user_sheets(user_id):
         FROM sheet AS s
         INNER JOIN (
             SELECT aurs_s_id
-            FROM public.app_user_rel_sheet
+            FROM app_user_rel_sheet
             WHERE aurs_au_id = {user_id}
             AND NOT aurs_deleted
         ) AS aurs
@@ -121,18 +121,17 @@ def get_sheet_metadata(google_id):
 
 
 def add_new_sheet_entry(metadata):
-    sheet_record = sheet(s_ca_id=None,
+    sheet_record = sheet(s_ss_id=1,
+                         s_ca_id=None,
                          s_sca_id=None,
                          s_google_id=metadata['google_id'],
                          s_sheet_name=metadata['sheet_name'],
                          s_owner_name=metadata['owner_name'],
                          s_owner_email=metadata['owner_email'],
                          s_row_count=metadata['row_count'],
-                         s_imported_date=datetime.utcnow(),
                          s_created_date=metadata['created_date'],
                          s_last_modified_date=metadata['last_modified'],
-                         s_is_public=True,
-                         s_made_public_date=datetime.utcnow()
+                         s_imported_date=datetime.utcnow()
                          )
     db_session.add(sheet_record)
     db_session.flush()
@@ -252,3 +251,9 @@ def check_sheet_availability(google_id):
         response['status'] = 'unknown_error'
 
     return response
+
+
+def update_sheet_status(google_id, status):
+    sheet_record = sheet.query.filter_by(s_google_id=google_id).first()
+    sheet_record.s_ss_id = status
+    db_session.commit()

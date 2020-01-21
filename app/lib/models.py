@@ -63,29 +63,44 @@ class app_user(Base):
         self.au_is_deleted = au_is_deleted
 
 
+class sheet_status(Base):
+    __tablename__ = 'sheet_status'
+    __table_args__ = {"schema": schema_name}
+    ss_id = Column(Integer, primary_key=True)
+    ss_status_name = Column(String(120))
+    ss_status_description = Column(Text)
+    ss_create_date = Column(DateTime)
+    ss_last_modified = Column(DateTime)
+
+    def __init__(self, ss_status_name=None, ss_status_description=None, ss_create_date=None, ss_last_modified=None):
+        self.ss_status_name = ss_status_name
+        self.ss_status_description = ss_status_description
+        self.ss_create_date = ss_create_date
+        self.ss_last_modified = ss_last_modified
+
+
 class sheet(Base):
     __tablename__ = 'sheet'
     __table_args__ = {"schema": schema_name}
     s_id = Column(Integer, primary_key=True)
-    s_ca_id = Column(Integer)  # ForeignKey(schema_name + '.category.ca_id'), nullable=False)
-    s_sca_id = Column(Integer)  # ForeignKey(schema_name + '.subcategory.sca_id'), nullable=False)
+    s_ss_id = Column(Integer, ForeignKey(schema_name + '.sheet_status.ss_id'), nullable=False)
+    s_ca_id = Column(Integer)  # , ForeignKey(schema_name + '.category.ca_id'), nullable=False)
+    s_sca_id = Column(Integer)  # , ForeignKey(schema_name + '.subcategory.sca_id'), nullable=False)
     s_google_id = Column(String(120), index=True)
     s_sheet_name = Column(Text)
     s_owner_name = Column(Text)
     s_owner_email = Column(Text)
     s_row_count = Column(Integer)
     s_created_date = Column(DateTime)
-    s_imported_date = Column(DateTime)
     s_last_modified_date = Column(DateTime)
-    s_is_public = Column(Boolean)
-    s_made_public_date = Column(DateTime)
+    s_imported_date = Column(DateTime)
 
-    def __init__(self, s_ca_id=None, s_sca_id=None, s_google_id=None,
-                 s_sheet_name=None, s_owner_name=None, s_owner_email=None,
-                 s_row_count=None, s_created_date=None, s_imported_date=None,
-                 s_last_modified_date=None, s_is_public=None, s_made_public_date=None):
+    def __init__(self, s_ca_id=None, s_sca_id=None, s_ss_id=None, s_google_id=None, s_sheet_name=None,
+                 s_owner_name=None, s_owner_email=None, s_row_count=None, s_created_date=None,
+                 s_last_modified_date=None, s_imported_date=None):
         self.s_ca_id = s_ca_id
         self.s_sca_id = s_sca_id
+        self.s_ss_id = s_ss_id
         self.s_google_id = s_google_id
         self.s_sheet_name = s_sheet_name
         self.s_owner_name = s_owner_name
@@ -93,8 +108,7 @@ class sheet(Base):
         self.s_row_count = s_row_count
         self.s_created_date = s_created_date
         self.s_last_modified_date = s_last_modified_date
-        self.s_is_public = s_is_public
-        self.s_made_public_date = s_made_public_date
+        self.s_imported_date = s_imported_date
 
 
 class app_user_rel_sheet(Base):
@@ -202,41 +216,3 @@ class subcategory(Base):
         self.sca_cat_description = sca_cat_description
         self.sca_create_date = sca_create_date
         self.sca_last_modified = sca_last_modified
-
-
-class request(Base):
-    __tablename__ = 'request'
-    __table_args__ = {"schema": schema_name}
-    r_id = Column(Integer, primary_key=True)
-    r_s_id = Column(Integer, ForeignKey(schema_name + '.sheet.s_id'), nullable=False)
-    r_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
-    r_rt_id = Column(Integer, ForeignKey(schema_name + '.request_type.rt_id'), nullable=False)
-    r_create_date = Column(DateTime)
-    r_last_modified = Column(DateTime)
-
-    def __init__(self, r_s_id=None, r_au_id=None, r_rt_id=None,
-                 r_create_date=None, r_last_modified=None):
-        self.r_s_id = r_s_id
-        self.r_au_id = r_au_id
-        self.r_rt_id = r_rt_id
-        self.r_create_date = r_create_date
-        self.r_last_modified = r_last_modified
-
-
-class request_type(Base):
-    __tablename__ = 'request_type'
-    __table_args__ = {"schema": schema_name}
-    rt_id = Column(Integer, primary_key=True)
-    rt_name = Column(String(120))
-    rt_description = Column(Text)
-    rt_create_date = Column(DateTime)
-    rt_last_modified = Column(DateTime)
-
-    def __init__(self, rt_name=None, rt_description=None,
-                 rt_create_date=None, rt_last_modified=None):
-        self.rt_name = rt_name
-        self.rt_description = rt_description
-        self.rt_create_date = rt_create_date
-        self.rt_last_modified = rt_last_modified
-
-

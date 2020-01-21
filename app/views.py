@@ -236,12 +236,9 @@ def register_sheet():
 @google_api.route('/register-sheet-view', methods=['POST'])
 def save_page():
     try:
-        # Saves Sheet ID to Session
         inputs = request.json
-
         ps.update_sheet_metadata(inputs['sheetID'])
         ps.add_sheet_view(inputs['sheetID'])
-
         return jsonify({"status": "Success"})
     except:
         print(pl.generate_error_message(sys.exc_info()))
@@ -259,12 +256,21 @@ def sheet_data():
         return redirect(url_for('basic_page.er_page'))
 
 
-@google_api.route('/make-share-request', methods=['GET'])
+@google_api.route('/make-share-request', methods=['POST'])
 def make_share_request():
     try:
-        google_id = request.args['googleId']
+        input = json.loads(request.data)
+        google_id = input['googleId']
         result = ps.check_sheet_availability(google_id)
-        return jsonify({"result": result})
+        if 'credentials' in session and result['status'] == 'sheet_accessible':
+            permission_level = pl.check_user_role()
+            if permission_level == 'super_user':
+                ps.update_sheet_status(google_id, 3)
+                result['status'] = 'sheet_made_public'
+            else:
+                ps.update_sheet_status(google_id, 2)
+
+        return jsonify(result)
     except:
         print(pl.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))

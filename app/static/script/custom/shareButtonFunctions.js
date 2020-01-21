@@ -51,22 +51,6 @@ function generateShareModal(id) {
 }
 
 
-function submitShareRequest() {
-    const googleId = $("#modalSubmit").val();
-    $.ajax({
-        type: "GET",
-        url: '/make-share-request',
-        data: {"googleId": googleId},
-        success: function(result) {
-            console.log(result);
-        },
-        error: function(msg){
-            console.log(msg);
-        }
-    })
-}
-
-
 function generateSheetLink(id) {
     const base_url = "https://docs.google.com/spreadsheets/d/";
     $.ajax({
@@ -83,4 +67,55 @@ function generateSheetLink(id) {
             console.log(msg);
         }
     })
+}
+
+
+function submitShareRequest() {
+    const googleId = $("#modalSubmit").val();
+    $("#spinner").show();
+    $.ajax({
+        type: "POST",
+        url: '/make-share-request',
+        data: JSON.stringify({"googleId": googleId}),
+        contentType: 'application/json',
+        success: function(result) {
+            $("#spinner").hide();
+            console.log(result);
+            showShareRequestResult(result['status']);
+        },
+        error: function(msg){
+            console.log(msg);
+        }
+    })
+}
+
+
+function showShareRequestResult(status) {
+    $('#shareModal').modal('hide');
+    $('#feedbackModal').modal('show');
+
+    if (status == 'sheet_accessible') {
+        const header = 'Success!';
+        $("#feedbackModalLabel").text(header);
+        const body = "A request has been sent to make your sheet available to everyone, subject to a quick review.";
+        $("#feedbackModalBody").text(body);
+    }
+    else if (status == 'sheet_made_public') {
+        const header = 'Success!';
+        $("#feedbackModalLabel").text(header);
+        const body = "Your sheet is now available for everyone to see!";
+        $("#feedbackModalBody").text(body);
+    }
+    else if (status == 'sheet_not_accessible') {
+        const header = 'Uh oh...';
+        $("#feedbackModalLabel").text(header);
+        const body = "We couldn't access this sheet. Please make sure it has been shared with everyone (with the link) or with the email provided.";
+        $("#feedbackModalBody").text(body);
+    }
+    else {
+        const header = 'Uh oh...';
+        $("#feedbackModalLabel").text(header);
+        const body = "Something unexpected went wrong. Please try again later, and if you still have issues, contact our support.";
+        $("#feedbackModalBody").text(body);
+    }
 }

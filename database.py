@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 from app.lib.databaseConfig import DATABASE
 
 # Database Models
-from app.lib.models import Base, db_session, app_user_role, app_user, request_type
+from app.lib.models import Base, db_session, app_user_role, app_user, sheet_status
 
 # ---------------------------------------------
 # Steps to recreate database
@@ -56,17 +56,29 @@ def create_user_roles():
     return super_user_aur_id, guest_user_aur_id
 
 
-def create_request_types():
-
-    # Create Default User Roles
-    request_1 = request_type(
-        rt_name='make_public',
-        rt_description="User has requested to make the sheet available publically.",
-        rt_create_date=datetime.now(),
-        rt_last_modified=datetime.now()
+def create_sheet_status_defaults():
+    status_1 = sheet_status(
+        ss_status_name='private',
+        ss_status_description="Sheet can only be seen by user who added the sheet",
+        ss_create_date=datetime.now(),
+        ss_last_modified=datetime.now()
+    )
+    status_2 = sheet_status(
+        ss_status_name='public_requested',
+        ss_status_description="User has requested to make the sheet available publically.",
+        ss_create_date=datetime.now(),
+        ss_last_modified=datetime.now()
+    )
+    status_3 = sheet_status(
+        ss_status_name='public',
+        ss_status_description="Sheet is viewable by all users.",
+        ss_create_date=datetime.now(),
+        ss_last_modified=datetime.now()
     )
 
-    db_session.add(request_1)
+    db_session.add(status_1)
+    db_session.add(status_2)
+    db_session.add(status_3)
     db_session.commit()
 
 
@@ -113,7 +125,7 @@ if __name__ == '__main__':
 
         super_user_aur_id, guest_user_aur_id = create_user_roles()
         create_default_users(super_user_aur_id, guest_user_aur_id)
-        create_request_types()
+        create_sheet_status_defaults()
 
     except Exception as e:
         print(e)
