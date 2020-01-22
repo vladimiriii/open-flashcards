@@ -1,40 +1,79 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from flask import session
+from flask import session, url_for, request
 
 # Google API
 from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
 
 # Custom Libraries
-from app.lib.models import app_user, app_user_role, db_session
+from app.lib.models import app_user, db_session
+from app.lib import utils
+
+# Service Account Key and Scopes
+CLIENT_SECRETS_FILE = "app/static/data/private/client_secret.json"
+SERVICE_ACCOUNT_FILE = "app/static/data/private/service_account.json"
+SCOPES = [
+    'openid email profile',
+    'https://www.googleapis.com/auth/spreadsheets.readonly',
+    'https://www.googleapis.com/auth/drive.readonly'
+]
+
+
+def process_login():
+    # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
+    flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
+
+    flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
+
+    authorization_url, state = flow.authorization_url(
+        access_type='offline',  # Refresh an access token without re-prompting the user for permission.
+        include_granted_scopes='true'  # Enable incremental authorization
+    )
+
+    # Store the state so the callback can verify the auth server response.
+    session['state'] = state
+
+    return authorization_url
+
+
+def handle_callback():
+    # Specify the state when creating the flow in the callback so that it can
+    # verified in the authorization server response.
+    state = session['state']
+
+    flow = Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE,
+        scopes=SCOPES,
+        state=state
+    )
+
+    flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
+
+    # Use the authorization server's response to fetch the OAuth 2.0 tokens.
+    authorization_response = request.url
+    flow.fetch_token(authorization_response=authorization_response)
+
+    # Store credentials in the session.
+    credentials = flow.credentials
+    session['credentials'] = utils.credentials_to_dict(credentials)
 
 
 def get_profile_info():
-
-    # Get credentials from session
     credentials = Credentials(**session['credentials'])
-
-    # Create access object
     service = build('oauth2', 'v2', credentials=credentials)
-
-    # Get profile info
     profile_info = service.userinfo().get().execute()
+    session['credentials'] = utils.credentials_to_dict(credentials)
 
     return profile_info
 
 
-def process_login():
-
-    # Get profile info
+def update_user_info():
     profile_info = get_profile_info()
-
-    # Parse Information
     email = profile_info['email']
     first_name = profile_info['given_name']
     last_name = profile_info['family_name']
-
-    # Lookup user
     current_user = app_user.query.filter_by(au_email=email).first()
 
     if current_user is None:
@@ -56,34 +95,5 @@ def process_login():
         current_user.au_last_sign_in = datetime.now()
         db_session.commit()
 
-    # Save credentials back in case the access token was refreshed
     session['au_id'] = current_user.au_id
     session['email'] = email
-    session['credentials'] = credentials_to_dict(Credentials(**session['credentials']))
-
-
-def check_user_role():
-
-    # Check DB for role
-    user_role = (db_session.query(app_user, app_user_role)
-                           .filter(app_user.au_email == session['email'])
-                           .filter(app_user.au_aur_id == app_user_role.aur_id)
-                           .first()).app_user_role.aur_role_name
-
-    return user_role
-
-
-def credentials_to_dict(credentials):
-    return {
-        'token': credentials.token,
-        'refresh_token': credentials.refresh_token,
-        'token_uri': credentials.token_uri,
-        'client_id': credentials.client_id,
-        'client_secret': credentials.client_secret,
-        'scopes': credentials.scopes}
-
-
-def generate_error_message(sys_info):
-    message = "ERROR FOUND\nError Type: \"" + str(sys_info[0]) + "\"\nError Value: \"" + str(
-        sys_info[1]) + "\"\nError Traceback: \"" + str(sys_info[2]) + "\""
-    return message

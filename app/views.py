@@ -3,15 +3,11 @@ from flask import Blueprint, jsonify, json, render_template, session, redirect, 
 import os
 import sys
 
-# Google API
-import google.oauth2.credentials
-import google.oauth2.service_account
-import google_auth_oauthlib.flow
-
 # Custom Libraries
 import app.lib.cardData as cd
 import app.lib.processLogin as pl
 import app.lib.processSheets as ps
+from app.lib import utils
 
 os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = 'YES'
 
@@ -19,15 +15,6 @@ os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = 'YES'
 basic_page = Blueprint('basic_page', __name__)
 internal_page = Blueprint('internal_page', __name__)
 google_api = Blueprint('google_api', __name__)
-
-# Service Account Key and Scopes
-CLIENT_SECRETS_FILE = "app/static/data/private/client_secret.json"
-SERVICE_ACCOUNT_FILE = "app/static/data/private/service_account.json"
-SCOPES = [
-    'openid email profile',
-    # 'https://www.googleapis.com/auth/spreadsheets.readonly',
-    # 'https://www.googleapis.com/auth/drive.readonly'
-]
 
 
 # BASIC PAGES
@@ -39,7 +26,7 @@ def landing_page():
         else:
             return render_template('index.html')
     except:
-        print(pl.generate_error_message(sys.exc_info()))
+        print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 
@@ -48,7 +35,7 @@ def pp_page():
     try:
         return render_template('privacy_policy.html')
     except:
-        print(pl.generate_error_message(sys.exc_info()))
+        print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 
@@ -57,7 +44,7 @@ def tc_page():
     try:
         return render_template('terms_conditions.html')
     except:
-        print(pl.generate_error_message(sys.exc_info()))
+        print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 
@@ -68,56 +55,23 @@ def er_page():
 
 # GOOGLE API INTERACTIONS
 @google_api.route('/process-login', methods=['GET'])
-def process_login():
+def start_login():
     try:
-        # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
-        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
-
-        flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
-
-        authorization_url, state = flow.authorization_url(
-            access_type='offline',  # Refresh an access token without re-prompting the user for permission.
-            include_granted_scopes='true'  # Enable incremental authorization
-        )
-
-        # Store the state so the callback can verify the auth server response.
-        session['state'] = state
-
+        authorization_url = pl.process_login()
         return redirect(authorization_url)
-
     except:
-        print(pl.generate_error_message(sys.exc_info()))
+        print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 
 @google_api.route('/oauth2callback')
 def oauth2callback():
     try:
-        # Specify the state when creating the flow in the callback so that it can
-        # verified in the authorization server response.
-        state = session['state']
-
-        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-            CLIENT_SECRETS_FILE,
-            scopes=SCOPES,
-            state=state
-        )
-
-        flow.redirect_uri = url_for('google_api.oauth2callback', _external=True)
-
-        # Use the authorization server's response to fetch the OAuth 2.0 tokens.
-        authorization_response = request.url
-        flow.fetch_token(authorization_response=authorization_response)
-
-        # Store credentials in the session.
-        credentials = flow.credentials
-        session['credentials'] = pl.credentials_to_dict(credentials)
-        pl.process_login()
-
+        pl.handle_callback()
+        pl.update_user_info()
         return redirect(url_for('internal_page.dashboard_page'))
-
     except:
-        print(pl.generate_error_message(sys.exc_info()))
+        print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 
@@ -125,13 +79,13 @@ def oauth2callback():
 def show_blog(sheet_id):
     try:
         if 'credentials' in session:
-            permission_level = pl.check_user_role()
+            permission_level = utils.check_user_role()
         else:
             permission_level = 'guest'
 
         return render_template('flashcards-template.html', sheet_id=sheet_id, permission_level=permission_level)
     except:
-        print(pl.generate_error_message(sys.exc_info()))
+        print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 
@@ -140,12 +94,12 @@ def show_blog(sheet_id):
 def dashboard_page():
     try:
         if 'credentials' in session:
-            permission_level = pl.check_user_role()
+            permission_level = utils.check_user_role()
             return render_template('dashboard.html', value=permission_level)
         else:
             return redirect(url_for('basic_page.landing_page'))
     except:
-        print(pl.generate_error_message(sys.exc_info()))
+        print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 
@@ -153,7 +107,7 @@ def dashboard_page():
 def admin_page():
     try:
         if 'credentials' in session:
-            permission_level = pl.check_user_role()
+            permission_level = utils.check_user_role()
 
             if permission_level == 'super_user':
                 return render_template('sheet-management.html')
@@ -164,7 +118,7 @@ def admin_page():
             return redirect(url_for('basic_page.landing_page'))
 
     except:
-        print(pl.generate_error_message(sys.exc_info()))
+        print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 
@@ -172,12 +126,12 @@ def admin_page():
 def make_request_page():
     try:
         if 'credentials' in session:
-            permission_level = pl.check_user_role()
+            permission_level = utils.check_user_role()
             return render_template('make-request.html', value=permission_level)
         else:
             return redirect(url_for('basic_page.landing_page'))
     except:
-        print(pl.generate_error_message(sys.exc_info()))
+        print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 
@@ -187,102 +141,83 @@ def lo_page():
         session.clear()
         return redirect(url_for('basic_page.landing_page'))
     except:
-        print(pl.generate_error_message(sys.exc_info()))
+        print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
+
 
 # Card Creation Options
 @internal_page.route('/create-flashcards', methods=['GET'])
 def create_flashcards_page():
     try:
         if 'credentials' in session:
-            permission_level = pl.check_user_role()
+            permission_level = utils.check_user_role()
             return render_template('create-flashcards.html', permission_level=permission_level)
         else:
             return redirect(url_for('basic_page.landing_page'))
-
     except:
-        print(pl.generate_error_message(sys.exc_info()))
+        print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
 
 
 @google_api.route('/get-sheet-lists', methods=['GET'])
 def get_sheet_lists():
-    try:
-        data_type = request.args['table']
-        if data_type == "publicSheets":
-            data_rows = ps.get_public_sheets()
-        elif data_type == "userSheets" and 'au_id' in session:
-            data_rows = ps.get_user_sheets(session['au_id'])
-        else:
-            data_rows = None
-        return jsonify({"data": data_rows})
-    except:
-        print(pl.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+    data_type = request.args['table']
+    if data_type == "publicSheets":
+        data_rows = ps.get_public_sheets()
+    elif data_type == "userSheets" and 'au_id' in session:
+        data_rows = ps.get_user_sheets(session['au_id'])
+    else:
+        data_rows = None
+
+    return jsonify({"data": data_rows})
 
 
 # DATA ROUTES
 @google_api.route('/register-sheet', methods=['POST'])
 def register_sheet():
-    try:
-        google_id = request.data.decode('UTF-8')
-        response = ps.import_new_sheet(google_id)
-        return jsonify(response)
-    except:
-        print(pl.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+    google_id = request.data.decode('UTF-8')
+    response = ps.import_new_sheet(google_id)
+
+    return jsonify(response)
 
 
 @google_api.route('/register-sheet-view', methods=['POST'])
 def save_page():
-    try:
-        inputs = request.json
-        ps.update_sheet_metadata(inputs['sheetID'])
-        ps.add_sheet_view(inputs['sheetID'])
-        return jsonify({"status": "Success"})
-    except:
-        print(pl.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+    inputs = request.json
+    ps.update_sheet_metadata(inputs['sheetID'])
+    ps.add_sheet_view(inputs['sheetID'])
+
+    return jsonify({"status": "Success"})
 
 
 @google_api.route('/get-sheet-info', methods=['GET'])
 def sheet_data():
-    try:
-        sheet_id = request.args['sheetId']
-        google_id = cd.get_google_id(sheet_id)
-        return jsonify({"googleId": google_id})
-    except:
-        print(pl.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+    sheet_id = request.args['sheetId']
+    google_id = cd.get_google_id(sheet_id)
+
+    return jsonify({"googleId": google_id})
 
 
 @google_api.route('/make-share-request', methods=['POST'])
 def make_share_request():
-    try:
-        input = json.loads(request.data)
-        google_id = input['googleId']
-        result = ps.check_sheet_availability(google_id)
-        if 'credentials' in session and result['status'] == 'sheet_accessible':
-            permission_level = pl.check_user_role()
-            if permission_level == 'super_user':
-                ps.update_sheet_status(google_id, 3)
-                result['status'] = 'sheet_made_public'
-            else:
-                ps.update_sheet_status(google_id, 2)
+    input = json.loads(request.data)
+    google_id = input['googleId']
+    result = ps.check_sheet_availability(google_id)
+    if 'credentials' in session and result['status'] == 'sheet_accessible':
+        permission_level = utils.check_user_role()
+        if permission_level == 'super_user':
+            ps.update_sheet_status(google_id, 3)
+            result['status'] = 'sheet_made_public'
+        else:
+            ps.update_sheet_status(google_id, 2)
 
-        return jsonify(result)
-    except:
-        print(pl.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+    return jsonify(result)
 
 
 @google_api.route('/card-data', methods=['POST'])
 def output_card_data():
-    try:
-        inputs = json.loads(request.data)
-        sheet_id = inputs['sheetID']
-        results = cd.get_data(sheet_id)
-        return jsonify(results)
-    except:
-        print(pl.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+    inputs = json.loads(request.data)
+    sheet_id = inputs['sheetID']
+    results = cd.get_data(sheet_id=sheet_id)
+
+    return jsonify(results)

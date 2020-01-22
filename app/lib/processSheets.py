@@ -3,19 +3,11 @@ from datetime import datetime
 from flask import session
 
 # Google API
-from googleapiclient.discovery import build
-import google.oauth2.service_account
 from googleapiclient.errors import HttpError
 
 # Custom Libraries
 from app.lib.models import sheet, db_session, view, app_user_rel_sheet
-
-# Service Account Key and Scopes
-SERVICE_ACCOUNT_FILE = "app/static/data/private/service_account.json"
-SCOPES = [
-    'https://www.googleapis.com/auth/spreadsheets.readonly',
-    'https://www.googleapis.com/auth/drive.readonly'
-]
+from app.lib import utils
 
 
 def get_public_sheets():
@@ -97,11 +89,7 @@ def get_user_sheets(user_id):
 
 
 def get_sheet_metadata(google_id):
-    credentials = google.oauth2.service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE,
-        scopes=SCOPES)
-
-    service = build('drive', 'v3', credentials=credentials)
+    service = utils.get_drive_credentials()
 
     fields = "name, createdTime, modifiedTime, owners"
     raw_metadata = service.files().get(fileId=google_id, fields=fields).execute()
@@ -215,20 +203,12 @@ def import_new_sheet(google_id):
             response['status'] = 'sheet_not_exist'
         elif e.resp.status == 400:
             response['status'] = 'invalid_url'
-        else:
-            response['status'] = 'unknown_error'
-    except Exception as e:
-        response['status'] = 'unknown_error'
 
     return response
 
 
 def get_sheet_row_count(google_id):
-    credentials = google.oauth2.service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE,
-        scopes=SCOPES)
-
-    service = build('sheets', 'v4', credentials=credentials)
+    service = utils.get_sheets_credentials()
 
     # Get sheet row count
     rangeName = 'A1:Z'
@@ -240,15 +220,16 @@ def get_sheet_row_count(google_id):
 def check_sheet_availability(google_id):
     response = {}
     try:
-        get_sheet_metadata(google_id)
+        drive_service = utils.get_drive_service_account_credentials()
+        sheet_service = utils.get_sheets_service_account_credentials()
+        drive_service.files().get(fileId=google_id, fields='name').execute()
+        sheet_service.spreadsheets().values().get(spreadsheetId=google_id, range='A1:J').execute()
         response['status'] = "sheet_accessible"
     except HttpError as e:
         if e.resp.status == 404:
             response['status'] = 'sheet_not_accessible'
         else:
             response['status'] = 'unknown_error'
-    except Exception:
-        response['status'] = 'unknown_error'
 
     return response
 
