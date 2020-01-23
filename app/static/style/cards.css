@@ -107,71 +107,80 @@ input[type="radio"]:checked + .order-btn {
 .card {
     width: 100%;
     height: 100%;
-    position: absolute;
-    -webkit-transition: -webkit-transform 1s;
-    -moz-transition: -moz-transform 1s;
-    -o-transition: -o-transform 1s;
-    transition: transform 1s;
+
+    -webkit-transition: 1.1s;
     -webkit-transform-style: preserve-3d;
+
+    -moz-transition: 1.1s;
     -moz-transform-style: preserve-3d;
+
+    -ms-transition: 1.1s;
+    -ms-transform-style: preserve-3d;
+
+    -o-transition: 1.1s;
     -o-transform-style: preserve-3d;
+
+    transition: 1.1s;
     transform-style: preserve-3d;
-    -webkit-transform-origin: 50% 50%;
 }
 
-.card div {
-    display: block;
+.face {
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
+    text-align: center;
     height: 100%;
     width: 100%;
-    color: white;
-    text-align: center;
+    display: block;
     position: absolute;
-    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
     -webkit-backface-visibility: hidden;
     -moz-backface-visibility: hidden;
+    -ms-transform-style: hidden;
     -o-backface-visibility: hidden;
     backface-visibility: hidden;
 }
 
 .card .front {
-  background: #F4A261;
-  padding-top: 4em;
+    background: #F4A261;
+    padding-top: 30%;
 }
 
 .card .back {
     background: #E9C46A;
     -webkit-transform: rotateY( 180deg );
     -moz-transform: rotateY( 180deg );
+    -ms-transform: rotateY( 180deg );
     -o-transform: rotateY( 180deg );
     transform: rotateY( 180deg );
 }
 
-div.card-back-row1 {
-    height: 80px;
-    top: 10px;
+.card.flipped {
+    -webkit-transform: rotateY( 180deg );
+    -moz-transform: rotateY( 180deg );
+    -ms-transform: rotateY( 180deg );
+    -o-transform: rotateY( 180deg );
+    transform: rotateY( 180deg );
+}
+
+.card-back-row {
+    text-align: center;
+    display: block;
     border: 0;
     margin-left: 0px;
     color: inherit;
     box-shadow: 0px 0px 0px;
+    margin-right: 0px;
+    height: 60px;
+}
+
+div.card-back-row1 {
+    margin-top: 10px;
 }
 
 div.card-back-row2 {
-    height: 80px;
-    top: 90px;
-    border: 0;
-    margin-left: 0px;
-    color: inherit;
-    box-shadow: 0px 0px 0px;
+    margin-top: 15px;
 }
 
 div.card-back-row3 {
-    height: 80px;
-    top: 170px;
-    border: 0;
-    margin-left: 0px;
-    padding-top: 25px;
-    color: inherit;
-    box-shadow: 0px 0px 0px;
+    margin-top: 65px;
 }
 
 p.card-text {
@@ -181,13 +190,6 @@ p.card-text {
     margin-bottom: 0px;
     max-width: 300px;
     overflow: hidden;
-}
-
-.card.flipped {
-    -webkit-transform: rotateY( 180deg );
-    -moz-transform: rotateY( 180deg );
-    -o-transform: rotateY( 180deg );
-    transform: rotateY( 180deg );
 }
 
 .correct-btn {
