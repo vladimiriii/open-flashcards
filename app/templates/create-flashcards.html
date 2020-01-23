@@ -19,9 +19,9 @@
     <!-- Content -->
     <div class="container-fluid">
         {% if permission_level == 'super_user' %}
-        		{% include 'includes/admin-navbar.html' %}
+        		{% include 'modules/admin-navbar.html' %}
         {% else %}
-        		{% include 'includes/loggedin-navbar.html' %}
+        		{% include 'modules/loggedin-navbar.html' %}
         {% endif %}
         <div class="row main-panel">
             <div class="col-md-12">
@@ -38,7 +38,7 @@
 <!--                </button>-->
             </div>
         </div>
-        {% include 'includes/footer.html' %}
+        {% include 'modules/footer.html' %}
         <!-- Modal -->
         <div class="row">
             <div class="modal fade" data-backdrop="static" data-keyboard="false" id="confirmation-modal" role="dialog">

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Cards | Open Flashcards</title>
 
@@ -19,17 +18,16 @@
     <script src="{{ url_for('static',filename='script/custom/cardViewOnLoad.js') }}"></script>
 
 </head>
-
 <body>
     {% include 'includes/spinner.html' %}
-    <!-- Content -->
     <div class="container-fluid">
+        <!-- Navbar -->
         {% if permission_level == 'super_user' %}
-            {% include 'includes/admin-navbar.html' %}
+            {% include 'modules/admin-navbar.html' %}
         {% elif permission_level == 'user' %}
-            {% include 'includes/loggedin-navbar.html' %}
+            {% include 'modules/loggedin-navbar.html' %}
         {% else %}
-            {% include 'includes/navbar.html' %}
+            {% include 'modules/navbar.html' %}
         {% endif %}
         <!-- Page Content -->
         <div class="row">
@@ -74,179 +72,29 @@
                     </button>
                 </a>
             </div>
-            <!-- Flip Cards -->
+            <!-- Cards -->
             <div class="col-md-9">
                 <div class="row">
-                    <div class="col-md-6 card-div">
-                        <section class="card-container">
-                            <div class="card" id="card1">
-                                <div class="front face"></div>
-                                <div class="back face" id="card1-back">
-                                    <div class="row card-back-row card-back-row1" id="card1-back1">
-                                    </div>
-                                    <div class="row card-back-row card-back-row2" id="card1-back2">
-                                    </div>
-                                    <div class="row card-back-row card-back-row3">
-                                        <button type="button" class="btn btn-secondary correct-btn">
-                                            <i class="fa fa-check" aria-hidden="true"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-secondary wrong-btn">
-                                            <i class="fa fa-times" aria-hidden="true"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-                    <div class="col-md-6 card-div">
-                        <section class="card-container">
-                            <div class="card" id="card2">
-                                <div class="front face"></div>
-                                <div class="back face" id="card2-back">
-                                    <div class="row card-back-row card-back-row1" id="card2-back1">
-                                    </div>
-                                    <div class="row card-back-row card-back-row2" id="card2-back2">
-                                    </div>
-                                    <div class="row card-back-row card-back-row3">
-                                        <button type="button" class="btn btn-secondary correct-btn">
-                                            <i class="fa fa-check" aria-hidden="true"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-secondary wrong-btn">
-                                            <i class="fa fa-times" aria-hidden="true"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
+                    {% with i = 1 %}
+                        {% include 'modules/card.html' %}
+                    {% endwith %}
+                    {% with i = 2 %}
+                        {% include 'modules/card.html' %}
+                    {% endwith %}
                 </div>
                 <div class="row">
-                    <div class="col-md-6 card-div">
-                        <section class="card-container">
-                            <div class="card" id="card3">
-                                <div class="front face"></div>
-                                <div class="back face" id="card3-back">
-                                    <div class="row card-back-row card-back-row1" id="card3-back1">
-                                    </div>
-                                    <div class="row card-back-row card-back-row2" id="card3-back2">
-                                    </div>
-                                    <div class="row card-back-row card-back-row3">
-                                        <button type="button" class="btn btn-secondary correct-btn">
-                                            <i class="fa fa-check" aria-hidden="true"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-secondary wrong-btn">
-                                            <i class="fa fa-times" aria-hidden="true"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-                    <div class="col-md-6 card-div">
-                        <section class="card-container">
-                            <div class="card" id="card4">
-                                <div class="front face"></div>
-                                <div class="back face" id="card4-back">
-                                    <div class="row card-back-row card-back-row1" id="card4-back1">
-                                    </div>
-                                    <div class="row card-back-row card-back-row2" id="card4-back2">
-                                    </div>
-                                    <div class="row card-back-row card-back-row3">
-                                        <button type="button" class="btn btn-secondary correct-btn">
-                                            <i class="fa fa-check" aria-hidden="true"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-secondary wrong-btn">
-                                            <i class="fa fa-times" aria-hidden="true"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
+                    {% with i = 3 %}
+                        {% include 'modules/card.html' %}
+                    {% endwith %}
+                    {% with i = 4 %}
+                        {% include 'modules/card.html' %}
+                    {% endwith %}
                 </div>
             </div>
         </div>
-        {% include 'includes/footer.html' %}
-        <!-- About Modal -->
-        <div class="row">
-            <div class="modal fade" data-backdrop="static" data-keyboard="false" id="column-select" role="dialog">
-                <div class="modal-dialog">
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="navbar-collapse modal-header">
-                            <h4>Select Columns</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row modal-row">
-                                <div class="col-md-6">
-                                    <p>Front of Card: </p>
-                                </div>
-                                <div class="col-md-6">
-                                    <div id="primary-language" class="form-group">
-                                        <select id="primary-list" class="form-control eco-select"></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row modal-row">
-                                <div class="col-md-6">
-                                    <p>Back of Card (Primary): </p>
-                                </div>
-                                <div class="col-md-6">
-                                    <div id="secondary-language" class="form-group">
-                                        <select id="secondary-list" class="form-control eco-select"></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row modal-row">
-                                <div class="col-md-6">
-                                    <p>Back of Card (Secondary - optional): </p>
-                                </div>
-                                <div class="col-md-6">
-                                    <div id="tertiary-language" class="form-group">
-                                        <select id="tertiary-list" class="form-control eco-select"></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row modal-row">
-                                <div class="col-md-6">
-                                    <p>Categories (Optional): </p>
-                                </div>
-                                <div class="col-md-6">
-                                    <div id="modal-categories" class="form-group">
-                                        <select id="modal-categories-list" class="form-control eco-select"></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row modal-row">
-                                <button type="button" class="btn btn-outline-success" id="confirm-btn">Confirm</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="modal fade" data-backdrop="static" data-keyboard="false" id="error-modal" role="dialog">
-                <div class="modal-dialog">
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="navbar-collapse modal-header" id="error-modal-header">
-                        </div>
-                        <div class="modal-body">
-                            <div class="row modal-row">
-                                <div class="col-md-12" id="error-modal-content">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <a href="/"><button type="button" class="btn btn-primary">Go to home page</button></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        {% include 'modules/footer.html' %}
+        {% include 'modules/card-options-modal.html' %}
+        {% include 'modules/error-modal.html' %}
     </div>
 </body>
-
 </html>

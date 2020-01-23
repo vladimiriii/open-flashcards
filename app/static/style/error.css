@@ -1,4 +1,7 @@
 /* Error Page Styling */
+.col-md-12 {
+    text-align: center;
+}
 
 .error-text {
     margin-top: 40px;

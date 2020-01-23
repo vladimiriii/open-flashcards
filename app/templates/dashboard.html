@@ -23,9 +23,9 @@
     <!-- Content -->
     <div class="container-fluid">
         {% if value == 'super_user' %}
-        {% include 'includes/admin-navbar.html' %}
+        {% include 'modules/admin-navbar.html' %}
         {% else %}
-        {% include 'includes/loggedin-navbar.html' %}
+        {% include 'modules/loggedin-navbar.html' %}
         {% endif %}
         <div class="row main-panel">
             <div class="col-md-12">
@@ -36,9 +36,9 @@
                 <h3><a href="/create-flashcards">Create New Cards</a></h3>
             </div>
         </div>
-        {% include 'includes/footer.html' %}
-        {% include 'includes/share-modal.html' %}
-        {% include 'includes/feedback-modal.html' %}
+        {% include 'modules/footer.html' %}
+        {% include 'modules/share-modal.html' %}
+        {% include 'modules/feedback-modal.html' %}
     </div>
 </body>
 

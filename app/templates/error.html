@@ -44,52 +44,23 @@
 	<!-- Content -->
 	<div class="container-fluid">
         <div class="row">
-            <div class="col-md-12" style="text-align: center">
-                <div class="row">
-                    <img id="error-img" src="{{ url_for('static',filename='img/error.png') }}">
-                    <!-- <img id="error-img" src="../static/img/error.png"> -->
-                </div>
-                <div class="row">
-                    <h1 class="error-text">Oops... something went wrong!</h1>
-                </div>
-                <div class="row error-links-div">
-                    <h3 class="error-link"><a href="./">Home</a></h3>
-                    <h3 class="error-link"><a href="./logout">Logout</a></h3>
-                </div>
+            <div class="col-md-12">
+                <img id="error-img" src="{{ url_for('static',filename='img/error.png') }}">
+            </div>
+		</div>
+        <div class="row">
+			<div class="col-md-12">
+            	<h1 class="error-text">Oops... something went wrong!</h1>
+			</div>
+        </div>
+        <div class="row error-links-div">
+			<div class="col-md-12">
+                <h3 class="error-link"><a href="./">Home</a></h3>
+                <h3 class="error-link"><a href="./logout">Logout</a></h3>
             </div>
         </div>
-        <!-- Footer -->
-		<div class="row">
-		    <footer>
-		        <div class="page-footer">
-		            <div class="container">
-		                <div class="row">
-		                    <div class="footer-col col-md-12">
-		                        <br>
-		                        <h4>Get in touch!</h4>
-		                        <!-- Twitter -->
-		                        <a href="https://twitter.com/mrbrettromero" data-toggle="tooltip" title="Twitter" target="_blank" class="share-btn twitter">
-		                            <i class="fa fa-twitter"></i>
-		                        </a>
-
-		                        <!-- Facebook -->
-		                        <a href="https://www.facebook.com/brett.romero.9" data-toggle="tooltip" title="Facebook" target="_blank" class="share-btn facebook">
-		                            <i class="fa fa-facebook"></i>
-		                        </a>
-
-		                        <!-- Page -->
-		                        <a href="http://brettromero.com" data-toggle="tooltip" title="brettromero.com" target="_blank" class="share-btn home">
-		                            <i class="fa fa-home"></i>
-		                        </a>
-		                        <br>
-                                <br>
-                                <br>
-		                    </div>
-		                </div>
-		            </div>
-		        </div>
-		    </footer>
-		</div>
-	</div>
+		<!-- Footer -->
+		{% include 'modules/footer.html' %}
+    </div>
 </body>
 </html>

@@ -3,62 +3,23 @@
 <head>
 	<title>Privacy Policy | Open Flashcards</title>
 
-	<!-- Encoding -->
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	{% include 'includes/basic-meta.html' %}
+    {% include 'includes/base-scripts.html' %}
 
-    <!-- Facebook Open Graph tags -->
-    <meta property="og:title" content="Open Flashcards" />
-    <meta property="og:site_name" content="Open Flashcards"/>
-    <meta property="og:image" content="http://openflashcards.com/static/img/index.jpg"/>
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="http://openflashcards.com"/>
-    <meta property="og:description" content="An online application for creating, viewing and sharing flashcards by quickly and easily importing information from Google Sheets."/>
-
-    <!-- jQuery plugin -->
-    <script src="{{ url_for('static',filename='script/jquery/jquery-3.1.1.min.js') }}"></script>
-
-	<!-- Bootstrap -->
-	<link rel="stylesheet" href="{{ url_for('static',filename='style/bootstrap.min.css') }}">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-
-	<!-- Font-awesome for sharing buttons -->
-	<link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
-	<!-- Internal CSS -->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/baseStyle.css') }}">
-
-	<!-- Google Analytics -->
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-        ga('create', 'UA-60963697-4', 'auto');
-        ga('send', 'pageview');
-    </script>
 </head>
 <body>
-	<!-- Content -->
 	<div class="container-fluid">
         <!-- Navbar -->
-        <div class="row">
-            <nav class="navbar navbar-default">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="./">Open Flashcards</a>
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapse-right" aria-expanded="false">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div>
-            </nav>
-        </div>
+        {% if permission_level == 'super_user' %}
+            {% include 'modules/admin-navbar.html' %}
+        {% elif permission_level == 'user' %}
+            {% include 'modules/loggedin-navbar.html' %}
+        {% else %}
+            {% include 'modules/navbar.html' %}
+        {% endif %}
         <!-- Content -->
 		<div class="row">
-            <div class='col-md-12'>
+            <div class='col-md-12 main-panel'>
                 <h2>Privacy Policy</h2>
                 <p>
                     This privacy policy has been compiled to better serve those who are concerned with how their 'Personally Identifiable Information' (PII) is being used online. PII, as described in US privacy law and information security, is information that can be used on its own or with other information to identify, contact, or locate a single person, or to identify an individual in context. Please read our privacy policy carefully to get a clear understanding of how we collect, use, protect or otherwise handle your Personally Identifiable Information in accordance with our website.
@@ -178,52 +139,11 @@
                 </ul>
                 <p>If at any time you would like to unsubscribe from receiving future emails, you can follow the instructions at the bottom of each email and we will promptly remove you from <strong>ALL</strong> correspondence.</p>
                 <h5>Contacting Us</h5>
-                <p>If there are any questions regarding this privacy policy, you may contact us using the information below.</p>
-                <p>Openflashcards.com</p>
-                <p>Amman, Jordan</p>
-                <p>brett.romero@outlook.com</p>
-                <br>
-                <br>
-                <br>
-                <p>Last Edited on 2017-05-10</p>
+                <p>If there are any questions regarding this privacy policy, please email us at info at dytbaat.com</p>
+                <p>Last Edited on 2020-01-23</p>
             </div>
         </div>
-        <br>
-        <br>
-        <!-- Footer -->
-		<div class="row">
-		    <footer>
-		        <div class="page-footer">
-		            <div class="container">
-		                <div class="row">
-		                    <div class="footer-col col-md-12">
-		                        <br>
-		                        <h4>Get in touch!</h4>
-		                        <!-- Twitter -->
-		                        <a href="https://twitter.com/mrbrettromero" data-toggle="tooltip" title="Twitter" target="_blank" class="share-btn twitter">
-		                            <i class="fa fa-twitter"></i>
-		                        </a>
-
-		                        <!-- Facebook -->
-		                        <a href="https://www.facebook.com/brett.romero.9" data-toggle="tooltip" title="Facebook" target="_blank" class="share-btn facebook">
-		                            <i class="fa fa-facebook"></i>
-		                        </a>
-
-		                        <!-- Page -->
-		                        <a href="http://brettromero.com" data-toggle="tooltip" title="brettromero.com" target="_blank" class="share-btn home">
-		                            <i class="fa fa-home"></i>
-		                        </a>
-		                        <br>
-                                <br>
-                                <p class='document-links'>
-                                    <a href='./privacy-policy'>Privacy Policy</a> | <a href='./terms-conditions'>Terms &amp; Conditions</a>
-                                </p>
-		                    </div>
-		                </div>
-		            </div>
-		        </div>
-		    </footer>
-		</div>
+        {% include 'modules/footer.html' %}
 	</div>
 </body>
 </html>
