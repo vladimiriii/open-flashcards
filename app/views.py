@@ -163,13 +163,14 @@ def create_flashcards_page():
 def get_sheet_lists():
     data_type = request.args['table']
     if data_type == "publicSheets":
-        data_rows = ps.get_public_sheets()
+        raw_data = ps.get_public_sheets()
     elif data_type == "userSheets" and 'au_id' in session:
-        data_rows = ps.get_user_sheets(session['au_id'])
+        raw_data = ps.get_user_sheets(session['au_id'])
     else:
-        data_rows = None
+        raw_data = None
+    table_data = ps.process_sheet_data(raw_data)
 
-    return jsonify({"data": data_rows})
+    return jsonify(table_data)
 
 
 # DATA ROUTES

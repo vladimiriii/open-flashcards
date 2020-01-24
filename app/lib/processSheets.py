@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from flask import session
+import pandas as pd
 
 # Google API
 from googleapiclient.errors import HttpError
@@ -8,6 +9,7 @@ from googleapiclient.errors import HttpError
 # Custom Libraries
 from app.lib.models import sheet, db_session, view, app_user_rel_sheet
 from app.lib import utils
+from app.lib import reference as ref
 
 
 def get_public_sheets():
@@ -16,7 +18,7 @@ def get_public_sheets():
             s_google_id,
             s_sheet_name,
             s_row_count,
-            COALESCE(views, 0),
+            COALESCE(views, 0) AS views,
             s_last_modified_date
         FROM sheet AS s
         LEFT JOIN (
@@ -32,18 +34,7 @@ def get_public_sheets():
 
     data = db_session.execute(query)
 
-    # Process Results
-    file_list = []
-    for row in data:
-        file_list.append({
-            'id': row[0],
-            'google_id': row[1],
-            'sheet_name': row[2],
-            'row_count': row[3],
-            'views': row[4],
-            'modified': row[5]})
-
-    return file_list
+    return data
 
 
 def get_user_sheets(user_id):
@@ -52,7 +43,8 @@ def get_user_sheets(user_id):
             s_google_id,
             s_sheet_name,
             s_row_count,
-            COALESCE(views, 0),
+            COALESCE(views, 0) AS views,
+            ss_status_name,
             s_last_modified_date
         FROM sheet AS s
         INNER JOIN (
@@ -62,6 +54,8 @@ def get_user_sheets(user_id):
             AND NOT aurs_deleted
         ) AS aurs
         ON aurs_s_id = s_id
+        INNER JOIN sheet_status
+        ON s_ss_id = ss_id
         LEFT JOIN (
             SELECT v_s_id,
                 COUNT(v_id) AS views
@@ -74,18 +68,14 @@ def get_user_sheets(user_id):
 
     data = db_session.execute(query)
 
-    # Process Results
-    file_list = []
-    for row in data:
-        file_list.append({
-            'id': row[0],
-            'google_id': row[1],
-            'sheet_name': row[2],
-            'row_count': row[3],
-            'views': row[4],
-            'modified': row[5]})
+    return data
 
-    return file_list
+
+def process_sheet_data(data):
+    df = pd.DataFrame(data)
+    df.columns = [ref.column_lookup[col] for col in data.keys()]
+    data_dict = df.to_dict(orient='split')
+    return data_dict
 
 
 def get_sheet_metadata(google_id):

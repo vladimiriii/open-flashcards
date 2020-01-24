@@ -58,19 +58,19 @@ def create_user_roles():
 
 def create_sheet_status_defaults():
     status_1 = sheet_status(
-        ss_status_name='private',
-        ss_status_description="Sheet can only be seen by user who added the sheet",
+        ss_status_name='Private',
+        ss_status_description="Sheet can only be seen by user who added the sheet.",
         ss_create_date=datetime.now(),
         ss_last_modified=datetime.now()
     )
     status_2 = sheet_status(
-        ss_status_name='public_requested',
+        ss_status_name='Review Pending',
         ss_status_description="User has requested to make the sheet available publically.",
         ss_create_date=datetime.now(),
         ss_last_modified=datetime.now()
     )
     status_3 = sheet_status(
-        ss_status_name='public',
+        ss_status_name='Public',
         ss_status_description="Sheet is viewable by all users.",
         ss_create_date=datetime.now(),
         ss_last_modified=datetime.now()

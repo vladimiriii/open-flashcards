@@ -5,7 +5,7 @@ function getSheetLists(table, additionalButtons) {
         url: '/get-sheet-lists',
         data: {"table": table},
         success: function(result) {
-            createTables(table, result["data"], additionalButtons)
+            createTables(table, result, additionalButtons)
         },
         error: function(msg){
             console.log(msg);
@@ -33,32 +33,29 @@ function createTables(table, data, additionalButtons) {
 }
 
 
-function generateSheetList(div, data) {
+function generateSheetList(div, tableData) {
     $('#' + div).empty();
-    var header = "<thead><tr>",
-        rows = "<tbody>",
-        colHeader,
-        colName;
+    let header = "<thead><tr>",
+        rows = "<tbody>";
 
     // Create Header
-    for (col in tableMappings["cleanNames"]) {
-        colHeader = tableMappings["cleanNames"][col];
-        header = header + '<th>' + colHeader + '</th>';
-    }
+    tableData['columns'].splice(2, tableData['columns'].length).map( function(column) {
+        header = header + '<th>' + column + '</th>';
+    })
     header = header + '<th class="confirm-head">Options</th></tr></thead>';
 
     // Create Data Rows
-    for (sheet in data) {
-        rows = rows + '<tr class="table-row" data-value="' + data[sheet]['id'] + '" id="' + div.substring(0, 2) + data[sheet]['id'] + '">'
-        for (key in tableMappings["columns"]) {
-            colName = tableMappings["columns"][key];
-            rows = rows + '<td>' + data[sheet][colName] + '</td>';
-        };
+    const sheetIdColumn = tableData['columns'].indexOf("sheetId");
+    tableData['data'].map( function(rowData) {
+        rows = rows + '<tr class="table-row" data-value="' + rowData[sheetIdColumn] + '" id="' + div.substring(0, 2) + rowData[sheetIdColumn] + '">'
+        rowData.splice(2, rowData.length).map(function(dataPoint) {
+            rows = rows + '<td>' + dataPoint + '</td>';
+        });
 
-        // Add Column for View/Import button
-        rows = rows + '<td class="confirm-col" id="' + div.substring(0, 2) + data[sheet]['id'] + '-opt">' + '' + '</td>';
+        // Add column for buttons
+        rows = rows + '<td class="confirm-col" id="' + div.substring(0, 2) + rowData[sheetIdColumn] + '-opt">' + '' + '</td>';
         rows = rows + '</tr>';
-    };
+    });
     rows = rows + "</tbody>";
 
     // Append elements to the Table
