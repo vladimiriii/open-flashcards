@@ -103,14 +103,33 @@ def dashboard_page():
         return redirect(url_for('basic_page.er_page'))
 
 
-@internal_page.route('/admin')
-def admin_page():
+@internal_page.route('/sheet-management')
+def sheet_management_page():
     try:
         if 'credentials' in session:
             permission_level = utils.check_user_role()
 
             if permission_level == 'super_user':
                 return render_template('sheet-management.html')
+            else:
+                return redirect(url_for('internal_page.dashboard_page'))
+
+        else:
+            return redirect(url_for('basic_page.landing_page'))
+
+    except:
+        print(utils.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
+@internal_page.route('/user-management')
+def user_management_page():
+    try:
+        if 'credentials' in session:
+            permission_level = utils.check_user_role()
+
+            if permission_level == 'super_user':
+                return render_template('user-management.html')
             else:
                 return redirect(url_for('internal_page.dashboard_page'))
 
@@ -166,6 +185,10 @@ def get_sheet_lists():
         raw_data = ps.get_public_sheets()
     elif data_type == "userSheets" and 'au_id' in session:
         raw_data = ps.get_user_sheets(session['au_id'])
+    elif data_type == "userSheets" and 'au_id' in session:
+        permission_level = utils.check_user_role()
+        if permission_level == 'super_user':
+            raw_data = ps.get_request_sheets()
     else:
         raw_data = None
     table_data = ps.process_sheet_data(raw_data)

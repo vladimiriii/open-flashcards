@@ -5,14 +5,14 @@
 
 	{% include 'includes/basic-meta.html' %}
 	{% include 'includes/base-scripts.html' %}
-	{% include 'includes/table-scripts.html' %}
 
 	<!-- Page Specific Styling -->
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/sheet-management.css') }}">
 
 	<!-- Custom JavaScript -->
-	<script src="{{ url_for('static',filename='script/custom/sheetManagementOnLoad.js') }}"></script>
-	<!-- <script src="{{ url_for('static',filename='script/custom/dashboardFunctions.js') }}"></script> -->
+	<!-- <script src="{{ url_for('static',filename='script/custom/dashboardOnLoad.js') }}"></script>
+	<script src="{{ url_for('static',filename='script/custom/dashboardFunctions.js') }}"></script>
+	<script src="{{ url_for('static',filename='script/custom/tableMeta.js') }}"></script> -->
 
 </head>
 <body>
@@ -22,8 +22,7 @@
 		{% include 'modules/admin-navbar.html' %}
 		<div class="row main-panel">
     	<div class="col-md-12">
-			<h3>Requests to be Made Public</h3>
-			<table id="requestSheets" class="display"></table>
+			<h3>User Management</h3>
 		</div>
     </div>
     {% include 'modules/footer.html' %}

@@ -1,20 +1,21 @@
+// SHARE BUTTON FUNCTIONS
 function addShareButton(div) {
     $("#" + div + " .table-row").on('click', function () {
-            showShareButton(div, this.id, $(this).attr('data-value'));
+        showShareButton(div, this.id, $(this).attr('data-sheet-id'), $(this).attr('data-google-id'));
     });
 }
 
 // SHARE BUTTON FUNCTIONS
-function showShareButton(div, row_id, sheet_id) {
+function showShareButton(div, rowId, sheetId, googleId) {
     $( "#" + div + "-share").remove();
-    const cellID = "#" + String(row_id) + "-opt";
-    if (!$("#" + String(row_id)).hasClass("selected")) {
-        const share_button = '<button type="button" class="btn btn-outline-warning btn-sm confirm-col-btn" '
+    const cellID = "#opt-" + div + '-' + sheetId;
+    if (!$("#" + String(rowId)).hasClass("selected")) {
+        const shareButton = '<button type="button" class="btn btn-outline-warning btn-sm confirm-col-btn" '
                    + 'id="' + div + '-share"'
-                   + 'onclick="makeSheetPublic(' + sheet_id + ', event)">'
+                   + 'onclick="makeSheetPublic(\'' + googleId + '\', event)">'
                    + '<i class="fa fa-share-alt" aria-hidden="true"></i></button>'
 
-       $(cellID).append(share_button);
+       $(cellID).append(shareButton);
     }
 }
 
@@ -51,27 +52,18 @@ function generateShareModal(id) {
 }
 
 
-function generateSheetLink(id) {
+function generateSheetLink(googleId) {
     const base_url = "https://docs.google.com/spreadsheets/d/";
-    $.ajax({
-        type: "GET",
-        url: '/get-sheet-info',
-        data: {"sheetId": id},
-        success: function(result) {
-            const url = base_url + result['googleId'];
-            const html = 'Link to Spreadsheet: <a target="_blank" href=' + url + '>' + url + '</a>';
-            $("#sheet-link").append(html);
-            $("#modalSubmit").val(result['googleId']);
-        },
-        error: function(msg){
-            console.log(msg);
-        }
-    })
+    const url = base_url + googleId;
+    const html = 'Link to Spreadsheet: <a target="_blank" href=' + url + '>' + url + '</a>';
+    $("#sheet-link").append(html);
+    $("#modalSubmit").val(googleId);
 }
 
 
 function submitShareRequest() {
     const googleId = $("#modalSubmit").val();
+    console.log(googleId);
     $("#spinner").show();
     $.ajax({
         type: "POST",

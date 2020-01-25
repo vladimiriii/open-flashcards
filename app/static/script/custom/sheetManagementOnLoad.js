@@ -7,6 +7,6 @@ On Page Load
 -----------------------------------*/
 $(document).ready(function(){
 
-    getSheetLists("userSheets", ["shareButton"]);
+    getSheetLists("requestSheets", ["reviewButton"]);
 
 });
