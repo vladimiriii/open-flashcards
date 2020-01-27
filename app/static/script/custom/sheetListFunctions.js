@@ -16,10 +16,9 @@ function getSheetLists(table, additionalButtons) {
 
 function createTables(table, data, additionalButtons) {
     $.when(generateSheetList(table, data)).done(function(viewColumn){
-        console.log(viewColumn);
         if (viewColumn !== -2) {
             $('#' + table).DataTable({
-                'order': [[ Math.max(0, viewColumn), "desc" ]],
+                'order': [[ Math.max(0, viewColumn - 2), "desc" ]],
                 'lengthChange': false,
                 'select': 'single'
             });
@@ -29,7 +28,13 @@ function createTables(table, data, additionalButtons) {
             if (typeof additionalButtons !== "undefined") {
                 if (additionalButtons.includes("shareButton")) {
                     addShareButton(table);
-                }
+                };
+                if (additionalButtons.includes("reviewButton")) {
+                    addReviewButton(table);
+                };
+                if (additionalButtons.includes("approveButton")) {
+                    addApproveButton(table);
+                };
             }
         }
         else {

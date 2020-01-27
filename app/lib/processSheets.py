@@ -83,7 +83,7 @@ def get_request_sheets():
         FROM sheet AS s
         INNER JOIN sheet_status
         ON s_ss_id = ss_id
-        LEFT JOIN (
+        INNER JOIN (
             SELECT v_s_id,
                 COUNT(v_id) AS views
             FROM public.view

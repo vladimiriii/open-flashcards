@@ -185,7 +185,7 @@ def get_sheet_lists():
         raw_data = ps.get_public_sheets()
     elif data_type == "userSheets" and 'au_id' in session:
         raw_data = ps.get_user_sheets(session['au_id'])
-    elif data_type == "userSheets" and 'au_id' in session:
+    elif data_type == "requestSheets" and 'au_id' in session:
         permission_level = utils.check_user_role()
         if permission_level == 'super_user':
             raw_data = ps.get_request_sheets()

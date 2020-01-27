@@ -26,3 +26,25 @@ function reviewSheet(googleId) {
     const win = window.open(url, '_blank');
     win.focus();
 }
+
+
+// APPROVE BUTTON
+function addApproveButton(div) {
+    $("#" + div + " .table-row").on('click', function () {
+        showApproveButton(div, this.id, $(this).attr('data-sheet-id'), $(this).attr('data-google-id'));
+    });
+}
+
+
+function showApproveButton(div, rowId, sheetId, googleId) {
+    $( "#btn-" + div + "-approve").remove();
+    const cellId = "#opt-" + div + '-' + sheetId;
+    if (!$("#" + String(rowId)).hasClass("selected")) {
+        const approveButton = '<button type="button" class="btn btn-outline-warning btn-sm confirm-col-btn" '
+                   + 'id="btn-' + div + '-approve"'
+                   + 'data-toggle="modal" data-target="#approveModal">'
+                   + '<i class="fa fa-check-circle-o" aria-hidden="true"></i></button>'
+
+       $(cellId).append(approveButton);
+    }
+}

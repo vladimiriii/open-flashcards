@@ -12,7 +12,7 @@
 
 	<!-- Custom JavaScript -->
 	<script src="{{ url_for('static',filename='script/custom/sheetManagementOnLoad.js') }}"></script>
-	<!-- <script src="{{ url_for('static',filename='script/custom/dashboardFunctions.js') }}"></script> -->
+	<script src="{{ url_for('static',filename='script/custom/reviewButtonFunctions.js') }}"></script>
 
 </head>
 <body>
@@ -27,6 +27,7 @@
 		</div>
     </div>
     {% include 'modules/footer.html' %}
+	{% include 'modules/approve-modal.html' %}
 	</div>
 </body>
 </html>
