@@ -1,22 +1,19 @@
 // SHARE BUTTON FUNCTIONS
-function addShareButton(div) {
-    $("#" + div + " .table-row").on('click', function () {
-        showShareButton(div, this.id, $(this).attr('data-sheet-id'), $(this).attr('data-google-id'));
-    });
+function addShareButtons(div, tableData, sheetIdIndex, googleIdIndex) {
+    for (rowIndex in tableData) {
+        const sheetId = String(tableData[rowIndex][sheetIdIndex]);
+        const googleId = String(tableData[rowIndex][googleIdIndex]);
+        buildShareButton(div, sheetId, googleId);
+    }
 }
 
-// SHARE BUTTON FUNCTIONS
-function showShareButton(div, rowId, sheetId, googleId) {
-    $( "#" + div + "-share").remove();
-    const cellID = "#opt-" + div + '-' + sheetId;
-    if (!$("#" + String(rowId)).hasClass("selected")) {
-        const shareButton = '<button type="button" class="btn btn-outline-warning btn-sm confirm-col-btn" '
-                   + 'id="' + div + '-share"'
-                   + 'onclick="makeSheetPublic(\'' + googleId + '\', event)">'
-                   + '<i class="fa fa-share-alt" aria-hidden="true"></i></button>'
 
-       $(cellID).append(shareButton);
-    }
+function buildShareButton(div, sheetId, googleId) {
+    const cellID = "#opt-" + div + '-' + sheetId;
+    const shareButton = '<button type="button" class="btn btn-outline-warning btn-sm confirm-col-btn" '
+           + 'onclick="makeSheetPublic(\'' + googleId + '\', event)">'
+           + '<i class="fa fa-share-alt" aria-hidden="true"></i></button>'
+   $(cellID).append(shareButton);
 }
 
 

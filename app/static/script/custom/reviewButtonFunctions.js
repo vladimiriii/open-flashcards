@@ -1,22 +1,20 @@
 // REVIEW BUTTON FUNCTIONS
-function addReviewButton(div) {
-    $("#" + div + " .table-row").on('click', function () {
-        showReviewButton(div, this.id, $(this).attr('data-sheet-id'), $(this).attr('data-google-id'));
-    });
+function addReviewButtons(div, tableData, sheetIdIndex, googleIdIndex) {
+    for (rowIndex in tableData) {
+        const sheetId = String(tableData[rowIndex][sheetIdIndex]);
+        const googleId = String(tableData[rowIndex][googleIdIndex]);
+        buildReviewButton(div, sheetId, googleId);
+    }
 }
 
 
-function showReviewButton(div, rowId, sheetId, googleId) {
-    $( "#btn-" + div + "-review").remove();
+function buildReviewButton(div, sheetId, googleId) {
     const cellId = "#opt-" + div + '-' + sheetId;
-    if (!$("#" + String(rowId)).hasClass("selected")) {
-        const reviewButton = '<button type="button" class="btn btn-outline-danger btn-sm confirm-col-btn" '
-                   + 'id="btn-' + div + '-review"'
-                   + 'onclick="reviewSheet(\'' + googleId + '\')">'
-                   + '<i class="fa fa-eye" aria-hidden="true"></i></button>'
+    const reviewButton = '<button type="button" class="btn btn-outline-danger btn-sm confirm-col-btn" '
+               + 'onclick="reviewSheet(\'' + googleId + '\')">'
+               + '<i class="fa fa-eye" aria-hidden="true"></i></button>'
 
-       $(cellId).append(reviewButton);
-    }
+   $(cellId).append(reviewButton);
 }
 
 
@@ -29,22 +27,20 @@ function reviewSheet(googleId) {
 
 
 // APPROVE BUTTON
-function addApproveButton(div) {
-    $("#" + div + " .table-row").on('click', function () {
-        showApproveButton(div, this.id, $(this).attr('data-sheet-id'), $(this).attr('data-google-id'));
-    });
+function addApproveButtons(div, tableData, sheetIdIndex, googleIdIndex) {
+    for (rowIndex in tableData) {
+        const sheetId = String(tableData[rowIndex][sheetIdIndex]);
+        const googleId = String(tableData[rowIndex][googleIdIndex]);
+        buildApproveButton(div, sheetId, googleId);
+    }
 }
 
 
-function showApproveButton(div, rowId, sheetId, googleId) {
-    $( "#btn-" + div + "-approve").remove();
+function buildApproveButton(div, sheetId, googleId) {
     const cellId = "#opt-" + div + '-' + sheetId;
-    if (!$("#" + String(rowId)).hasClass("selected")) {
-        const approveButton = '<button type="button" class="btn btn-outline-warning btn-sm confirm-col-btn" '
-                   + 'id="btn-' + div + '-approve"'
-                   + 'data-toggle="modal" data-target="#approveModal">'
-                   + '<i class="fa fa-check-circle-o" aria-hidden="true"></i></button>'
+    const approveButton = '<button type="button" class="btn btn-outline-warning btn-sm confirm-col-btn" '
+               + 'data-toggle="modal" data-target="#approveModal">'
+               + '<i class="fa fa-check-circle-o" aria-hidden="true"></i></button>'
 
-       $(cellId).append(approveButton);
-    }
+   $(cellId).append(approveButton);
 }

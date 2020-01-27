@@ -1,22 +1,19 @@
 // VIEW BUTTON FUNCTIONS
-function addViewButton(div) {
-    $("#" + div + " .table-row").on('click', function () {
-        showViewButton(div, this.id, $(this).attr('data-sheet-id'));
-    });
+function addViewButtons(div, tableData, sheetIdIndex) {
+    for (rowIndex in tableData) {
+        const sheetId = String(tableData[rowIndex][sheetIdIndex]);
+        buildViewButton(div, sheetId);
+    }
 }
 
 
-function showViewButton(div, rowId, sheetId) {
-    $( "#" + div + "-view").remove();
+function buildViewButton(div, sheetId) {
     const cellID = "#opt-" + div + '-' + sheetId;
-    if (!$("#" + rowId).hasClass("selected")) {
-        const viewButton = '<button type="button" class="btn btn-outline-success btn-sm confirm-col-btn" '
-                   + 'id="' + div + '-view"'
-                   + 'onclick="viewSheet(' + sheetId + ', event)">'
-                   + '<i class="fa fa-play" aria-hidden="true"></i></button>'
-
-       $(cellID).append(viewButton);
-    }
+    const viewButton = '<button type="button" class="btn btn-outline-success btn-sm confirm-col-btn" '
+               + 'onclick="viewSheet(' + sheetId + ', event)">'
+               + '<i class="fa fa-play" aria-hidden="true"></i></button>'
+   // console.log(viewButton);
+   $(cellID).append(viewButton);
 }
 
 

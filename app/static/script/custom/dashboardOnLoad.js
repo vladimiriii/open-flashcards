@@ -10,7 +10,7 @@ $(document).ready(function(){
 
     $("#" + page).attr('class', 'active');
 
-    getSheetLists("publicSheets");
-    getSheetLists("userSheets", ["shareButton"]);
+    getSheetLists("publicSheets", ["viewButton"]);
+    getSheetLists("userSheets", ["viewButton", "shareButton"]);
 
 });
