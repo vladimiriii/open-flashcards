@@ -22,9 +22,9 @@
     {% include 'includes/spinner.html' %}
     <div class="container-fluid">
         <!-- Navbar -->
-        {% if permission_level == 'super_user' %}
+        {% if permission_level == 'Super User' %}
             {% include 'modules/admin-navbar.html' %}
-        {% elif permission_level == 'user' %}
+        {% elif permission_level != 'Guest' %}
             {% include 'modules/loggedin-navbar.html' %}
         {% else %}
             {% include 'modules/navbar.html' %}

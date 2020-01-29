@@ -3,7 +3,7 @@ from google.oauth2.service_account import Credentials as service_account_credent
 from google.oauth2.credentials import Credentials as user_credentials
 
 from flask import session
-from app.lib.models import app_user, app_user_role, db_session
+from app.lib.database.models import app_user, app_user_role, db_session
 
 SERVICE_ACCOUNT_FILE = "app/static/data/private/service_account.json"
 

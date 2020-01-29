@@ -8,7 +8,7 @@ from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
 
 # Custom Libraries
-from app.lib.models import app_user, db_session
+from app.lib.database.models import app_user, app_user_role, db_session
 from app.lib import utils
 
 # Service Account Key and Scopes
@@ -77,22 +77,19 @@ def update_user_info():
     current_user = app_user.query.filter_by(au_email=email).first()
 
     if current_user is None:
+        role_id = db_session.query(app_user_role.aur_id).filter_by(aur_role_name='Individual').first()
         current_user = app_user(
-            au_aur_id=2,
+            au_aur_id=role_id,
             au_email=email,
             au_first_name=first_name,
             au_last_name=last_name,
-            au_gender=None,
-            au_profile_url=None,
-            au_first_sign_in=datetime.now(),
-            au_last_sign_in=datetime.now(),
-            au_is_deleted=False
+            au_created=datetime.utcnow(),
+            au_last_modified=datetime.utcnow(),
         )
         db_session.add(current_user)
-        db_session.flush()
         db_session.commit()
     else:
-        current_user.au_last_sign_in = datetime.now()
+        current_user.au_last_modified = datetime.utcnow()
         db_session.commit()
 
     session['au_id'] = current_user.au_id

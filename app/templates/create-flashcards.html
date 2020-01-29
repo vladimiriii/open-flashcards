@@ -18,10 +18,10 @@
     {% include 'includes/spinner.html' %}
     <!-- Content -->
     <div class="container-fluid">
-        {% if permission_level == 'super_user' %}
-        		{% include 'modules/admin-navbar.html' %}
+        {% if permission_level == 'Super User' %}
+    		{% include 'modules/admin-navbar.html' %}
         {% else %}
-        		{% include 'modules/loggedin-navbar.html' %}
+    		{% include 'modules/loggedin-navbar.html' %}
         {% endif %}
         <div class="row main-panel">
             <div class="col-md-12">

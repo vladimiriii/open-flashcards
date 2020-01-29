@@ -98,13 +98,13 @@ function showShareRequestResult(status) {
     else if (status == 'sheet_not_accessible') {
         const header = 'Uh oh...';
         $("#feedbackModalLabel").text(header);
-        const body = "We couldn't access this sheet. Please make sure it has been shared with everyone (with the link) or with the email provided.";
+        const body = "We couldn't access this sheet. Please make sure it has been shared with everyone or with the email provided.";
         $("#feedbackModalBody").text(body);
     }
     else {
         const header = 'Uh oh...';
         $("#feedbackModalLabel").text(header);
-        const body = "Something unexpected went wrong. Please try again later, and if you still have issues, contact our support.";
+        const body = "Something unexpected went wrong. Please try again later, and if you still have issues, please contact us.";
         $("#feedbackModalBody").text(body);
     }
 }

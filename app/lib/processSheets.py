@@ -7,7 +7,7 @@ import pandas as pd
 from googleapiclient.errors import HttpError
 
 # Custom Libraries
-from app.lib.models import sheet, db_session, view, app_user_rel_sheet
+from app.lib.database.models import sheet, db_session, view, app_user_rel_sheet, sheet_status
 from app.lib import utils
 from app.lib import reference as ref
 
@@ -19,8 +19,10 @@ def get_public_sheets():
             s_sheet_name,
             s_row_count,
             COALESCE(views, 0) AS views,
-            s_last_modified_date
+            s_last_modified
         FROM sheet AS s
+        INNER JOIN sheet_status
+        ON s_ss_id = ss_id
         LEFT JOIN (
             SELECT v_s_id,
                 COUNT(v_id) AS views
@@ -29,7 +31,7 @@ def get_public_sheets():
             ORDER BY views DESC
             ) AS vs
         ON s.s_id = vs.v_s_id
-        WHERE s_ss_id = 3;
+        WHERE ss_status_name = 'Public';
         """)
 
     data = db_session.execute(query)
@@ -45,7 +47,7 @@ def get_user_sheets(user_id):
             s_row_count,
             COALESCE(views, 0) AS views,
             ss_status_name,
-            s_last_modified_date
+            s_last_modified
         FROM sheet AS s
         INNER JOIN (
             SELECT aurs_s_id
@@ -79,7 +81,7 @@ def get_request_sheets():
             s_row_count,
             COALESCE(views, 0) AS views,
             ss_status_name,
-            s_last_modified_date
+            s_last_modified
         FROM sheet AS s
         INNER JOIN sheet_status
         ON s_ss_id = ss_id
@@ -91,7 +93,7 @@ def get_request_sheets():
             ORDER BY views DESC
             ) AS vs
         ON s.s_id = vs.v_s_id
-        WHERE ss_status_name = 'Review Pending';
+        WHERE ss_status_name = 'Public Review Requested';
         """)
 
     data = db_session.execute(query)
@@ -130,20 +132,18 @@ def get_sheet_metadata(google_id):
 
 
 def add_new_sheet_entry(metadata):
-    sheet_record = sheet(s_ss_id=1,
-                         s_ca_id=None,
-                         s_sca_id=None,
+    status_id = db_session.query(sheet_status.ss_id).filter_by(ss_status_name='Private').first()
+    sheet_record = sheet(s_ss_id=status_id,
                          s_google_id=metadata['google_id'],
                          s_sheet_name=metadata['sheet_name'],
                          s_owner_name=metadata['owner_name'],
                          s_owner_email=metadata['owner_email'],
                          s_row_count=metadata['row_count'],
-                         s_created_date=metadata['created_date'],
-                         s_last_modified_date=metadata['last_modified'],
-                         s_imported_date=datetime.utcnow()
+                         s_created=metadata['created_date'],
+                         s_last_modified=metadata['last_modified'],
                          )
     db_session.add(sheet_record)
-    db_session.flush()
+    db_session.commit()
 
     return sheet_record.s_id
 
@@ -170,7 +170,7 @@ def update_sheet_metadata(sheet_id):
     sheet_record = sheet.query.filter_by(s_id=sheet_id).first()
     sheet_record.s_sheet_name = metadata['sheet_name']
     sheet_record.s_row_count = metadata['row_count']
-    sheet_record.s_last_modified_date = metadata['last_modified']
+    sheet_record.s_last_modified = metadata['last_modified']
 
     # Commit changes to the database
     db_session.commit()
@@ -180,12 +180,12 @@ def add_sheet_view(sheet_id):
     if 'au_id' in session:
         view_record = view(v_au_id=session['au_id'],
                            v_s_id=sheet_id,
-                           v_date=datetime.now())
+                           v_timestamp=datetime.now())
     else:
 
         view_record = view(v_au_id=1,
                            v_s_id=sheet_id,
-                           v_date=datetime.now())
+                           v_timestamp=datetime.now())
 
     # Save to Database
     db_session.add(view_record)
@@ -255,7 +255,11 @@ def check_sheet_availability(google_id):
     return response
 
 
-def update_sheet_status(google_id, status):
+def update_sheet_status(google_id, super_user):
     sheet_record = sheet.query.filter_by(s_google_id=google_id).first()
-    sheet_record.s_ss_id = status
+    if super_user:
+        status_id = db_session.query(sheet_status.ss_id).filter_by(ss_status_name='Public').first()
+    else:
+        status_id = db_session.query(sheet_status.ss_id).filter_by(ss_status_name='Public Review Requested').first()
+    sheet_record.s_ss_id = status_id
     db_session.commit()

@@ -81,7 +81,7 @@ def show_blog(sheet_id):
         if 'credentials' in session:
             permission_level = utils.check_user_role()
         else:
-            permission_level = 'guest'
+            permission_level = 'Guest'
 
         return render_template('flashcards-template.html', sheet_id=sheet_id, permission_level=permission_level)
     except:
@@ -109,7 +109,7 @@ def sheet_management_page():
         if 'credentials' in session:
             permission_level = utils.check_user_role()
 
-            if permission_level == 'super_user':
+            if permission_level == 'Super User':
                 return render_template('sheet-management.html')
             else:
                 return redirect(url_for('internal_page.dashboard_page'))
@@ -128,7 +128,7 @@ def user_management_page():
         if 'credentials' in session:
             permission_level = utils.check_user_role()
 
-            if permission_level == 'super_user':
+            if permission_level == 'Super User':
                 return render_template('user-management.html')
             else:
                 return redirect(url_for('internal_page.dashboard_page'))
@@ -136,19 +136,6 @@ def user_management_page():
         else:
             return redirect(url_for('basic_page.landing_page'))
 
-    except:
-        print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
-
-
-@internal_page.route('/make-request')
-def make_request_page():
-    try:
-        if 'credentials' in session:
-            permission_level = utils.check_user_role()
-            return render_template('make-request.html', value=permission_level)
-        else:
-            return redirect(url_for('basic_page.landing_page'))
     except:
         print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
@@ -187,10 +174,11 @@ def get_sheet_lists():
         raw_data = ps.get_user_sheets(session['au_id'])
     elif data_type == "requestSheets" and 'au_id' in session:
         permission_level = utils.check_user_role()
-        if permission_level == 'super_user':
+        if permission_level == 'Super User':
             raw_data = ps.get_request_sheets()
     else:
         raw_data = None
+
     table_data = ps.process_sheet_data(raw_data)
 
     return jsonify(table_data)
@@ -229,11 +217,11 @@ def make_share_request():
     result = ps.check_sheet_availability(google_id)
     if 'credentials' in session and result['status'] == 'sheet_accessible':
         permission_level = utils.check_user_role()
-        if permission_level == 'super_user':
-            ps.update_sheet_status(google_id, 3)
+        if permission_level == 'Super User':
+            ps.update_sheet_status(google_id=google_id, super_user=True)
             result['status'] = 'sheet_made_public'
         else:
-            ps.update_sheet_status(google_id, 2)
+            ps.update_sheet_status(google_id=google_id, super_user=False)
 
     return jsonify(result)
 

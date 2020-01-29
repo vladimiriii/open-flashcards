@@ -2,7 +2,7 @@ import os
 import configparser
 
 # Get Configuration Settings
-par_dir = os.path.join(__file__, "../..")
+par_dir = os.path.join(__file__, "../../..")
 par_dir_abs_path = os.path.abspath(par_dir)
 app_dir = os.path.dirname(par_dir_abs_path)
 config = configparser.RawConfigParser()

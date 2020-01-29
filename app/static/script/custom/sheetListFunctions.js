@@ -78,7 +78,9 @@ function generateSheetList(div, tableData, buttonsToAdd) {
     $('#' + div).append(rows);
 
     // Append Buttons
-    addAllButtons(div, tableData, buttonsToAdd, sheetIdIndex, googleIdIndex);
+    if (tableData != null) {
+        addAllButtons(div, tableData, buttonsToAdd, sheetIdIndex, googleIdIndex);
+    }
 
     return viewColumn;
 }

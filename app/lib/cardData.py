@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-from flask import session
-
-# Google API
 from googleapiclient.errors import HttpError
 
-from app.lib.models import db_session, sheet
+from app.lib.database.models import db_session, sheet
 from app.lib.errorLookup import error_lookup
 from app.lib import utils
 
