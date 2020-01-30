@@ -1,11 +1,28 @@
-from sqlalchemy import event, DDL
+from sqlalchemy import text
 
 
-trig_ddl = DDL("""
-    CREATE TRIGGER customers_search_vector_update BEFORE INSERT OR UPDATE
-    ON customers
-    FOR EACH ROW EXECUTE PROCEDURE
-    tsvector_update_trigger(search_vector,'pg_catalog.english',customer_code,customer_name);
-""")
-tbl = Customer.__table__
-event.listen(tbl, 'after_create', trig_ddl.execute_if(dialect='postgresql'))
+def sheet_action_update_trigger(db_session):
+    trigger = text("""
+        CREATE TRIGGER sheet_action_update
+        AFTER INSERT
+        ON sheet_action
+        FOR EACH ROW
+        EXECUTE PROCEDURE update_sheet_status();
+    """)
+
+    db_session.execute(trigger)
+    db_session.commit()
+
+
+if __name__ == '__main__':
+    from sqlalchemy.engine.url import URL
+    from sqlalchemy.orm import scoped_session, sessionmaker
+    from databaseConfig import DATABASE
+    from sqlalchemy import create_engine
+
+    engine = create_engine(URL(**DATABASE))
+    db_session = scoped_session(sessionmaker(autocommit=False,
+                                             autoflush=True,
+                                             bind=engine))
+
+    sheet_action_update_trigger(db_session)

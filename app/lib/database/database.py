@@ -7,8 +7,10 @@ from sqlalchemy.engine.url import URL
 from sqlalchemy import create_engine
 
 # Database
-from app.lib.database.databaseConfig import DATABASE
-from app.lib.database.models import Base, db_session, app_user_role, app_user, user_action_type, sheet_action_type, sheet_status, teacher_student_status
+from databaseConfig import DATABASE
+from models import Base, db_session, app_user_role, app_user, user_action_type, sheet_action_type, sheet_status, teacher_student_status
+from procedures import update_sheet_status_procedure
+from triggers import sheet_action_update_trigger
 
 # ---------------------------------------------
 # Steps to recreate database
@@ -49,9 +51,12 @@ def create_user_roles():
 
 
 def create_default_users(role_ids):
-    app_dir = os.getcwd()
-    config_filepath = app_dir + '/config.cfg'
+    # Get Configuration Settings
+    par_dir = os.path.join(__file__, "../../..")
+    par_dir_abs_path = os.path.abspath(par_dir)
+    app_dir = os.path.dirname(par_dir_abs_path)
     config = configparser.RawConfigParser()
+    config_filepath = app_dir + '/config.cfg'
     config.read(config_filepath)
 
     user_email = config.get('App_User_Account', 'USER_EMAIL')
@@ -125,7 +130,7 @@ def create_sheet_status_defaults():
 
     statuses = [
         {"name": "Private", "description": "Sheet can only be seen by user who added the sheet."},
-        {"name": "Public Review Requested", "description": "User has requested to make the sheet available publicly."},
+        {"name": "Review Requested", "description": "User has requested to make the sheet available publicly."},
         {"name": "Public", "description": "Sheet is viewable by all users."},
         {"name": "Deleted", "description": "Sheet has been deleted."},
     ]
@@ -151,32 +156,38 @@ def create_sheet_action_type_defaults(status_ids):
 
     action_types = [
         {
-            "name": "Import",
-            "description": "Import sheet details into database.",
-            "start_ss_id": None,
-            "end_ss_id": status_ids['Private']
-        },
-        {
             "name": "Request Public",
             "description": "User has requested to make the sheet available publicly.",
             "start_ss_id": status_ids['Private'],
-            "end_ss_id": status_ids['Public Review Requested']
+            "end_ss_id": status_ids['Review Requested']
         },
         {
-            "name": "Make Public",
-            "description": "Make a sheet publicly available.",
-            "start_ss_id": status_ids['Public Review Requested'],
+            "name": "Approve Sheet",
+            "description": "Sheet has been approved to be publicly available.",
+            "start_ss_id": status_ids['Review Requested'],
             "end_ss_id": status_ids['Public']
         },
         {
+            "name": "Make Public",
+            "description": "Sheet has been made publicly available without a review.",
+            "start_ss_id": status_ids['Private'],
+            "end_ss_id": status_ids['Public']
+        },
+        {
+            "name": "Cancel Request",
+            "description": "The request to review the sheet has been cancelled.",
+            "start_ss_id": status_ids['Review Requested'],
+            "end_ss_id": status_ids['Private']
+        },
+        {
             "name": "Make Private",
-            "description": "Make a sheet private.",
+            "description": "Sheet has been made private.",
             "start_ss_id": status_ids['Public'],
             "end_ss_id": status_ids['Private']
         },
         {
             "name": "Delete",
-            "description": "Delete the sheet from the app.",
+            "description": "Sheet has been deleted.",
             "start_ss_id": None,
             "end_ss_id": status_ids['Deleted']
         }
@@ -207,3 +218,6 @@ if __name__ == '__main__':
     create_teacher_student_status_defaults()
     status_ids = create_sheet_status_defaults()
     create_sheet_action_type_defaults(status_ids)
+
+    update_sheet_status_procedure(db_session)
+    sheet_action_update_trigger(db_session)

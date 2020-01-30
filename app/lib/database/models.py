@@ -4,8 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-from app.lib.database.databaseConfig import DATABASE
-# from app.lib.database import triggers
+from databaseConfig import DATABASE
 
 # Create DB Engine
 Base = declarative_base()
