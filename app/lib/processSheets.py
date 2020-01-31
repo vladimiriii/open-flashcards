@@ -7,7 +7,7 @@ import pandas as pd
 from googleapiclient.errors import HttpError
 
 # Custom Libraries
-from app.lib.database.models import sheet, db_session, view, app_user_rel_sheet, sheet_status
+from app.lib.database.models import sheet, db_session, view, app_user_rel_sheet, sheet_status, sheet_action, sheet_action_type
 from app.lib import utils
 from app.lib import reference as ref
 
@@ -200,7 +200,6 @@ def import_new_sheet(google_id):
 
     try:
         metadata = get_sheet_metadata(google_id)
-
         if current_sheet is None:
             sheet_id = add_new_sheet_entry(metadata)
             add_new_user_rel_sheet_entry(sheet_id, metadata['is_owner'])
@@ -255,11 +254,28 @@ def check_sheet_availability(google_id):
     return response
 
 
-def update_sheet_status(google_id, super_user):
-    sheet_record = sheet.query.filter_by(s_google_id=google_id).first()
-    if super_user:
-        status_id = db_session.query(sheet_status.ss_id).filter_by(ss_status_name='Public').first()
-    else:
-        status_id = db_session.query(sheet_status.ss_id).filter_by(ss_status_name='Public Review Requested').first()
-    sheet_record.s_ss_id = status_id
+def update_sheet_status(google_id, event):
+
+    if event == 'Request Public':
+        permission_level = utils.check_user_role()
+        if permission_level == 'Super User':
+            event = "Make Public"
+
+    sheet_id = db_session.query(sheet.s_id).filter_by(s_google_id=google_id).first()
+    action_type_id = db_session.query(sheet_action_type.sat_id).filter_by(sat_type_name=event).first()
+
+    new_event = sheet_action(
+        sa_sat_id=action_type_id,
+        sa_au_id=session['au_id'],
+        sa_s_id=sheet_id,
+        sa_timestamp=datetime.utcnow()
+    )
+    db_session.add(new_event)
     db_session.commit()
+
+    new_status = (db_session.query(sheet_status.ss_status_name)
+                            .filter(sheet.s_ss_id == sheet_status.ss_id)
+                            .filter(sheet.s_google_id == google_id)
+                            .first())
+
+    return new_status

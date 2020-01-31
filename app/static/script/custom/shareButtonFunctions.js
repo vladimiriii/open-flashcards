@@ -1,9 +1,12 @@
 // SHARE BUTTON FUNCTIONS
-function addShareButtons(div, tableData, sheetIdIndex, googleIdIndex) {
+function addShareButtons(div, tableData, sheetIdIndex, googleIdIndex, statusIndex) {
     for (rowIndex in tableData) {
-        const sheetId = String(tableData[rowIndex][sheetIdIndex]);
-        const googleId = String(tableData[rowIndex][googleIdIndex]);
-        buildShareButton(div, sheetId, googleId);
+        const status = tableData[rowIndex][statusIndex];
+        if (status == 'Private') {
+            const sheetId = String(tableData[rowIndex][sheetIdIndex]);
+            const googleId = String(tableData[rowIndex][googleIdIndex]);
+            buildShareButton(div, sheetId, googleId);
+        }
     }
 }
 
@@ -64,47 +67,15 @@ function submitShareRequest() {
     $("#spinner").show();
     $.ajax({
         type: "POST",
-        url: '/make-share-request',
-        data: JSON.stringify({"googleId": googleId}),
+        url: '/update-sheet-status',
+        data: JSON.stringify({"googleId": googleId, "event": "Request Public"}),
         contentType: 'application/json',
         success: function(result) {
             $("#spinner").hide();
-            console.log(result);
-            showShareRequestResult(result['status']);
+            showResultModal(result['status']);
         },
         error: function(msg){
             console.log(msg);
         }
     })
-}
-
-
-function showShareRequestResult(status) {
-    $('#shareModal').modal('hide');
-    $('#feedbackModal').modal('show');
-
-    if (status == 'sheet_accessible') {
-        const header = 'Success!';
-        $("#feedbackModalLabel").text(header);
-        const body = "A request has been sent to make your sheet available to everyone, subject to a quick review.";
-        $("#feedbackModalBody").text(body);
-    }
-    else if (status == 'sheet_made_public') {
-        const header = 'Success!';
-        $("#feedbackModalLabel").text(header);
-        const body = "Your sheet is now available for everyone to see!";
-        $("#feedbackModalBody").text(body);
-    }
-    else if (status == 'sheet_not_accessible') {
-        const header = 'Uh oh...';
-        $("#feedbackModalLabel").text(header);
-        const body = "We couldn't access this sheet. Please make sure it has been shared with everyone or with the email provided.";
-        $("#feedbackModalBody").text(body);
-    }
-    else {
-        const header = 'Uh oh...';
-        $("#feedbackModalLabel").text(header);
-        const body = "Something unexpected went wrong. Please try again later, and if you still have issues, please contact us.";
-        $("#feedbackModalBody").text(body);
-    }
 }

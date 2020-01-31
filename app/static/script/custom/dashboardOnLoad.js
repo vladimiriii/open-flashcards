@@ -11,6 +11,6 @@ $(document).ready(function(){
     $("#" + page).attr('class', 'active');
 
     getSheetLists("publicSheets", ["viewButton"]);
-    getSheetLists("userSheets", ["viewButton", "shareButton"]);
+    getSheetLists("userSheets", ["viewButton", "shareButton", "cancelButton", "privateButton"]);
 
 });

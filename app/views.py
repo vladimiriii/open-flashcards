@@ -210,18 +210,15 @@ def sheet_data():
     return jsonify({"googleId": google_id})
 
 
-@google_api.route('/make-share-request', methods=['POST'])
-def make_share_request():
+@google_api.route('/update-sheet-status', methods=['POST'])
+def process_update_sheet_status_request():
     input = json.loads(request.data)
     google_id = input['googleId']
+    event = input['event']
+
     result = ps.check_sheet_availability(google_id)
     if 'credentials' in session and result['status'] == 'sheet_accessible':
-        permission_level = utils.check_user_role()
-        if permission_level == 'Super User':
-            ps.update_sheet_status(google_id=google_id, super_user=True)
-            result['status'] = 'sheet_made_public'
-        else:
-            ps.update_sheet_status(google_id=google_id, super_user=False)
+        result['status'] = ps.update_sheet_status(google_id=google_id, event=event)
 
     return jsonify(result)
 

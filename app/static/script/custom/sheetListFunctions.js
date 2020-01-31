@@ -46,7 +46,8 @@ function generateSheetList(div, tableData, buttonsToAdd) {
         headerHtml = "",
         rowHtml = "",
         sheetIdIndex = null,
-        googleIdIndex = null;
+        googleIdIndex = null,
+        statusIndex = null;
 
     // Generate Table HTML
     if (tableData == null) {
@@ -65,6 +66,7 @@ function generateSheetList(div, tableData, buttonsToAdd) {
         // Data Rows
         sheetIdIndex = tableData['columns'].indexOf("sheetId");
         googleIdIndex = tableData['columns'].indexOf("googleId");
+        statusIndex = tableData['columns'].indexOf("Status");
         for (rowIndex in tableData['data']) {
             rowHtml += addTableRow(tableData['data'][rowIndex], div, sheetIdIndex, googleIdIndex);
         }
@@ -79,7 +81,7 @@ function generateSheetList(div, tableData, buttonsToAdd) {
 
     // Append Buttons
     if (tableData != null) {
-        addAllButtons(div, tableData, buttonsToAdd, sheetIdIndex, googleIdIndex);
+        addAllButtons(div, tableData, buttonsToAdd, sheetIdIndex, googleIdIndex, statusIndex);
     }
 
     return viewColumn;
@@ -92,7 +94,8 @@ function addTableRow(rowData, div, sheetIdIndex, googleIdIndex){
     const htmlId = div + '-' + sheetId;
 
     let rowHtml = '<tr class="table-row">'
-    rowData.splice(2, rowData.length).map(function(dataPoint) {
+    const rowCopy = rowData.slice();
+    rowCopy.splice(2, rowCopy.length).map(function(dataPoint) {
         rowHtml += '<td>' + dataPoint + '</td>';
     });
 
@@ -104,14 +107,14 @@ function addTableRow(rowData, div, sheetIdIndex, googleIdIndex){
 }
 
 
-function addAllButtons(div, tableData, buttonsToAdd, sheetIdIndex, googleIdIndex){
+function addAllButtons(div, tableData, buttonsToAdd, sheetIdIndex, googleIdIndex, statusIndex){
 
     if (typeof buttonsToAdd !== "undefined") {
         if (buttonsToAdd.includes("viewButton")) {
             addViewButtons(div, tableData['data'], sheetIdIndex);
         };
         if (buttonsToAdd.includes("shareButton")) {
-            addShareButtons(div, tableData['data'], sheetIdIndex, googleIdIndex);
+            addShareButtons(div, tableData['data'], sheetIdIndex, googleIdIndex, statusIndex);
         };
         if (buttonsToAdd.includes("reviewButton")) {
             addReviewButtons(div, tableData['data'], sheetIdIndex, googleIdIndex);
@@ -119,5 +122,48 @@ function addAllButtons(div, tableData, buttonsToAdd, sheetIdIndex, googleIdIndex
         if (buttonsToAdd.includes("approveButton")) {
             addApproveButtons(div, tableData['data'], sheetIdIndex, googleIdIndex);
         };
+        if (buttonsToAdd.includes("privateButton")) {
+            addPrivateButtons(div, tableData['data'], sheetIdIndex, googleIdIndex, statusIndex);
+        };
+        if (buttonsToAdd.includes("cancelButton")) {
+            addCancelButtons(div, tableData['data'], sheetIdIndex, googleIdIndex, statusIndex);
+        };
+    }
+}
+
+
+function showResultModal(status) {
+    $('#shareModal').modal('hide');
+    $('#feedbackModal').modal('show');
+
+    if (status == 'Review Requested') {
+        const header = 'Success!';
+        $("#feedbackModalLabel").text(header);
+        const body = "A request has been sent to make your sheet available to everyone, subject to a quick review.";
+        $("#feedbackModalBody").text(body);
+    }
+    else if (status == 'Public') {
+        const header = 'Success!';
+        $("#feedbackModalLabel").text(header);
+        const body = "Your sheet is now available for everyone to see!";
+        $("#feedbackModalBody").text(body);
+    }
+    else if (status == 'Private') {
+        const header = 'Success!';
+        $("#feedbackModalLabel").text(header);
+        const body = "Your sheet is now only available for you to view.";
+        $("#feedbackModalBody").text(body);
+    }
+    else if (status == 'sheet_not_accessible') {
+        const header = 'Uh oh...';
+        $("#feedbackModalLabel").text(header);
+        const body = "We couldn't access this sheet. Please make sure it has been shared with everyone or with the email provided.";
+        $("#feedbackModalBody").text(body);
+    }
+    else {
+        const header = 'Uh oh...';
+        $("#feedbackModalLabel").text(header);
+        const body = "Something unexpected went wrong. Please try again later, and if you still have issues, please contact us.";
+        $("#feedbackModalBody").text(body);
     }
 }
