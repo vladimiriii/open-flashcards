@@ -20,13 +20,11 @@ function createTables(table, data, buttonsToAdd) {
             $('#' + table).DataTable({
                 'order': [[ Math.max(0, viewColumn - 2), "desc" ]],
                 'lengthChange': false,
-                'select': false
             });
         }
         else {
             $('#' + table).DataTable({
                 'order': [[ Math.max(0, viewColumn), "desc" ]],
-                'select': false,
                 'lengthChange': false,
                 'searching': false,
                 'ordering': false,
@@ -59,9 +57,9 @@ function generateSheetList(div, tableData, buttonsToAdd) {
         viewColumn = tableData['columns'].indexOf('Views');
         const columnList = tableData['columns'].slice();
         columnList.splice(2, tableData['columns'].length).map( function(column) {
-            headerHtml += '<th>' + column + '</th>';
+            headerHtml += '<th class="' + getColumnClass(column) + '">' + column + '</th>';
         })
-        headerHtml += '<th class="confirm-head">Options</th></tr>';
+        headerHtml += '<th class="all confirm-head">Options</th></tr>';
 
         // Data Rows
         sheetIdIndex = tableData['columns'].indexOf("sheetId");
@@ -128,42 +126,5 @@ function addAllButtons(div, tableData, buttonsToAdd, sheetIdIndex, googleIdIndex
         if (buttonsToAdd.includes("cancelButton")) {
             addCancelButtons(div, tableData['data'], sheetIdIndex, googleIdIndex, statusIndex);
         };
-    }
-}
-
-
-function showResultModal(status) {
-    $('#shareModal').modal('hide');
-    $('#feedbackModal').modal('show');
-
-    if (status == 'Review Requested') {
-        const header = 'Success!';
-        $("#feedbackModalLabel").text(header);
-        const body = "A request has been sent to make your sheet available to everyone, subject to a quick review.";
-        $("#feedbackModalBody").text(body);
-    }
-    else if (status == 'Public') {
-        const header = 'Success!';
-        $("#feedbackModalLabel").text(header);
-        const body = "Your sheet is now available for everyone to see!";
-        $("#feedbackModalBody").text(body);
-    }
-    else if (status == 'Private') {
-        const header = 'Success!';
-        $("#feedbackModalLabel").text(header);
-        const body = "Your sheet is now only available for you to view.";
-        $("#feedbackModalBody").text(body);
-    }
-    else if (status == 'sheet_not_accessible') {
-        const header = 'Uh oh...';
-        $("#feedbackModalLabel").text(header);
-        const body = "We couldn't access this sheet. Please make sure it has been shared with everyone or with the email provided.";
-        $("#feedbackModalBody").text(body);
-    }
-    else {
-        const header = 'Uh oh...';
-        $("#feedbackModalLabel").text(header);
-        const body = "Something unexpected went wrong. Please try again later, and if you still have issues, please contact us.";
-        $("#feedbackModalBody").text(body);
     }
 }
