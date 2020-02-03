@@ -5,6 +5,7 @@ from sqlalchemy.engine.url import URL
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 from app.lib.database.databaseConfig import DATABASE
+# from databaseConfig import DATABASE
 
 # Create DB Engine
 Base = declarative_base()
@@ -15,27 +16,6 @@ db_session = scoped_session(sessionmaker(autocommit=False,
 
 Base.query = db_session.query_property()
 schema_name = 'public'
-
-
-# Create our database model
-class app_user_role(Base):
-    __tablename__ = 'app_user_role'
-    __table_args__ = {"schema": schema_name}
-    aur_id = Column(Integer, primary_key=True)
-    aur_role_name = Column(String(120))
-    aur_role_description = Column(Text)
-    aur_created = Column(DateTime)
-    aur_last_modified = Column(DateTime)
-
-    def __init__(self,
-                 aur_role_name=None,
-                 aur_role_description=None,
-                 aur_created=None,
-                 aur_last_modified=None):
-        self.aur_role_name = aur_role_name
-        self.aur_role_description = aur_role_description
-        self.aur_created = aur_created
-        self.aur_last_modified = aur_last_modified
 
 
 class app_user(Base):
@@ -64,89 +44,118 @@ class app_user(Base):
         self.au_last_modified = au_last_modified
 
 
-class teacher_rel_student(Base):
-    __tablename__ = 'teacher_rel_student'
+class app_user_role(Base):
+    __tablename__ = 'app_user_role'
     __table_args__ = {"schema": schema_name}
-    trs_id = Column(Integer, primary_key=True)
-    trs_teacher_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
-    trs_student_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
-    trs_status = Column(Integer, ForeignKey(schema_name + '.teacher_student_status.tss_id'), nullable=False)
-    trs_created = Column(DateTime)
-    trs_last_modified = Column(DateTime)
+    aur_id = Column(Integer, primary_key=True)
+    aur_role_name = Column(String(120))
+    aur_role_description = Column(Text)
+    aur_created = Column(DateTime)
+    aur_last_modified = Column(DateTime)
 
     def __init__(self,
-                 trs_id=None,
-                 trs_teacher_au_id=None,
-                 trs_student_au_id=None,
-                 trs_status=None,
-                 trs_created=None,
-                 trs_last_modified=None):
-        self.trs_id = trs_id
-        self.trs_teacher_au_id = trs_teacher_au_id
-        self.trs_student_au_id = trs_student_au_id
-        self.trs_status = trs_status
-        self.trs_created = trs_created
-        self.trs_last_modified = trs_last_modified
+                 aur_role_name=None,
+                 aur_role_description=None,
+                 aur_created=None,
+                 aur_last_modified=None):
+        self.aur_role_name = aur_role_name
+        self.aur_role_description = aur_role_description
+        self.aur_created = aur_created
+        self.aur_last_modified = aur_last_modified
 
 
-class teacher_student_status(Base):
-    __tablename__ = 'teacher_student_status'
+class app_user_action(Base):
+    __tablename__ = 'app_user_action'
     __table_args__ = {"schema": schema_name}
-    tss_id = Column(Integer, primary_key=True)
-    tss_status_name = Column(String(120))
-    tss_status_description = Column(Text)
-    tss_created = Column(DateTime)
-    tss_last_modified = Column(DateTime)
+    aua_id = Column(Integer, primary_key=True)
+    aua_auat_id = Column(Integer, ForeignKey(schema_name + '.app_user_action_type.auat_id'), nullable=False)
+    aua_initiator_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
+    aua_impacted_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
+    aua_timestamp = Column(DateTime)
 
     def __init__(self,
-                 tss_status_name=None,
-                 tss_status_description=None,
-                 tss_created=None,
-                 tss_last_modified=None):
-        self.tss_status_name = tss_status_name
-        self.tss_status_description = tss_status_description
-        self.tss_created = tss_created
-        self.tss_last_modified = tss_last_modified
+                 aua_auat_id=None,
+                 aua_initiator_au_id=None,
+                 aua_impacted_au_id=None,
+                 aua_timestamp=None):
+        self.aua_auat_id = aua_auat_id
+        self.aua_initiator_au_id = aua_initiator_au_id
+        self.aua_impacted_au_id = aua_impacted_au_id
+        self.aua_timestamp = aua_timestamp
 
 
-class user_action(Base):
-    __tablename__ = 'user_action'
+class app_user_action_type(Base):
+    __tablename__ = 'app_user_action_type'
     __table_args__ = {"schema": schema_name}
-    ua_id = Column(Integer, primary_key=True)
-    ua_uat_id = Column(Integer, ForeignKey(schema_name + '.user_action_type.uat_id'), nullable=False)
-    ua_initiator_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
-    ua_impacted_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
-    ua_timestamp = Column(DateTime)
+    auat_id = Column(Integer, primary_key=True)
+    auat_type_name = Column(String(120))
+    auat_type_description = Column(Text)
+    auat_start_aur_id = Column(Integer, ForeignKey(schema_name + '.app_user_role.aur_id'), nullable=True)
+    auat_end_aur_id = Column(Integer, ForeignKey(schema_name + '.app_user_role.aur_id'), nullable=False)
+    auat_created = Column(DateTime)
+    auat_last_modified = Column(DateTime)
 
     def __init__(self,
-                 ua_uat_id=None,
-                 ua_initiator_au_id=None,
-                 ua_impacted_au_id=None,
-                 ua_timestamp=None):
-        self.ua_uat_id = ua_uat_id
-        self.ua_initiator_au_id = ua_initiator_au_id
-        self.ua_impacted_au_id = ua_impacted_au_id
-        self.ua_timestamp = ua_timestamp
+                 auat_type_name=None,
+                 auat_type_description=None,
+                 auat_start_aur_id=None,
+                 auat_end_aur_id=None,
+                 auat_created=None,
+                 auat_last_modified=None):
+        self.auat_type_name = auat_type_name
+        self.auat_type_description = auat_type_description
+        self.auat_start_aur_id = auat_start_aur_id
+        self.auat_end_aur_id = auat_end_aur_id
+        self.auat_created = auat_created
+        self.auat_last_modified = auat_last_modified
 
 
-class user_action_type(Base):
-    __tablename__ = 'user_action_type'
+class student_rel_sheet(Base):
+    __tablename__ = 'student_rel_sheet'
     __table_args__ = {"schema": schema_name}
-    uat_id = Column(Integer, primary_key=True)
-    uat_type_name = Column(String(120))
-    uat_type_description = Column(Text)
-    uat_created = Column(DateTime)
-    uat_last_modified = Column(DateTime)
+    srs_id = Column(Integer, primary_key=True)
+    srs_teacher_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
+    srs_student_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
+    srs_s_id = Column(Integer, ForeignKey(schema_name + '.sheet.s_id'), nullable=False)
+    srs_status = Column(Integer, ForeignKey(schema_name + '.student_sheet_status.sss_id'), nullable=False)
+    srs_created = Column(DateTime)
+    srs_last_modified = Column(DateTime)
 
     def __init__(self,
-                 uat_type_name=None,
-                 uat_type_description=None,
-                 uat_created=None,
-                 uat_last_modified=None):
-        self.uat_type_name = uat_type_name
-        self.uat_type_description = uat_type_description
-        self.uat_created = uat_created
-        self.uat_last_modified = uat_last_modified
+                 srs_id=None,
+                 srs_teacher_au_id=None,
+                 srs_student_au_id=None,
+                 srs_s_id=None,
+                 srs_status=None,
+                 srs_created=None,
+                 srs_last_modified=None):
+        self.srs_id = srs_id
+        self.srs_teacher_au_id = srs_teacher_au_id
+        self.srs_student_au_id = srs_student_au_id
+        self.srs_s_id = srs_s_id
+        self.srs_status = srs_status
+        self.srs_created = srs_created
+        self.srs_last_modified = srs_last_modified
+
+
+class student_sheet_status(Base):
+    __tablename__ = 'student_sheet_status'
+    __table_args__ = {"schema": schema_name}
+    sss_id = Column(Integer, primary_key=True)
+    sss_status_name = Column(String(120))
+    sss_status_description = Column(Text)
+    sss_created = Column(DateTime)
+    sss_last_modified = Column(DateTime)
+
+    def __init__(self,
+                 sss_status_name=None,
+                 sss_status_description=None,
+                 sss_created=None,
+                 sss_last_modified=None):
+        self.sss_status_name = sss_status_name
+        self.sss_status_description = sss_status_description
+        self.sss_created = sss_created
+        self.sss_last_modified = sss_last_modified
 
 
 class sheet(Base):
@@ -159,6 +168,8 @@ class sheet(Base):
     s_owner_name = Column(Text)
     s_owner_email = Column(Text)
     s_row_count = Column(Integer)
+    s_sheet_created = Column(DateTime)
+    s_sheet_last_modifed = Column(DateTime)
     s_created = Column(DateTime)
     s_last_modified = Column(DateTime)
 

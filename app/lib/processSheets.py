@@ -93,7 +93,7 @@ def get_request_sheets():
             ORDER BY views DESC
             ) AS vs
         ON s.s_id = vs.v_s_id
-        WHERE ss_status_name = 'Public Review Requested';
+        WHERE ss_status_name = 'Review Requested';
         """)
 
     data = db_session.execute(query)
@@ -139,8 +139,10 @@ def add_new_sheet_entry(metadata):
                          s_owner_name=metadata['owner_name'],
                          s_owner_email=metadata['owner_email'],
                          s_row_count=metadata['row_count'],
-                         s_created=metadata['created_date'],
-                         s_last_modified=metadata['last_modified'],
+                         s_sheet_created=metadata['created_date'],
+                         s_sheet_last_modifed=metadata['last_modified'],
+                         s_created=datetime.utcnow(),
+                         s_last_modified=datetime.utcnow(),
                          )
     db_session.add(sheet_record)
     db_session.commit()
@@ -170,7 +172,8 @@ def update_sheet_metadata(sheet_id):
     sheet_record = sheet.query.filter_by(s_id=sheet_id).first()
     sheet_record.s_sheet_name = metadata['sheet_name']
     sheet_record.s_row_count = metadata['row_count']
-    sheet_record.s_last_modified = metadata['last_modified']
+    sheet_record.s_sheet_last_modifed = metadata['last_modified']
+    sheet_record.s_last_modifed = datetime.utcnow()
 
     # Commit changes to the database
     db_session.commit()

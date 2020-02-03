@@ -4,10 +4,23 @@ from sqlalchemy import text
 def sheet_action_update_trigger(db_session):
     trigger = text("""
         CREATE TRIGGER sheet_action_update
-        AFTER INSERT
+        BEFORE INSERT
         ON sheet_action
         FOR EACH ROW
         EXECUTE PROCEDURE update_sheet_status();
+    """)
+
+    db_session.execute(trigger)
+    db_session.commit()
+
+
+def app_user_role_update_trigger(db_session):
+    trigger = text("""
+        CREATE TRIGGER app_user_action_update
+        BEFORE INSERT
+        ON app_user_action
+        FOR EACH ROW
+        EXECUTE PROCEDURE update_app_user_role();
     """)
 
     db_session.execute(trigger)
@@ -26,3 +39,4 @@ if __name__ == '__main__':
                                              bind=engine))
 
     sheet_action_update_trigger(db_session)
+    app_user_action_update_trigger(db_session)

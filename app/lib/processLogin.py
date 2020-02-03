@@ -93,4 +93,3 @@ def update_user_info():
         db_session.commit()
 
     session['au_id'] = current_user.au_id
-    session['email'] = email

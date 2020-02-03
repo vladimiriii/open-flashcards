@@ -8,9 +8,9 @@ from sqlalchemy import create_engine
 
 # Database
 from databaseConfig import DATABASE
-from models import Base, db_session, app_user_role, app_user, user_action_type, sheet_action_type, sheet_status, teacher_student_status
-from procedures import update_sheet_status_procedure
-from triggers import sheet_action_update_trigger
+from models import Base, db_session, app_user_role, app_user, app_user_action_type, sheet_action_type, sheet_status, student_sheet_status
+from procedures import update_sheet_status_procedure, update_app_user_role_procedure
+from triggers import sheet_action_update_trigger, app_user_role_update_trigger
 
 # ---------------------------------------------
 # Steps to recreate database
@@ -21,15 +21,14 @@ from triggers import sheet_action_update_trigger
 # GRANT ALL PRIVILEGES ON DATABASE openflashcards TO username;
 
 
-def create_user_roles():
-
+def create_app_user_roles():
     roles = [
         {"name": "Guest", "description": "User that has not logged in, can only view public sheets."},
-        {"name": "Individual", "description": "Logged in user, can import and view their own sheets with restrictions."},
-        {"name": "Self Learner", "description": "Logged in user. Can import and view their own sheets with no restrictions."},
-        {"name": "Student", "description": "Logged in user that has been added by at least one Teacher. Can import and view own sheets with no restrictions, and view sheets imported by their Teacher(s)."},
-        {"name": "Teacher", "description": "Logged in user. Can import and view their own sheets, plus add Students that will be able to view their sheets."},
-        {"name": "Super User", "description": "Can import and view all sheets without restriction."}
+        {"name": "Undergraduate", "description": "Logged in user, can import and view their own sheets with restrictions."},
+        {"name": "Graduate", "description": "Logged in user. Can import and view their own sheets with no restrictions."},
+        {"name": "Professor", "description": "Logged in user. Can import and view their own sheets, plus add other users that will be able to view their sheets."},
+        {"name": "Super User", "description": "Can import and view all sheets without restriction."},
+        {"name": "Blocked", "description": "User is not allowed to access the App."}
     ]
 
     role_ids = {}
@@ -41,16 +40,15 @@ def create_user_roles():
             aur_last_modified=datetime.now()
         )
         db_session.add(role_entry)
-        if role['name'] in ["Guest", "Super User"]:
-            db_session.flush()
-            role_ids[role['name']] = role_entry.aur_id
+        db_session.flush()
+        role_ids[role['name']] = role_entry.aur_id
 
     db_session.commit()
 
     return role_ids
 
 
-def create_default_users(role_ids):
+def create_default_app_users(role_ids):
     # Get Configuration Settings
     par_dir = os.path.join(__file__, "../../..")
     par_dir_abs_path = os.path.abspath(par_dir)
@@ -86,40 +84,66 @@ def create_default_users(role_ids):
     db_session.commit()
 
 
-def create_user_action_type_defaults():
-
+def create_app_user_action_type_defaults(role_ids):
     action_types = [
-        {"name": "Add Student", "description": "Add relationship between a Teacher user and a Student user."},
-        {"name": "Remove Student", "description": "Remove a relationship between a Teacher user and a Student user."},
-        {"name": "Change Role", "description": "Change the role of an existing user."},
-        {"name": "Block", "description": "Blocks a user from logging in."}
+        {
+            "name": "Bought Graduate Package",
+            "description": "Upgrades an individual to allow unrestricted access.",
+            "start_aur_id": role_ids["Undergraduate"],
+            "end_aur_id": role_ids["Graduate"]
+        },
+        {
+            "name": "Graduate Package Expired",
+            "description": "User access to Graduate features has expired.",
+            "start_aur_id": role_ids["Graduate"],
+            "end_aur_id": role_ids["Undergraduate"]
+        },
+        {
+            "name": "Bought Professor Package",
+            "description": "Upgrades any user to a Professor.",
+            "start_aur_id": None,
+            "end_aur_id": role_ids["Professor"]
+        },
+        {
+            "name": "Professor Package Expired",
+            "description": "User access to Professor features has expired.",
+            "start_aur_id": role_ids["Professor"],
+            "end_aur_id": role_ids["Undergraduate"]
+        },
+        {
+            "name": "Block User",
+            "description": "Blocks a user from logging in.",
+            "start_aur_id": None,
+            "end_aur_id": role_ids["Blocked"]
+        }
     ]
 
     for action in action_types:
-        action_entry = user_action_type(
-            uat_type_name=action['name'],
-            uat_type_description=action['description'],
-            uat_created=datetime.utcnow(),
-            uat_last_modified=datetime.utcnow()
+        action_entry = app_user_action_type(
+            auat_type_name=action['name'],
+            auat_type_description=action['description'],
+            auat_start_aur_id=action['start_aur_id'],
+            auat_end_aur_id=action['end_aur_id'],
+            auat_created=datetime.utcnow(),
+            auat_last_modified=datetime.utcnow()
         )
         db_session.add(action_entry)
 
     db_session.commit()
 
 
-def create_teacher_student_status_defaults():
-
+def create_student_sheet_status_defaults():
     statuses = [
-        {"name": "Active", "description": "Relationship between the Teacher and the Student is active."},
-        {"name": "Inactive", "description": "Relationship between the Teacher and the Student is inactive."}
+        {"name": "Active", "description": "Student access to the sheet is active."},
+        {"name": "Inactive", "description": "Student access to the sheet is inactive."}
     ]
 
     for status in statuses:
-        status_entry = teacher_student_status(
-            tss_status_name=status['name'],
-            tss_status_description=status['description'],
-            tss_created=datetime.utcnow(),
-            tss_last_modified=datetime.utcnow()
+        status_entry = student_sheet_status(
+            sss_status_name=status['name'],
+            sss_status_description=status['description'],
+            sss_created=datetime.utcnow(),
+            sss_last_modified=datetime.utcnow()
         )
         db_session.add(status_entry)
 
@@ -127,7 +151,6 @@ def create_teacher_student_status_defaults():
 
 
 def create_sheet_status_defaults():
-
     statuses = [
         {"name": "Private", "description": "Sheet can only be seen by user who added the sheet."},
         {"name": "Review Requested", "description": "User has requested to make the sheet available publicly."},
@@ -153,7 +176,6 @@ def create_sheet_status_defaults():
 
 
 def create_sheet_action_type_defaults(status_ids):
-
     action_types = [
         {
             "name": "Request Public",
@@ -208,16 +230,17 @@ def create_sheet_action_type_defaults(status_ids):
 
 
 if __name__ == '__main__':
-
     engine = create_engine(URL(**DATABASE))
     Base.metadata.create_all(bind=engine)
 
-    role_ids = create_user_roles()
-    create_default_users(role_ids)
-    create_user_action_type_defaults()
-    create_teacher_student_status_defaults()
+    role_ids = create_app_user_roles()
+    create_default_app_users(role_ids)
+    create_app_user_action_type_defaults(role_ids)
+    create_student_sheet_status_defaults()
     status_ids = create_sheet_status_defaults()
     create_sheet_action_type_defaults(status_ids)
 
     update_sheet_status_procedure(db_session)
     sheet_action_update_trigger(db_session)
+    update_app_user_role_procedure(db_session)
+    app_user_role_update_trigger(db_session)
