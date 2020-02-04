@@ -4,7 +4,7 @@ from sqlalchemy import text
 def sheet_action_update_trigger(db_session):
     trigger = text("""
         CREATE TRIGGER sheet_action_update
-        BEFORE INSERT
+        AFTER INSERT
         ON sheet_action
         FOR EACH ROW
         EXECUTE PROCEDURE update_sheet_status();
@@ -17,7 +17,7 @@ def sheet_action_update_trigger(db_session):
 def app_user_role_update_trigger(db_session):
     trigger = text("""
         CREATE TRIGGER app_user_action_update
-        BEFORE INSERT
+        AFTER INSERT
         ON app_user_action
         FOR EACH ROW
         EXECUTE PROCEDURE update_app_user_role();

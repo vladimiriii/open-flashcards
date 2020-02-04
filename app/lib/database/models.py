@@ -169,7 +169,7 @@ class sheet(Base):
     s_owner_email = Column(Text)
     s_row_count = Column(Integer)
     s_sheet_created = Column(DateTime)
-    s_sheet_last_modifed = Column(DateTime)
+    s_sheet_last_modified = Column(DateTime)
     s_created = Column(DateTime)
     s_last_modified = Column(DateTime)
 
@@ -180,6 +180,8 @@ class sheet(Base):
                  s_owner_name=None,
                  s_owner_email=None,
                  s_row_count=None,
+                 s_sheet_created=None,
+                 s_sheet_last_modified=None,
                  s_created=None,
                  s_last_modified=None):
         self.s_ss_id = s_ss_id
@@ -188,6 +190,8 @@ class sheet(Base):
         self.s_owner_name = s_owner_name
         self.s_owner_email = s_owner_email
         self.s_row_count = s_row_count
+        self.s_sheet_created = s_sheet_created
+        self.s_sheet_last_modified = s_sheet_last_modified
         self.s_created = s_created
         self.s_last_modified = s_last_modified
 
@@ -239,9 +243,9 @@ class sheet_action(Base):
     sa_timestamp = Column(DateTime)
 
     def __init__(self,
-                 sa_sat_id=None,
                  sa_au_id=None,
                  sa_s_id=None,
+                 sa_sat_id=None,
                  sa_timestamp=None):
         self.sa_au_id = sa_au_id
         self.sa_s_id = sa_s_id

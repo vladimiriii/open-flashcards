@@ -7,7 +7,7 @@ import pandas as pd
 from googleapiclient.errors import HttpError
 
 # Custom Libraries
-from app.lib.database.models import sheet, db_session, view, app_user_rel_sheet, sheet_status, sheet_action, sheet_action_type
+from app.lib.database.models import sheet, db_session, view, app_user, app_user_role, app_user_rel_sheet, sheet_status, sheet_action, sheet_action_type
 from app.lib import utils
 from app.lib import reference as ref
 
@@ -140,7 +140,7 @@ def add_new_sheet_entry(metadata):
                          s_owner_email=metadata['owner_email'],
                          s_row_count=metadata['row_count'],
                          s_sheet_created=metadata['created_date'],
-                         s_sheet_last_modifed=metadata['last_modified'],
+                         s_sheet_last_modified=metadata['last_modified'],
                          s_created=datetime.utcnow(),
                          s_last_modified=datetime.utcnow(),
                          )
@@ -185,8 +185,11 @@ def add_sheet_view(sheet_id):
                            v_s_id=sheet_id,
                            v_timestamp=datetime.now())
     else:
-
-        view_record = view(v_au_id=1,
+        guest_user_id = (db_session.query(app_user.au_id)
+                                   .filter(app_user.au_aur_id == app_user_role.aur_id)
+                                   .filter(app_user_role.aur_role_name == "Guest")
+                                   .scalar())
+        view_record = view(v_au_id=guest_user_id,
                            v_s_id=sheet_id,
                            v_timestamp=datetime.now())
 
@@ -264,13 +267,15 @@ def update_sheet_status(google_id, event):
         if permission_level == 'Super User':
             event = "Make Public"
 
-    sheet_id = db_session.query(sheet.s_id).filter_by(s_google_id=google_id).first()
-    action_type_id = db_session.query(sheet_action_type.sat_id).filter_by(sat_type_name=event).first()
+    sheet_id = db_session.query(sheet.s_id).filter_by(s_google_id=google_id).scalar()
+    action_type_id = db_session.query(sheet_action_type.sat_id).filter_by(sat_type_name=event).scalar()
+
+    print(sheet_id, action_type_id, session['au_id'])
 
     new_event = sheet_action(
-        sa_sat_id=action_type_id,
         sa_au_id=session['au_id'],
         sa_s_id=sheet_id,
+        sa_sat_id=action_type_id,
         sa_timestamp=datetime.utcnow()
     )
     db_session.add(new_event)

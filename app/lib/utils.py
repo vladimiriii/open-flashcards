@@ -74,7 +74,7 @@ def credentials_to_dict(credentials):
 
 def check_user_role():
     user_role = (db_session.query(app_user, app_user_role)
-                           .filter(app_user.au_email == session['email'])
+                           .filter(app_user.au_id == session['au_id'])
                            .filter(app_user.au_aur_id == app_user_role.aur_id)
                            .first()).app_user_role.aur_role_name
 

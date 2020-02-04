@@ -5,8 +5,9 @@ import configparser
 par_dir = os.path.join(__file__, "../../..")
 par_dir_abs_path = os.path.abspath(par_dir)
 app_dir = os.path.dirname(par_dir_abs_path)
-config = configparser.RawConfigParser()
 config_filepath = app_dir + '/config.cfg'
+
+config = configparser.RawConfigParser()
 config.read(config_filepath)
 
 DB_PORT = config.get('Database', 'DB_PORT')
