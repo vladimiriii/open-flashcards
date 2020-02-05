@@ -7,6 +7,7 @@ import sys
 import app.lib.cardData as cd
 import app.lib.processLogin as pl
 import app.lib.processSheets as ps
+import app.lib.userData as ud
 from app.lib import utils
 
 os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = 'YES'
@@ -179,7 +180,23 @@ def get_sheet_lists():
     else:
         raw_data = None
 
-    table_data = ps.process_sheet_data(raw_data)
+    table_data = utils.process_table_data(raw_data)
+
+    return jsonify(table_data)
+
+
+@google_api.route('/get-user-list', methods=['GET'])
+def get_user_list():
+    if 'au_id' in session:
+        permission_level = utils.check_user_role()
+        if permission_level == 'Super User':
+            raw_data = ud.get_user_data()
+        else:
+            raw_data = None
+    else:
+        raw_data = None
+
+    table_data = utils.process_table_data(raw_data)
 
     return jsonify(table_data)
 

@@ -1,9 +1,12 @@
+import pandas as pd
+
 from googleapiclient.discovery import build
 from google.oauth2.service_account import Credentials as service_account_credentials
 from google.oauth2.credentials import Credentials as user_credentials
 
 from flask import session
 from app.lib.database.models import app_user, app_user_role, db_session
+from app.lib import reference as ref
 
 SERVICE_ACCOUNT_FILE = "app/static/data/private/service_account.json"
 
@@ -79,6 +82,16 @@ def check_user_role():
                            .first()).app_user_role.aur_role_name
 
     return user_role
+
+
+def process_table_data(data):
+    df = pd.DataFrame(data)
+    if len(df) > 0:
+        df.columns = [ref.column_lookup[col] for col in data.keys()]
+        data_dict = df.to_dict(orient='split')
+    else:
+        data_dict = None
+    return data_dict
 
 
 def generate_error_message(sys_info):

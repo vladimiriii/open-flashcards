@@ -42,7 +42,13 @@ function getColumnClass(column) {
         "Views": "min-tablet-l",
         "Status": "min-tablet-p",
         "Last Modified": "min-desktop",
-        "Options": "all"
+        "Options": "all",
+        "User ID": "all",
+        "Role": "all",
+        "Email": "min-tablet-p",
+        "Name": "all",
+        "First Log In": "min-tablet-l",
+        "Last Log In": "min-tablet-l"
     };
 
     return lookup[column];

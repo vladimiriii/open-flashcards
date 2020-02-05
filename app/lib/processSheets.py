@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from flask import session
-import pandas as pd
 
 # Google API
 from googleapiclient.errors import HttpError
@@ -9,7 +8,6 @@ from googleapiclient.errors import HttpError
 # Custom Libraries
 from app.lib.database.models import sheet, db_session, view, app_user, app_user_role, app_user_rel_sheet, sheet_status, sheet_action, sheet_action_type
 from app.lib import utils
-from app.lib import reference as ref
 
 
 def get_public_sheets():
@@ -74,7 +72,7 @@ def get_user_sheets(user_id):
 
 
 def get_request_sheets():
-    query = (f"""
+    query = ("""
         SELECT s_id,
             s_google_id,
             s_sheet_name,
@@ -99,16 +97,6 @@ def get_request_sheets():
     data = db_session.execute(query)
 
     return data
-
-
-def process_sheet_data(data):
-    df = pd.DataFrame(data)
-    if len(df) > 0:
-        df.columns = [ref.column_lookup[col] for col in data.keys()]
-        data_dict = df.to_dict(orient='split')
-    else:
-        data_dict = None
-    return data_dict
 
 
 def get_sheet_metadata(google_id):

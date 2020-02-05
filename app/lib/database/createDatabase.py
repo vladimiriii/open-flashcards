@@ -36,8 +36,8 @@ def create_app_user_roles():
         role_entry = app_user_role(
             aur_role_name=role['name'],
             aur_role_description=role['description'],
-            aur_created=datetime.now(),
-            aur_last_modified=datetime.now()
+            aur_created=datetime.utcnow(),
+            aur_last_modified=datetime.utcnow()
         )
         db_session.add(role_entry)
         db_session.flush()

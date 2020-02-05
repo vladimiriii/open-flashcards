@@ -5,14 +5,14 @@
 
 	{% include 'includes/basic-meta.html' %}
 	{% include 'includes/base-scripts.html' %}
+	{% include 'includes/table-scripts.html' %}
 
 	<!-- Page Specific Styling -->
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/sheet-management.css') }}">
 
 	<!-- Custom JavaScript -->
-	<!-- <script src="{{ url_for('static',filename='script/custom/dashboardOnLoad.js') }}"></script>
-	<script src="{{ url_for('static',filename='script/custom/dashboardFunctions.js') }}"></script>
-	<script src="{{ url_for('static',filename='script/custom/tableMeta.js') }}"></script> -->
+	<script src="{{ url_for('static',filename='script/custom/userManagementOnLoad.js') }}"></script>
+	<script src="{{ url_for('static',filename='script/custom/userManagementFunctions.js') }}"></script>
 
 </head>
 <body>
@@ -23,6 +23,7 @@
 		<div class="row main-panel">
     	<div class="col-md-12">
 			<h3>User Management</h3>
+			<table id="currentUsers" class="display responsive" width="100%"></table>
 		</div>
     </div>
     {% include 'modules/footer.html' %}
