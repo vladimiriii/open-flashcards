@@ -103,11 +103,11 @@ function addUserManagementButtons(div, tableData, buttonsToAdd, userIdIndex, rol
 
     if (typeof buttonsToAdd !== "undefined") {
         if (buttonsToAdd.includes("graduateUpgradeButton")) {
-            addGraduateButtons(div, tableData['data'], userIdIndex, roleIndex);
+            addGraduateUpgradeButtons(div, tableData['data'], userIdIndex, roleIndex);
         };
-    //     if (buttonsToAdd.includes("professorUpgradeButton")) {
-    //         addUserManagementButtons(div, tableData['data'], userIdIndex, roleIndex);
-    //     };
+        if (buttonsToAdd.includes("teacherUpgradeButton")) {
+            addTeacherUpgradeButtons(div, tableData['data'], userIdIndex, roleIndex);
+        };
         if (buttonsToAdd.includes("cancelPackageButton")) {
             addCancelPackageButtons(div, tableData['data'], userIdIndex, roleIndex);
         };

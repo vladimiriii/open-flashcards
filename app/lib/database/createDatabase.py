@@ -26,7 +26,7 @@ def create_app_user_roles():
         {"name": "Guest", "description": "User that has not logged in, can only view public sheets."},
         {"name": "Undergraduate", "description": "Logged in user, can import and view their own sheets with restrictions."},
         {"name": "Graduate", "description": "Logged in user. Can import and view their own sheets with no restrictions."},
-        {"name": "Professor", "description": "Logged in user. Can import and view their own sheets, plus add other users that will be able to view their sheets."},
+        {"name": "Teacher", "description": "Logged in user. Can import and view their own sheets, plus add other users that will be able to view their sheets."},
         {"name": "Super User", "description": "Can import and view all sheets without restriction."},
         {"name": "Blocked", "description": "User is not allowed to access the App."}
     ]
@@ -109,15 +109,15 @@ def create_app_user_action_type_defaults(role_ids):
             "end_aur_id": role_ids["Undergraduate"]
         },
         {
-            "name": "Bought Professor Package",
-            "description": "Upgrades any user to a Professor.",
+            "name": "Bought Teacher Package",
+            "description": "Upgrades any user to a Teacher.",
             "start_aur_id": None,
-            "end_aur_id": role_ids["Professor"]
+            "end_aur_id": role_ids["Teacher"]
         },
         {
-            "name": "Professor Package Expired",
-            "description": "User access to Professor features has expired.",
-            "start_aur_id": role_ids["Professor"],
+            "name": "Teacher Package Expired",
+            "description": "User access to Teacher features has expired.",
+            "start_aur_id": role_ids["Teacher"],
             "end_aur_id": role_ids["Undergraduate"]
         },
         {

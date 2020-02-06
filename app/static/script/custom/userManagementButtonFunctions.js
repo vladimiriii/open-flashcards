@@ -1,4 +1,4 @@
-function addGraduateButtons(div, tableData, userIdIndex, roleIndex) {
+function addGraduateUpgradeButtons(div, tableData, userIdIndex, roleIndex) {
     for (rowIndex in tableData) {
         const role = tableData[rowIndex][roleIndex]
         if (role == 'Undergraduate') {
@@ -12,58 +12,66 @@ function addGraduateButtons(div, tableData, userIdIndex, roleIndex) {
 function buildGraduateButton(div, userId) {
     const cellId = "#opt-" + div + '-' + userId;
     const btn = '<button type="button" class="btn btn-outline-success btn-sm confirm-col-btn" '
-           + 'onclick="makeGraduateRequest(\'' + userId + '\')">'
-           + '<i class="fa fa-level-up" aria-hidden="true"></i></button>'
+           + 'onclick="makeUserRequest(\'' + userId + '\', \'Bought Graduate Package\')">'
+           + '<i class="fa fa-graduation-cap" aria-hidden="true"></i></button>'
    $(cellId).append(btn);
 }
 
 
-function makeGraduateRequest(userId) {
-    event.stopPropagation();
-    $("#spinner").show();
-    $.ajax({
-        type: "POST",
-        url: '/update-user-role',
-        data: JSON.stringify({"userId": userId, "event": "Bought Graduate Package"}),
-        contentType: 'application/json',
-        success: function(result) {
-            $("#spinner").hide();
-            console.log(result);
-            // showResultModal(result['status']);
-        },
-        error: function(msg){
-            console.log(msg);
-        }
-    })
-}
-
-function addCancelPackageButtons(div, tableData, userIdIndex, roleIndex) {
+function addTeacherUpgradeButtons(div, tableData, userIdIndex, roleIndex) {
     for (rowIndex in tableData) {
         const role = tableData[rowIndex][roleIndex]
-        if (['Graduate', 'Professor'].includes(role)) {
+        if (['Undergraduate', 'Graduate'].includes(role)) {
             const userId = String(tableData[rowIndex][userIdIndex]);
-            buildCancelPackageButton(div, userId);
+            buildTeacherButton(div, userId);
         }
     }
 }
 
 
-function buildCancelPackageButton(div, userId) {
+function buildTeacherButton(div, userId) {
     const cellId = "#opt-" + div + '-' + userId;
-    const btn = '<button type="button" class="btn btn-outline-primary btn-sm confirm-col-btn" '
-           + 'onclick="makeCancelPackageRequest(\'' + userId + '\')">'
-           + '<i class="fa fa-level-down" aria-hidden="true"></i></button>'
+    const btn = '<button type="button" class="btn btn-outline-warning btn-sm confirm-col-btn" '
+           + 'onclick="makeUserRequest(\'' + userId + '\', \'Bought Teacher Package\')">'
+           + '<i class="fa fa-institution" aria-hidden="true"></i></button>'
    $(cellId).append(btn);
 }
 
 
-function makeCancelPackageRequest(userId) {
+function addCancelPackageButtons(div, tableData, userIdIndex, roleIndex) {
+    for (rowIndex in tableData) {
+        const role = tableData[rowIndex][roleIndex]
+        if (['Graduate', 'Teacher'].includes(role)) {
+            const userId = String(tableData[rowIndex][userIdIndex]);
+            buildCancelPackageButton(div, userId, role);
+        }
+    }
+}
+
+
+function buildCancelPackageButton(div, userId, role) {
+    const cellId = "#opt-" + div + '-' + userId;
+    let user_event;
+    if (role == "Graduate") {
+        user_event = "Graduate Package Expired"
+    }
+    else if (role == "Teacher") {
+        user_event = "Teacher Package Expired"
+    }
+    const btn = '<button type="button" class="btn btn-outline-primary btn-sm confirm-col-btn" '
+           + 'onclick="makeUserRequest(\'' + userId + '\', \'' + user_event + '\')">'
+           + '<i class="fa fa-ban" aria-hidden="true"></i></button>'
+   $(cellId).append(btn);
+}
+
+
+function makeUserRequest(userId, user_event) {
     event.stopPropagation();
     $("#spinner").show();
     $.ajax({
         type: "POST",
         url: '/update-user-role',
-        data: JSON.stringify({"userId": userId, "event": "Graduate Package Expired"}),
+        data: JSON.stringify({"userId": userId, "event": user_event}),
         contentType: 'application/json',
         success: function(result) {
             $("#spinner").hide();

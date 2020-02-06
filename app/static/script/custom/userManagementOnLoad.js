@@ -5,7 +5,7 @@ $(document).ready(function(){
 
     getUserList("currentUsers",
                  ["graduateUpgradeButton",
-                  "professorUpgradeButton",
+                  "teacherUpgradeButton",
                   "cancelPackageButton",
                   "blockButton"]
     );
