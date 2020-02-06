@@ -75,15 +75,6 @@ def credentials_to_dict(credentials):
         'scopes': credentials.scopes}
 
 
-def check_user_role():
-    user_role = (db_session.query(app_user, app_user_role)
-                           .filter(app_user.au_id == session['au_id'])
-                           .filter(app_user.au_aur_id == app_user_role.aur_id)
-                           .first()).app_user_role.aur_role_name
-
-    return user_role
-
-
 def process_table_data(data):
     df = pd.DataFrame(data)
     if len(df) > 0:

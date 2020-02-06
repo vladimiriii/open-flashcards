@@ -9,8 +9,8 @@ from sqlalchemy import create_engine
 # Database
 from databaseConfig import DATABASE
 from models import Base, db_session, app_user_role, app_user, app_user_action_type, sheet_action_type, sheet_status, student_sheet_status
-from procedures import update_sheet_status_procedure, update_app_user_role_procedure
-from triggers import sheet_action_update_trigger, app_user_role_update_trigger
+import procedures as proc
+import triggers as trig
 
 # ---------------------------------------------
 # Steps to recreate database
@@ -79,8 +79,18 @@ def create_default_app_users(role_ids):
         au_last_modified=datetime.utcnow(),
     )
 
+    user_3 = app_user(
+        au_aur_id=role_ids['Undergraduate'],
+        au_email='test@test.com',
+        au_first_name='Test',
+        au_last_name='User',
+        au_created=datetime.utcnow(),
+        au_last_modified=datetime.utcnow(),
+    )
+
     db_session.add(user_1)
     db_session.add(user_2)
+    db_session.add(user_3)
     db_session.commit()
 
 
@@ -240,7 +250,7 @@ if __name__ == '__main__':
     status_ids = create_sheet_status_defaults()
     create_sheet_action_type_defaults(status_ids)
 
-    update_sheet_status_procedure(db_session)
-    sheet_action_update_trigger(db_session)
-    update_app_user_role_procedure(db_session)
-    app_user_role_update_trigger(db_session)
+    proc.update_sheet_status_procedure(db_session)
+    trig.sheet_action_trigger(db_session)
+    proc.update_app_user_role_procedure(db_session)
+    trig.app_user_action_trigger(db_session)

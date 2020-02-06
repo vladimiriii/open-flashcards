@@ -7,6 +7,7 @@ from googleapiclient.errors import HttpError
 
 # Custom Libraries
 from app.lib.database.models import sheet, db_session, view, app_user, app_user_role, app_user_rel_sheet, sheet_status, sheet_action, sheet_action_type
+import app.lib.user.extract as ue
 from app.lib import utils
 
 
@@ -251,14 +252,12 @@ def check_sheet_availability(google_id):
 def update_sheet_status(google_id, event):
 
     if event == 'Request Public':
-        permission_level = utils.check_user_role()
+        permission_level = ue.check_user_role()
         if permission_level == 'Super User':
             event = "Make Public"
 
     sheet_id = db_session.query(sheet.s_id).filter_by(s_google_id=google_id).scalar()
     action_type_id = db_session.query(sheet_action_type.sat_id).filter_by(sat_type_name=event).scalar()
-
-    print(sheet_id, action_type_id, session['au_id'])
 
     new_event = sheet_action(
         sa_au_id=session['au_id'],

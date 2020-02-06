@@ -7,7 +7,8 @@ import sys
 import app.lib.cardData as cd
 import app.lib.processLogin as pl
 import app.lib.processSheets as ps
-import app.lib.userData as ud
+import app.lib.user.extract as ue
+import app.lib.user.update as uu
 from app.lib import utils
 
 os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = 'YES'
@@ -69,7 +70,7 @@ def start_login():
 def oauth2callback():
     try:
         pl.handle_callback()
-        pl.update_user_info()
+        uu.update_user_info()
         return redirect(url_for('internal_page.dashboard_page'))
     except:
         print(utils.generate_error_message(sys.exc_info()))
@@ -80,7 +81,7 @@ def oauth2callback():
 def show_blog(sheet_id):
     try:
         if 'credentials' in session:
-            permission_level = utils.check_user_role()
+            permission_level = ue.check_user_role()
         else:
             permission_level = 'Guest'
 
@@ -95,7 +96,7 @@ def show_blog(sheet_id):
 def dashboard_page():
     try:
         if 'credentials' in session:
-            permission_level = utils.check_user_role()
+            permission_level = ue.check_user_role()
             return render_template('dashboard.html', value=permission_level)
         else:
             return redirect(url_for('basic_page.landing_page'))
@@ -108,7 +109,7 @@ def dashboard_page():
 def sheet_management_page():
     try:
         if 'credentials' in session:
-            permission_level = utils.check_user_role()
+            permission_level = ue.check_user_role()
 
             if permission_level == 'Super User':
                 return render_template('sheet-management.html')
@@ -127,7 +128,7 @@ def sheet_management_page():
 def user_management_page():
     try:
         if 'credentials' in session:
-            permission_level = utils.check_user_role()
+            permission_level = ue.check_user_role()
 
             if permission_level == 'Super User':
                 return render_template('user-management.html')
@@ -157,7 +158,7 @@ def lo_page():
 def create_flashcards_page():
     try:
         if 'credentials' in session:
-            permission_level = utils.check_user_role()
+            permission_level = ue.check_user_role()
             return render_template('create-flashcards.html', permission_level=permission_level)
         else:
             return redirect(url_for('basic_page.landing_page'))
@@ -174,7 +175,7 @@ def get_sheet_lists():
     elif data_type == "userSheets" and 'au_id' in session:
         raw_data = ps.get_user_sheets(session['au_id'])
     elif data_type == "requestSheets" and 'au_id' in session:
-        permission_level = utils.check_user_role()
+        permission_level = ue.check_user_role()
         if permission_level == 'Super User':
             raw_data = ps.get_request_sheets()
     else:
@@ -188,9 +189,9 @@ def get_sheet_lists():
 @google_api.route('/get-user-list', methods=['GET'])
 def get_user_list():
     if 'au_id' in session:
-        permission_level = utils.check_user_role()
+        permission_level = ue.check_user_role()
         if permission_level == 'Super User':
-            raw_data = ud.get_user_data()
+            raw_data = ue.get_user_data()
         else:
             raw_data = None
     else:
@@ -236,6 +237,21 @@ def process_update_sheet_status_request():
     result = ps.check_sheet_availability(google_id)
     if 'credentials' in session and result['status'] == 'sheet_accessible':
         result['status'] = ps.update_sheet_status(google_id=google_id, event=event)
+
+    return jsonify(result)
+
+
+@google_api.route('/update-user-role', methods=['POST'])
+def process_update_user_role_request():
+    input = json.loads(request.data)
+    user_id = int(input['userId'])
+    event = input['event']
+
+    result = {}
+    if 'au_id' in session:
+        permission_level = ue.check_user_role()
+        if permission_level == 'Super User':
+            result['status'] = uu.update_user_role(user_id=user_id, event=event)
 
     return jsonify(result)
 

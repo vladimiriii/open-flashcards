@@ -101,18 +101,18 @@ function addTableRow(rowData, div, userIdIndex){
 
 function addUserManagementButtons(div, tableData, buttonsToAdd, userIdIndex, roleIndex){
 
-    // if (typeof buttonsToAdd !== "undefined") {
-    //     if (buttonsToAdd.includes("graduateUpgradeButton")) {
-    //         addUserManagementButtons(div, tableData['data'], userIdIndex, roleIndex);
-    //     };
+    if (typeof buttonsToAdd !== "undefined") {
+        if (buttonsToAdd.includes("graduateUpgradeButton")) {
+            addGraduateButtons(div, tableData['data'], userIdIndex, roleIndex);
+        };
     //     if (buttonsToAdd.includes("professorUpgradeButton")) {
     //         addUserManagementButtons(div, tableData['data'], userIdIndex, roleIndex);
     //     };
-    //     if (buttonsToAdd.includes("cancelPackageButton")) {
-    //         addUserManagementButtons(div, tableData['data'], userIdIndex, roleIndex);
-    //     };
+        if (buttonsToAdd.includes("cancelPackageButton")) {
+            addCancelPackageButtons(div, tableData['data'], userIdIndex, roleIndex);
+        };
     //     if (buttonsToAdd.includes("blockButton")) {
     //         addUserManagementButtons(div, tableData['data'], userIdIndex, roleIndex);
     //     };
-    // }
+    }
 }
