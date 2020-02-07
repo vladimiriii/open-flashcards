@@ -11,7 +11,8 @@ function addReviewButtons(div, tableData, sheetIdIndex, googleIdIndex) {
 function buildReviewButton(div, sheetId, googleId) {
     const cellId = "#opt-" + div + '-' + sheetId;
     const reviewButton = '<button type="button" class="btn btn-outline-danger btn-sm confirm-col-btn" '
-               + 'onclick="reviewSheet(\'' + googleId + '\')">'
+               + 'onclick="reviewSheet(\'' + googleId + '\')"'
+               + 'data-toggle="tooltip" data-placement="top" title="View the sheet">'
                + '<i class="fa fa-eye" aria-hidden="true"></i></button>'
 
    $(cellId).append(reviewButton);

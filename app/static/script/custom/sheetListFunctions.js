@@ -57,7 +57,7 @@ function generateSheetList(div, tableData, buttonsToAdd) {
         viewColumn = tableData['columns'].indexOf('Views');
         const columnList = tableData['columns'].slice();
         columnList.splice(2, tableData['columns'].length).map( function(column) {
-            headerHtml += '<th class="' + getColumnClass(column) + '">' + column + '</th>';
+            headerHtml += '<th class="' + getSheetColumnClass(column) + '">' + column + '</th>';
         })
         headerHtml += '<th class="all confirm-head">Options</th></tr>';
 

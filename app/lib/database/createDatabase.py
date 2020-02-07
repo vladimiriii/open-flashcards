@@ -23,11 +23,11 @@ import triggers as trig
 
 def create_app_user_roles():
     roles = [
-        {"name": "Guest", "description": "User that has not logged in, can only view public sheets."},
-        {"name": "Undergraduate", "description": "Logged in user, can import and view their own sheets with restrictions."},
-        {"name": "Graduate", "description": "Logged in user. Can import and view their own sheets with no restrictions."},
-        {"name": "Teacher", "description": "Logged in user. Can import and view their own sheets, plus add other users that will be able to view their sheets."},
-        {"name": "Super User", "description": "Can import and view all sheets without restriction."},
+        {"name": "Guest", "description": "User that has not logged in and can only view public sheets."},
+        {"name": "Undergraduate", "description": "User that can import and view their own sheets with restrictions."},
+        {"name": "Graduate", "description": "User that can import and view their own sheets with no restrictions."},
+        {"name": "Teacher", "description": "User that can import and view their own sheets, plus add other users that will be able to view their sheets."},
+        {"name": "Super User", "description": "User with access to all app features."},
         {"name": "Blocked", "description": "User is not allowed to access the App."}
     ]
 
@@ -98,7 +98,7 @@ def create_app_user_action_type_defaults(role_ids):
     action_types = [
         {
             "name": "Bought Graduate Package",
-            "description": "Upgrades an individual to allow unrestricted access.",
+            "description": "Upgrades an Undergraduate user to a Graduate user.",
             "start_aur_id": role_ids["Undergraduate"],
             "end_aur_id": role_ids["Graduate"]
         },
@@ -110,7 +110,7 @@ def create_app_user_action_type_defaults(role_ids):
         },
         {
             "name": "Bought Teacher Package",
-            "description": "Upgrades any user to a Teacher.",
+            "description": "Upgrades any user to a Teacher user.",
             "start_aur_id": None,
             "end_aur_id": role_ids["Teacher"]
         },
@@ -125,7 +125,14 @@ def create_app_user_action_type_defaults(role_ids):
             "description": "Blocks a user from logging in.",
             "start_aur_id": None,
             "end_aur_id": role_ids["Blocked"]
+        },
+        {
+            "name": "Unblock User",
+            "description": "Remove the block on a user account.",
+            "start_aur_id": role_ids["Blocked"],
+            "end_aur_id": role_ids["Undergraduate"]
         }
+
     ]
 
     for action in action_types:

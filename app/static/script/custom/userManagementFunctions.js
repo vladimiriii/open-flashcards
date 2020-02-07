@@ -24,6 +24,10 @@ function createTables(table, data, buttonsToAdd) {
         }
         else {
             $('#' + table).DataTable({
+                "columnDefs": [
+                    { "width": "30px", "targets": 1 },
+                    { "width": "200px", "targets": 6 }
+                 ],
                 'order': [[ Math.max(0, userColumn), "asc" ]],
                 'lengthChange': false,
                 'searching': false,
@@ -54,7 +58,7 @@ function generateUserList(div, tableData, buttonsToAdd) {
         headerHtml += '<tr>'
         const columnList = tableData['columns'].slice()
         columnList.map(function(column) {
-            headerHtml += '<th class="' + getColumnClass(column) + '">' + column + '</th>';
+            headerHtml += '<th class="' + getUserColumnClass(column) + '">' + column + '</th>';
         })
         headerHtml += '<th class="all confirm-head">Options</th></tr>';
 
@@ -111,8 +115,11 @@ function addUserManagementButtons(div, tableData, buttonsToAdd, userIdIndex, rol
         if (buttonsToAdd.includes("cancelPackageButton")) {
             addCancelPackageButtons(div, tableData['data'], userIdIndex, roleIndex);
         };
-    //     if (buttonsToAdd.includes("blockButton")) {
-    //         addUserManagementButtons(div, tableData['data'], userIdIndex, roleIndex);
-    //     };
+        if (buttonsToAdd.includes("blockButton")) {
+            addBlockButtons(div, tableData['data'], userIdIndex, roleIndex);
+        };
+        if (buttonsToAdd.includes("unblockButton")) {
+            addUnblockButtons(div, tableData['data'], userIdIndex, roleIndex);
+        };
     }
 }

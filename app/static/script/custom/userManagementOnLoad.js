@@ -7,7 +7,8 @@ $(document).ready(function(){
                  ["graduateUpgradeButton",
                   "teacherUpgradeButton",
                   "cancelPackageButton",
-                  "blockButton"]
+                  "blockButton",
+                  "unblockButton"]
     );
 
 });

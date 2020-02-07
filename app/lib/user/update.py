@@ -45,9 +45,4 @@ def update_user_role(user_id, event):
     db_session.add(new_event)
     db_session.commit()
 
-    new_status = (db_session.query(app_user_role.aur_role_name)
-                            .filter(app_user.au_aur_id == app_user_role.aur_id)
-                            .filter(app_user.au_id == user_id)
-                            .first())
-
-    return new_status
+    return event

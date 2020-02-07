@@ -251,7 +251,11 @@ def process_update_user_role_request():
     if 'au_id' in session:
         permission_level = ue.check_user_role()
         if permission_level == 'Super User':
-            result['status'] = uu.update_user_role(user_id=user_id, event=event)
+            result['event'] = uu.update_user_role(user_id=user_id, event=event)
+        else:
+            result['event'] = "Unauthorized Access"
+    else:
+        result['event'] = "Unauthorized Access"
 
     return jsonify(result)
 

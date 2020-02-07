@@ -14,6 +14,7 @@
 	<script src="{{ url_for('static',filename='script/custom/userManagementOnLoad.js') }}"></script>
 	<script src="{{ url_for('static',filename='script/custom/userManagementFunctions.js') }}"></script>
 	<script src="{{ url_for('static',filename='script/custom/userManagementButtonFunctions.js') }}"></script>
+	<script src="{{ url_for('static',filename='script/custom/userReference.js') }}"></script>
 
 </head>
 <body>
@@ -28,6 +29,7 @@
 		</div>
     </div>
     {% include 'modules/footer.html' %}
+	{% include 'modules/feedback-modal.html' %}
 	</div>
 </body>
 </html>

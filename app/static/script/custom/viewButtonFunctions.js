@@ -10,7 +10,8 @@ function addViewButtons(div, tableData, sheetIdIndex) {
 function buildViewButton(div, sheetId) {
     const cellID = "#opt-" + div + '-' + sheetId;
     const viewButton = '<button type="button" class="btn btn-outline-success btn-sm confirm-col-btn" '
-               + 'onclick="viewSheet(' + sheetId + ', event)">'
+               + 'onclick="viewSheet(' + sheetId + ', event)"'
+               + 'data-toggle="tooltip" data-placement="top" title="View the flashcards">'
                + '<i class="fa fa-play" aria-hidden="true"></i></button>'
    // console.log(viewButton);
    $(cellID).append(viewButton);

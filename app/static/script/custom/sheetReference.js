@@ -35,7 +35,7 @@ function showResultModal(status) {
 }
 
 
-function getColumnClass(column) {
+function getSheetColumnClass(column) {
     const lookup = {
         "Sheet Name": "all",
         "# of Cards": "min-tablet-p",
@@ -43,12 +43,6 @@ function getColumnClass(column) {
         "Status": "min-tablet-p",
         "Last Modified": "min-desktop",
         "Options": "all",
-        "User ID": "all",
-        "Role": "all",
-        "Email": "min-tablet-p",
-        "Name": "all",
-        "First Log In": "min-tablet-l",
-        "Last Log In": "min-tablet-l"
     };
 
     return lookup[column];

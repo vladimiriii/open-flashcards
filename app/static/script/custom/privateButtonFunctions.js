@@ -14,7 +14,8 @@ function addPrivateButtons(div, tableData, sheetIdIndex, googleIdIndex, statusIn
 function buildPrivateButton(div, sheetId, googleId) {
     const cellID = "#opt-" + div + '-' + sheetId;
     const btn = '<button type="button" class="btn btn-outline-primary btn-sm confirm-col-btn" '
-           + 'onclick="makePrivateRequest(\'' + googleId + '\')">'
+           + 'onclick="makePrivateRequest(\'' + googleId + '\')"'
+           + 'data-toggle="tooltip" data-placement="top" title="Make this sheet private again">'
            + '<i class="fa fa-eye-slash" aria-hidden="true"></i></button>'
    $(cellID).append(btn);
 }

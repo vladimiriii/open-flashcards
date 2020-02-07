@@ -14,7 +14,8 @@ function addShareButtons(div, tableData, sheetIdIndex, googleIdIndex, statusInde
 function buildShareButton(div, sheetId, googleId) {
     const cellID = "#opt-" + div + '-' + sheetId;
     const shareButton = '<button type="button" class="btn btn-outline-warning btn-sm confirm-col-btn" '
-           + 'onclick="makeSheetPublic(\'' + googleId + '\', event)">'
+           + 'onclick="makeSheetPublic(\'' + googleId + '\', event)"'
+           + 'data-toggle="tooltip" data-placement="top" title="Share this sheet">'
            + '<i class="fa fa-share-alt" aria-hidden="true"></i></button>'
    $(cellID).append(shareButton);
 }
