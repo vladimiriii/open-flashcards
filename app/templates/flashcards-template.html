@@ -24,8 +24,10 @@
         <!-- Navbar -->
         {% if permission_level == 'Super User' %}
             {% include 'modules/admin-navbar.html' %}
-        {% elif permission_level != 'Guest' %}
-            {% include 'modules/loggedin-navbar.html' %}
+        {% elif permission_level == 'Teacher' %}
+            {% include 'modules/teacher-navbar.html' %}
+        {% elif permission_level in ['Graduate', 'UnderGraduate']%}
+            {% include 'modules/student-navbar.html' %}
         {% else %}
             {% include 'modules/navbar.html' %}
         {% endif %}
@@ -94,7 +96,7 @@
         </div>
         {% include 'modules/footer.html' %}
         {% include 'modules/card-options-modal.html' %}
-        {% include 'modules/error-modal.html' %}
+        {% include 'modules/feedback-modal.html' %}
     </div>
 </body>
 </html>

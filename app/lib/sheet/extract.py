@@ -1,8 +1,6 @@
-from flask import session
-
 from googleapiclient.errors import HttpError
 
-from app.lib.database.models import db_session
+from app.lib.database.models import db_session, sheet, app_user_rel_sheet, sheet_status
 from app.lib import utils
 
 
@@ -95,10 +93,32 @@ def get_request_sheets():
     return data
 
 
+def check_user_has_access(sheet_id, user_id):
+
+    result = app_user_rel_sheet.query.filter_by(aurs_s_id=sheet_id).filter_by(aurs_au_id=user_id).first()
+
+    if result is not None:
+        return True
+    else:
+        return False
+
+
+def check_sheet_is_public(sheet_id):
+
+    status = (db_session.query(sheet_status.ss_status_name)
+                        .filter(sheet.s_ss_id == sheet_status.ss_id)
+                        .filter(sheet.s_id == sheet_id)
+                        .scalar())
+    if status == 'Public':
+        return True
+    else:
+        return False
+
+
 def get_sheet_metadata(google_id):
     service = utils.get_drive_credentials()
 
-    fields = "name, createdTime, modifiedTime, owners"
+    fields = "name, createdTime, modifiedTime, owners, ownedByMe"
     raw_metadata = service.files().get(fileId=google_id, fields=fields).execute()
 
     # Create clean metadata object
@@ -110,7 +130,7 @@ def get_sheet_metadata(google_id):
     metadata['owner_email'] = raw_metadata['owners'][0]['emailAddress']
     metadata['owner_name'] = raw_metadata['owners'][0]['displayName']
     metadata['row_count'] = get_sheet_row_count(google_id)
-    metadata['is_owner'] = metadata['owner_email'] == session['email'] if 'email' in session else False
+    metadata['is_owner'] = raw_metadata['ownedByMe']
 
     return metadata
 

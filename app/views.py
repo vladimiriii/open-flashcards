@@ -233,9 +233,12 @@ def get_user_list():
 # DATA ROUTES
 @google_api.route('/register-sheet', methods=['POST'])
 def register_sheet():
-    google_id = request.data.decode('UTF-8')
-    response = su.import_new_sheet(google_id)
-
+    if 'au_id' in session:
+        user_role = ue.check_user_role()
+        google_id = request.data.decode('UTF-8')
+        response = su.import_new_sheet(google_id, user_role)
+    else:
+        response = 'unknown_error'
     return jsonify(response)
 
 
@@ -292,6 +295,17 @@ def process_update_user_role_request():
 def output_card_data():
     inputs = json.loads(request.data)
     sheet_id = inputs['sheetID']
-    results = cd.get_data(sheet_id=sheet_id)
+    if 'au_id' in session:
+        user_has_access = se.check_user_has_access(sheet_id, session['au_id'])
+        if user_has_access:
+            results = cd.get_data(sheet_id=sheet_id)
+        else:
+            results = {'error': 'incorrect_premissions'}
+    else:
+        sheet_is_public = se.check_sheet_is_public(sheet_id)
+        if sheet_is_public:
+            results = cd.get_data(sheet_id=sheet_id)
+        else:
+            results = {'error': 'incorrect_premissions'}
 
     return jsonify(results)

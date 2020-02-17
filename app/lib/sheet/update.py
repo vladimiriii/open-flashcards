@@ -44,15 +44,17 @@ def add_new_user_rel_sheet_entry(sheet_id, is_owner):
 
 
 def update_sheet_metadata(sheet_id):
-    google_id = db_session.query(sheet.s_google_id).filter_by(s_id=sheet_id).scalar()
 
+    google_id = db_session.query(sheet.s_google_id).filter_by(s_id=sheet_id).scalar()
     metadata = se.get_sheet_metadata(google_id)
 
     # Update sheet record with latest metadata
     sheet_record = sheet.query.filter_by(s_id=sheet_id).first()
     sheet_record.s_sheet_name = metadata['sheet_name']
+    sheet_record.s_owner_name = metadata['owner_name']
+    sheet_record.s_owner_email = metadata['owner_email']
     sheet_record.s_row_count = metadata['row_count']
-    sheet_record.s_sheet_last_modifed = metadata['last_modified']
+    sheet_record.s_sheet_last_modified = metadata['last_modified']
     sheet_record.s_last_modifed = datetime.utcnow()
 
     # Commit changes to the database
@@ -80,27 +82,31 @@ def add_sheet_view(sheet_id):
     return view_record.v_id
 
 
-def import_new_sheet(google_id):
+def import_new_sheet(google_id, user_role):
     response = {}
     current_sheet = sheet.query.filter_by(s_google_id=google_id).first()
 
     try:
         metadata = se.get_sheet_metadata(google_id)
         if current_sheet is None:
-            sheet_id = add_new_sheet_entry(metadata)
-            add_new_user_rel_sheet_entry(sheet_id, metadata['is_owner'])
-            response['status'] = 'sheet_imported'
-        else:
-            sheet_id = current_sheet.s_id
-            update_sheet_metadata(sheet_id, google_id)
-
-            # Check if this user already has relationship to this sheet
-            sheet_rel_user = app_user_rel_sheet.query.filter_by(aurs_s_id=sheet_id, aurs_au_id=session['au_id']).first()
-            if sheet_rel_user is None:
+            if user_role == 'Undergraduate' and not metadata['is_owner']:
+                response['status'] = 'upgrade_needed'
+            else:
+                sheet_id = add_new_sheet_entry(metadata)
                 add_new_user_rel_sheet_entry(sheet_id, metadata['is_owner'])
                 response['status'] = 'sheet_imported'
+        else:
+            sheet_id = current_sheet.s_id
+            update_sheet_metadata(sheet_id)
+            sheet_rel_user = app_user_rel_sheet.query.filter_by(aurs_s_id=sheet_id, aurs_au_id=session['au_id']).first()
+            if user_role == 'Undergraduate' and not metadata['is_owner']:
+                response['status'] = 'upgrade_needed'
             else:
-                response['status'] = 'sheet_already_imported'
+                if sheet_rel_user is None:
+                    add_new_user_rel_sheet_entry(sheet_id, metadata['is_owner'])
+                    response['status'] = 'sheet_imported'
+                else:
+                    response['status'] = 'sheet_already_imported'
 
         response['sheetId'] = str(sheet_id)
 

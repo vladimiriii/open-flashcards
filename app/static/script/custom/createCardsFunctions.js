@@ -89,5 +89,9 @@ responseMap = {
     'sheet_already_imported': {
         'header': "Already Done!",
         'body': "Looks like you have already imported this sheet!"
+    },
+    'upgrade_needed': {
+        'header': "Upgrade Needed to Access this Feature",
+        'body': "You need to be a Graduate or a Teacher to import sheets you are not the owner of. Please visit the <a href=\"./upgrade\">Upgrade Page</a>."
     }
 };

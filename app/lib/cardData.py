@@ -17,7 +17,7 @@ def get_data(sheet_id):
         else:
             final_data = response
     else:
-        final_data = {'error': error_lookup['id_not_found']}
+        final_data = {'error': 'not_found'}
 
     return final_data
 

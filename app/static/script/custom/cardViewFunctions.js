@@ -8,7 +8,13 @@ function getSheetData(id) {
         data: dataJson,
         contentType: 'application/json',
         success: function(result) {
-            cards = new cardSet(result);
+            console.log(result);
+            if ('error' in result) {
+                showResultModal(result['error']);
+            }
+            else {
+                cards = new cardSet(result);
+            }
             $("#spinner").hide();
         },
         error: function(msg){
@@ -285,18 +291,39 @@ function getResizedFont(text, language) {
     return Math.max(fontSize, 16);
 };
 
-function showErrorModal() {
-    $("#error-modal-header").empty();
-    $("#error-modal-content").empty();
 
-    errorInfo = cards.rawData['error'];
-    const headerText = '<h4 style="text-align: center">' + errorInfo['modalHeader'] + '</h4>'
+function showResultModal(error) {
+    $('#feedbackModalLabel').empty();
+    $('#feedbackModalBody').empty();
+    $('#feedbackModal .modal-footer').empty();
+    $('#feedbackModal .modal-header button').remove();
 
+    // Update Modal Contents
+    if (error == 'not_found') {
+        const header = 'Sheet Not Found!';
+        $("#feedbackModalLabel").text(header);
+        const body = "We couldn't find this sheet any more. We will look into this to make sure it doesn't happen again.";
+        $("#feedbackModalBody").text(body);
+    }
+    else if (error == 'incorrect_premissions') {
+        const header = 'Woops!';
+        $("#feedbackModalLabel").text(header);
+        const body = "This sheet may not exist, or you may not have the right permissions to view it.";
+        $("#feedbackModalBody").text(body);
+    }
+    else {
+        const header = 'Uh oh...';
+        $("#feedbackModalLabel").text(header);
+        const body = "Something unexpected went wrong. Please try again later, and if you still have issues, please contact us.";
+        $("#feedbackModalBody").text(body);
+    }
 
-    const contentText = "<p>" + errorInfo['modalText'] + "</p>"
+    // Disable click away
+    $('#feedbackModal').attr("data-backdrop", "static");
 
-    $("#error-modal-header").append(headerText);
-    $("#error-modal-header").append(contentText);
+    // Close Button
+    const closeButton = '<a href="/"><button type="button" class="btn btn-outline-warning">Close</button></a>';
+    $('#feedbackModal .modal-footer').append(closeButton);
 
-    $('#error-modal').modal('show');
+    $('#feedbackModal').modal('show');
 }
