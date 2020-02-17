@@ -6,7 +6,8 @@ import sys
 # Custom Libraries
 import app.lib.cardData as cd
 import app.lib.processLogin as pl
-import app.lib.processSheets as ps
+import app.lib.sheet.extract as se
+import app.lib.sheet.update as su
 import app.lib.user.extract as ue
 import app.lib.user.update as uu
 from app.lib import utils
@@ -105,20 +106,33 @@ def dashboard_page():
         return redirect(url_for('basic_page.er_page'))
 
 
+@internal_page.route('/student-management')
+def student_management_page():
+    try:
+        if 'credentials' in session:
+            permission_level = ue.check_user_role()
+            if permission_level in ['Teacher', 'Super User']:
+                return render_template('student-management.html')
+            else:
+                return redirect(url_for('internal_page.dashboard_page'))
+        else:
+            return redirect(url_for('basic_page.landing_page'))
+    except:
+        print(utils.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
 @internal_page.route('/sheet-management')
 def sheet_management_page():
     try:
         if 'credentials' in session:
             permission_level = ue.check_user_role()
-
             if permission_level == 'Super User':
                 return render_template('sheet-management.html')
             else:
                 return redirect(url_for('internal_page.dashboard_page'))
-
         else:
             return redirect(url_for('basic_page.landing_page'))
-
     except:
         print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
@@ -129,12 +143,10 @@ def user_management_page():
     try:
         if 'credentials' in session:
             permission_level = ue.check_user_role()
-
             if permission_level == 'Super User':
                 return render_template('user-management.html')
             else:
                 return redirect(url_for('internal_page.dashboard_page'))
-
         else:
             return redirect(url_for('basic_page.landing_page'))
 
@@ -171,13 +183,29 @@ def create_flashcards_page():
 def get_sheet_lists():
     data_type = request.args['table']
     if data_type == "publicSheets":
-        raw_data = ps.get_public_sheets()
+        raw_data = se.get_public_sheets()
     elif data_type == "userSheets" and 'au_id' in session:
-        raw_data = ps.get_user_sheets(session['au_id'])
+        raw_data = se.get_user_sheets(session['au_id'])
     elif data_type == "requestSheets" and 'au_id' in session:
         permission_level = ue.check_user_role()
         if permission_level == 'Super User':
-            raw_data = ps.get_request_sheets()
+            raw_data = se.get_request_sheets()
+    else:
+        raw_data = None
+
+    table_data = utils.process_table_data(raw_data)
+
+    return jsonify(table_data)
+
+
+@google_api.route('/get-student-list', methods=['GET'])
+def get_student_list():
+    if 'au_id' in session:
+        permission_level = ue.check_user_role()
+        if permission_level in ['Super User', 'Teacher']:
+            raw_data = ue.get_student_data(session['au_id'])
+        else:
+            raw_data = None
     else:
         raw_data = None
 
@@ -206,7 +234,7 @@ def get_user_list():
 @google_api.route('/register-sheet', methods=['POST'])
 def register_sheet():
     google_id = request.data.decode('UTF-8')
-    response = ps.import_new_sheet(google_id)
+    response = su.import_new_sheet(google_id)
 
     return jsonify(response)
 
@@ -214,8 +242,8 @@ def register_sheet():
 @google_api.route('/register-sheet-view', methods=['POST'])
 def save_page():
     inputs = request.json
-    ps.update_sheet_metadata(inputs['sheetID'])
-    ps.add_sheet_view(inputs['sheetID'])
+    su.update_sheet_metadata(inputs['sheetID'])
+    su.add_sheet_view(inputs['sheetID'])
 
     return jsonify({"status": "Success"})
 
@@ -234,9 +262,9 @@ def process_update_sheet_status_request():
     google_id = input['googleId']
     event = input['event']
 
-    result = ps.check_sheet_availability(google_id)
+    result = se.check_sheet_availability(google_id)
     if 'credentials' in session and result['status'] == 'sheet_accessible':
-        result['status'] = ps.update_sheet_status(google_id=google_id, event=event)
+        result['status'] = su.update_sheet_status(google_id=google_id, event=event)
 
     return jsonify(result)
 

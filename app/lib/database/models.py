@@ -110,54 +110,6 @@ class app_user_action_type(Base):
         self.auat_last_modified = auat_last_modified
 
 
-class student_rel_sheet(Base):
-    __tablename__ = 'student_rel_sheet'
-    __table_args__ = {"schema": schema_name}
-    srs_id = Column(Integer, primary_key=True)
-    srs_teacher_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
-    srs_student_au_id = Column(Integer, ForeignKey(schema_name + '.app_user.au_id'), nullable=False)
-    srs_s_id = Column(Integer, ForeignKey(schema_name + '.sheet.s_id'), nullable=False)
-    srs_status = Column(Integer, ForeignKey(schema_name + '.student_sheet_status.sss_id'), nullable=False)
-    srs_created = Column(DateTime)
-    srs_last_modified = Column(DateTime)
-
-    def __init__(self,
-                 srs_id=None,
-                 srs_teacher_au_id=None,
-                 srs_student_au_id=None,
-                 srs_s_id=None,
-                 srs_status=None,
-                 srs_created=None,
-                 srs_last_modified=None):
-        self.srs_id = srs_id
-        self.srs_teacher_au_id = srs_teacher_au_id
-        self.srs_student_au_id = srs_student_au_id
-        self.srs_s_id = srs_s_id
-        self.srs_status = srs_status
-        self.srs_created = srs_created
-        self.srs_last_modified = srs_last_modified
-
-
-class student_sheet_status(Base):
-    __tablename__ = 'student_sheet_status'
-    __table_args__ = {"schema": schema_name}
-    sss_id = Column(Integer, primary_key=True)
-    sss_status_name = Column(String(120))
-    sss_status_description = Column(Text)
-    sss_created = Column(DateTime)
-    sss_last_modified = Column(DateTime)
-
-    def __init__(self,
-                 sss_status_name=None,
-                 sss_status_description=None,
-                 sss_created=None,
-                 sss_last_modified=None):
-        self.sss_status_name = sss_status_name
-        self.sss_status_description = sss_status_description
-        self.sss_created = sss_created
-        self.sss_last_modified = sss_last_modified
-
-
 class sheet(Base):
     __tablename__ = 'sheet'
     __table_args__ = {"schema": schema_name}

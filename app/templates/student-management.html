@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Open Flashcards</title>
+
+	{% include 'includes/basic-meta.html' %}
+	{% include 'includes/base-scripts.html' %}
+	{% include 'includes/table-scripts.html' %}
+
+	<!-- Page Specific Styling -->
+
+	<!-- Custom JavaScript -->
+	<script src="{{ url_for('static',filename='script/custom/studentManagementOnLoad.js') }}"></script>
+	<script src="{{ url_for('static',filename='script/custom/studentManagementFunctions.js') }}"></script>
+	<script src="{{ url_for('static',filename='script/custom/studentReference.js') }}"></script>
+
+</head>
+<body>
+	{% include 'includes/spinner.html' %}
+	<!-- Content -->
+	<div class="container-fluid">
+		{% include 'modules/teacher-navbar.html' %}
+		<div class="row main-panel">
+    	<div class="col-md-12">
+			<h3>Current Students</h3>
+			<table id="studentUsers" class="display responsive" width="100%"></table>
+		</div>
+    </div>
+    {% include 'modules/footer.html' %}
+	{% include 'modules/approve-modal.html' %}
+	</div>
+</body>
+</html>

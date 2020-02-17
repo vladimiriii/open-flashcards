@@ -22,8 +22,10 @@
     <div class="container-fluid">
         {% if value == 'Super User' %}
         {% include 'modules/admin-navbar.html' %}
+        {% elif value == 'Teacher' %}
+        {% include 'modules/teacher-navbar.html' %}
         {% else %}
-        {% include 'modules/loggedin-navbar.html' %}
+        {% include 'modules/student-navbar.html' %}
         {% endif %}
         <div class="row main-panel">
             <div class="col-md-12">

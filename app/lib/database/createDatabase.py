@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 
 # Database
 from databaseConfig import DATABASE
-from models import Base, db_session, app_user_role, app_user, app_user_action_type, sheet_action_type, sheet_status, student_sheet_status
+from models import Base, db_session, app_user_role, app_user, app_user_action_type, sheet_action_type
 import procedures as proc
 import triggers as trig
 
@@ -149,24 +149,6 @@ def create_app_user_action_type_defaults(role_ids):
     db_session.commit()
 
 
-def create_student_sheet_status_defaults():
-    statuses = [
-        {"name": "Active", "description": "Student access to the sheet is active."},
-        {"name": "Inactive", "description": "Student access to the sheet is inactive."}
-    ]
-
-    for status in statuses:
-        status_entry = student_sheet_status(
-            sss_status_name=status['name'],
-            sss_status_description=status['description'],
-            sss_created=datetime.utcnow(),
-            sss_last_modified=datetime.utcnow()
-        )
-        db_session.add(status_entry)
-
-    db_session.commit()
-
-
 def create_sheet_status_defaults():
     statuses = [
         {"name": "Private", "description": "Sheet can only be seen by user who added the sheet."},
@@ -253,7 +235,6 @@ if __name__ == '__main__':
     role_ids = create_app_user_roles()
     create_default_app_users(role_ids)
     create_app_user_action_type_defaults(role_ids)
-    create_student_sheet_status_defaults()
     status_ids = create_sheet_status_defaults()
     create_sheet_action_type_defaults(status_ids)
 
