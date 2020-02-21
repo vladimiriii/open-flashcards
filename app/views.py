@@ -30,37 +30,46 @@ def landing_page():
             return render_template('index.html')
     except:
         print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+        return redirect(url_for('basic_page.general_error_page'))
 
 
 @basic_page.route('/privacy-policy', methods=['GET'])
-def pp_page():
+def privacy_policy_page():
     try:
         if 'credentials' in session:
             permission_level = ue.check_user_role()
         else:
             permission_level = 'Guest'
-        return render_template('privacy_policy.html', value=permission_level)
+        return render_template('privacy-policy.html', value=permission_level)
     except:
         print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+        return redirect(url_for('basic_page.general_error_page'))
 
 
 @basic_page.route('/terms-conditions', methods=['GET'])
-def tc_page():
+def terms_and_conditions_page():
     try:
         if 'credentials' in session:
             permission_level = ue.check_user_role()
         else:
             permission_level = 'Guest'
-        return render_template('terms_conditions.html', value=permission_level)
+        return render_template('terms-conditions.html', value=permission_level)
     except:
         print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+        return redirect(url_for('basic_page.general_error_page'))
+
+
+@basic_page.route('/account-suspended', methods=['GET'])
+def account_suspended_page():
+    try:
+        return render_template('account-suspended.html')
+    except:
+        print(utils.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.general_error_page'))
 
 
 @basic_page.route('/error', methods=['GET'])
-def er_page():
+def general_error_page():
     return render_template('error.html')
 
 
@@ -72,7 +81,7 @@ def start_login():
         return redirect(authorization_url)
     except:
         print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+        return redirect(url_for('basic_page.general_error_page'))
 
 
 @google_api.route('/oauth2callback')
@@ -80,10 +89,15 @@ def oauth2callback():
     try:
         pl.handle_callback()
         uu.update_user_info()
-        return redirect(url_for('internal_page.dashboard_page'))
+        user_blocked = ue.check_user_role() == 'Blocked'
+        if user_blocked:
+            session.clear()
+            return redirect(url_for('basic_page.account_suspended_page'))
+        else:
+            return redirect(url_for('internal_page.dashboard_page'))
     except:
         print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+        return redirect(url_for('basic_page.general_error_page'))
 
 
 @basic_page.route('/flashcards/<sheet_id>')
@@ -97,7 +111,7 @@ def show_blog(sheet_id):
         return render_template('flashcards-template.html', sheet_id=sheet_id, permission_level=permission_level)
     except:
         print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+        return redirect(url_for('basic_page.general_error_page'))
 
 
 # LOGGED IN PAGES
@@ -111,7 +125,7 @@ def dashboard_page():
             return redirect(url_for('basic_page.landing_page'))
     except:
         print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+        return redirect(url_for('basic_page.general_error_page'))
 
 
 @internal_page.route('/student-management')
@@ -127,7 +141,7 @@ def student_management_page():
             return redirect(url_for('basic_page.landing_page'))
     except:
         print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+        return redirect(url_for('basic_page.general_error_page'))
 
 
 @internal_page.route('/sheet-management')
@@ -143,7 +157,7 @@ def sheet_management_page():
             return redirect(url_for('basic_page.landing_page'))
     except:
         print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+        return redirect(url_for('basic_page.general_error_page'))
 
 
 @internal_page.route('/user-management')
@@ -160,7 +174,7 @@ def user_management_page():
 
     except:
         print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+        return redirect(url_for('basic_page.general_error_page'))
 
 
 @internal_page.route('/upgrade')
@@ -173,7 +187,7 @@ def upgrade_page():
             return redirect(url_for('basic_page.landing_page'))
     except:
         print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+        return redirect(url_for('basic_page.general_error_page'))
 
 
 @internal_page.route('/logout', methods=['GET'])
@@ -183,7 +197,7 @@ def lo_page():
         return redirect(url_for('basic_page.landing_page'))
     except:
         print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+        return redirect(url_for('basic_page.general_error_page'))
 
 
 # Card Creation Options
@@ -197,7 +211,7 @@ def create_flashcards_page():
             return redirect(url_for('basic_page.landing_page'))
     except:
         print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.er_page'))
+        return redirect(url_for('basic_page.general_error_page'))
 
 
 @google_api.route('/get-sheet-lists', methods=['GET'])

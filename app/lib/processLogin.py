@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
 from flask import session, url_for, request
 
 # Google API
@@ -8,7 +7,6 @@ from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
 
 # Custom Libraries
-from app.lib.database.models import app_user, app_user_role, db_session
 from app.lib import utils
 
 # Service Account Key and Scopes
