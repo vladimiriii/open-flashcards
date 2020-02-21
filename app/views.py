@@ -163,6 +163,19 @@ def user_management_page():
         return redirect(url_for('basic_page.er_page'))
 
 
+@internal_page.route('/upgrade')
+def upgrade_page():
+    try:
+        if 'credentials' in session:
+            permission_level = ue.check_user_role()
+            return render_template('upgrade.html', value=permission_level)
+        else:
+            return redirect(url_for('basic_page.landing_page'))
+    except:
+        print(utils.generate_error_message(sys.exc_info()))
+        return redirect(url_for('basic_page.er_page'))
+
+
 @internal_page.route('/logout', methods=['GET'])
 def lo_page():
     try:

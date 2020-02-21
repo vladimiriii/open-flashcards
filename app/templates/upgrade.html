@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Upgrade | Open Flashcards</title>
+
+    {% include 'includes/basic-meta.html' %}
+    {% include 'includes/base-scripts.html' %}
+
+    <!-- Page Specific Styling -->
+
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static',filename='script/custom/page/upGradeOnLoad.js') }}"></script>
+
+</head>
+
+<body>
+    {% include 'includes/spinner.html' %}
+    <!-- Content -->
+    <div class="container-fluid">
+        {% if value == 'Super User' %}
+        {% include 'modules/admin-navbar.html' %}
+        {% elif value == 'Teacher' %}
+        {% include 'modules/teacher-navbar.html' %}
+        {% else %}
+        {% include 'modules/student-navbar.html' %}
+        {% endif %}
+        <div class="row main-panel">
+            <div class="col-md-12">
+                <h1>Upgrade details here</h1>
+            </div>
+        </div>
+        {% include 'modules/footer.html' %}
+    </div>
+</body>
+
+</html>
