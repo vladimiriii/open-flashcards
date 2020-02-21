@@ -1,7 +1,7 @@
 /*-----------------------------------
 Global Variables
 -----------------------------------*/
-var cards
+var cards;
 
 var category = "All",
     cardCount = 4,

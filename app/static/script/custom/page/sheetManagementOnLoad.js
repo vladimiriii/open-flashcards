@@ -1,12 +1,15 @@
 /*-----------------------------------
 Global Variables
 -----------------------------------*/
+const page = 'sheets'
 
 /*-----------------------------------
 On Page Load
 -----------------------------------*/
 $(document).ready(function(){
 
-    getStudentListData("studentUsers", ["suspendButton", "deleteButton"]);
+    $("#" + page).attr('class', 'active');
+
+    getSheetLists("requestSheets", ["reviewButton", "approveButton"]);
 
 });

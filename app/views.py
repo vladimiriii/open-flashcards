@@ -36,7 +36,11 @@ def landing_page():
 @basic_page.route('/privacy-policy', methods=['GET'])
 def pp_page():
     try:
-        return render_template('privacy_policy.html')
+        if 'credentials' in session:
+            permission_level = ue.check_user_role()
+        else:
+            permission_level = 'Guest'
+        return render_template('privacy_policy.html', value=permission_level)
     except:
         print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
@@ -45,7 +49,11 @@ def pp_page():
 @basic_page.route('/terms-conditions', methods=['GET'])
 def tc_page():
     try:
-        return render_template('terms_conditions.html')
+        if 'credentials' in session:
+            permission_level = ue.check_user_role()
+        else:
+            permission_level = 'Guest'
+        return render_template('terms_conditions.html', value=permission_level)
     except:
         print(utils.generate_error_message(sys.exc_info()))
         return redirect(url_for('basic_page.er_page'))
@@ -112,7 +120,7 @@ def student_management_page():
         if 'credentials' in session:
             permission_level = ue.check_user_role()
             if permission_level in ['Teacher', 'Super User']:
-                return render_template('student-management.html')
+                return render_template('student-management.html', value=permission_level)
             else:
                 return redirect(url_for('internal_page.dashboard_page'))
         else:
@@ -171,7 +179,7 @@ def create_flashcards_page():
     try:
         if 'credentials' in session:
             permission_level = ue.check_user_role()
-            return render_template('create-flashcards.html', permission_level=permission_level)
+            return render_template('create-flashcards.html', value=permission_level)
         else:
             return redirect(url_for('basic_page.landing_page'))
     except:

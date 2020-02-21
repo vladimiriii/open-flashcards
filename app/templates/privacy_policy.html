@@ -10,12 +10,14 @@
 <body>
 	<div class="container-fluid">
         <!-- Navbar -->
-        {% if permission_level == 'super_user' %}
-            {% include 'modules/admin-navbar.html' %}
-        {% elif permission_level == 'user' %}
-            {% include 'modules/loggedin-navbar.html' %}
-        {% else %}
-            {% include 'modules/navbar.html' %}
+		{% if value == 'Super User' %}
+        {% include 'modules/admin-navbar.html' %}
+        {% elif value == 'Teacher' %}
+        {% include 'modules/teacher-navbar.html' %}
+        {% elif value in ['Undergraduate', 'Graduate'] %}
+        {% include 'modules/student-navbar.html' %}
+		{% else %}
+		{% include 'modules/navbar.html' %}
         {% endif %}
         <!-- Content -->
 		<div class="row">

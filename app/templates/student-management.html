@@ -10,16 +10,20 @@
 	<!-- Page Specific Styling -->
 
 	<!-- Custom JavaScript -->
-	<script src="{{ url_for('static',filename='script/custom/studentManagementOnLoad.js') }}"></script>
-	<script src="{{ url_for('static',filename='script/custom/studentManagementFunctions.js') }}"></script>
-	<script src="{{ url_for('static',filename='script/custom/studentReference.js') }}"></script>
+	<script src="{{ url_for('static',filename='script/custom/page/studentManagementOnLoad.js') }}"></script>
+	<script src="{{ url_for('static',filename='script/custom/user/studentManagementFunctions.js') }}"></script>
+	<script src="{{ url_for('static',filename='script/custom/user/studentReference.js') }}"></script>
 
 </head>
 <body>
 	{% include 'includes/spinner.html' %}
 	<!-- Content -->
 	<div class="container-fluid">
-		{% include 'modules/teacher-navbar.html' %}
+		{% if value == 'Super User' %}
+        {% include 'modules/admin-navbar.html' %}
+        {% elif value == 'Teacher' %}
+        {% include 'modules/teacher-navbar.html' %}
+        {% endif %}
 		<div class="row main-panel">
     	<div class="col-md-12">
 			<h3>Current Students</h3>
