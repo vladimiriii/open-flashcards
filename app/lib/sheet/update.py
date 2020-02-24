@@ -82,33 +82,35 @@ def add_sheet_view(sheet_id):
     return view_record.v_id
 
 
-def import_new_sheet(google_id, user_role):
+def import_new_sheet(google_id):
     response = {}
     current_sheet = sheet.query.filter_by(s_google_id=google_id).first()
+    user_role = ue.check_user_role(session['au_id'])
 
     try:
         metadata = se.get_sheet_metadata(google_id)
-        if current_sheet is None:
-            if user_role == 'Undergraduate' and not metadata['is_owner']:
-                response['status'] = 'upgrade_needed'
-            else:
+        owner_role = ue.check_user_role_by_email(metadata['owner_email'])
+
+        paid_user = user_role in ['Graduate', 'Teacher', 'Super User']
+        user_is_owner = metadata['is_owner']
+        owner_is_teacher = owner_role in ['Teacher', 'Super User']
+        if paid_user or user_is_owner or owner_is_teacher:
+            if current_sheet is None:
                 sheet_id = add_new_sheet_entry(metadata)
+            else:
+                sheet_id = current_sheet.s_id
+                update_sheet_metadata(sheet_id)
+
+            sheet_rel_user = app_user_rel_sheet.query.filter_by(aurs_s_id=sheet_id, aurs_au_id=session['au_id']).first()
+            if sheet_rel_user is None:
                 add_new_user_rel_sheet_entry(sheet_id, metadata['is_owner'])
                 response['status'] = 'sheet_imported'
-        else:
-            sheet_id = current_sheet.s_id
-            update_sheet_metadata(sheet_id)
-            sheet_rel_user = app_user_rel_sheet.query.filter_by(aurs_s_id=sheet_id, aurs_au_id=session['au_id']).first()
-            if user_role == 'Undergraduate' and not metadata['is_owner']:
-                response['status'] = 'upgrade_needed'
             else:
-                if sheet_rel_user is None:
-                    add_new_user_rel_sheet_entry(sheet_id, metadata['is_owner'])
-                    response['status'] = 'sheet_imported'
-                else:
-                    response['status'] = 'sheet_already_imported'
+                response['status'] = 'sheet_already_imported'
 
-        response['sheetId'] = str(sheet_id)
+            response['sheetId'] = str(sheet_id)
+        else:
+            response['status'] = 'upgrade_needed'
 
     except HttpError as e:
         if e.resp.status == 404:
@@ -122,7 +124,7 @@ def import_new_sheet(google_id, user_role):
 def update_sheet_status(google_id, event):
 
     if event == 'Request Public':
-        permission_level = ue.check_user_role()
+        permission_level = ue.check_user_role(session['au_id'])
         if permission_level == 'Super User':
             event = "Make Public"
 

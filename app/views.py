@@ -24,7 +24,7 @@ google_api = Blueprint('google_api', __name__)
 @basic_page.route('/', methods=['GET'])
 def landing_page():
     try:
-        if 'credentials' in session:
+        if 'au_id' in session:
             return redirect(url_for('internal_page.dashboard_page'))
         else:
             return render_template('index.html')
@@ -36,8 +36,8 @@ def landing_page():
 @basic_page.route('/privacy-policy', methods=['GET'])
 def privacy_policy_page():
     try:
-        if 'credentials' in session:
-            permission_level = ue.check_user_role()
+        if 'au_id' in session:
+            permission_level = ue.check_user_role(session['au_id'])
         else:
             permission_level = 'Guest'
         return render_template('privacy-policy.html', value=permission_level)
@@ -49,8 +49,8 @@ def privacy_policy_page():
 @basic_page.route('/terms-conditions', methods=['GET'])
 def terms_and_conditions_page():
     try:
-        if 'credentials' in session:
-            permission_level = ue.check_user_role()
+        if 'au_id' in session:
+            permission_level = ue.check_user_role(session['au_id'])
         else:
             permission_level = 'Guest'
         return render_template('terms-conditions.html', value=permission_level)
@@ -89,7 +89,7 @@ def oauth2callback():
     try:
         pl.handle_callback()
         uu.update_user_info()
-        user_blocked = ue.check_user_role() == 'Blocked'
+        user_blocked = ue.check_user_role(session['au_id']) == 'Blocked'
         if user_blocked:
             session.clear()
             return redirect(url_for('basic_page.account_suspended_page'))
@@ -103,8 +103,8 @@ def oauth2callback():
 @basic_page.route('/flashcards/<sheet_id>')
 def show_blog(sheet_id):
     try:
-        if 'credentials' in session:
-            permission_level = ue.check_user_role()
+        if 'au_id' in session:
+            permission_level = ue.check_user_role(session['au_id'])
             if permission_level == 'Blocked':
                 session.clear()
                 return redirect(url_for('basic_page.account_suspended_page'))
@@ -121,8 +121,8 @@ def show_blog(sheet_id):
 @internal_page.route('/dashboard', methods=['GET'])
 def dashboard_page():
     try:
-        if 'credentials' in session:
-            permission_level = ue.check_user_role()
+        if 'au_id' in session:
+            permission_level = ue.check_user_role(session['au_id'])
             if permission_level == 'Blocked':
                 session.clear()
                 return redirect(url_for('basic_page.account_suspended_page'))
@@ -138,8 +138,8 @@ def dashboard_page():
 @internal_page.route('/student-management')
 def student_management_page():
     try:
-        if 'credentials' in session:
-            permission_level = ue.check_user_role()
+        if 'au_id' in session:
+            permission_level = ue.check_user_role(session['au_id'])
             if permission_level in ['Teacher', 'Super User']:
                 return render_template('student-management.html', value=permission_level)
             else:
@@ -154,8 +154,8 @@ def student_management_page():
 @internal_page.route('/sheet-management')
 def sheet_management_page():
     try:
-        if 'credentials' in session:
-            permission_level = ue.check_user_role()
+        if 'au_id' in session:
+            permission_level = ue.check_user_role(session['au_id'])
             if permission_level == 'Super User':
                 return render_template('sheet-management.html')
             else:
@@ -170,8 +170,8 @@ def sheet_management_page():
 @internal_page.route('/user-management')
 def user_management_page():
     try:
-        if 'credentials' in session:
-            permission_level = ue.check_user_role()
+        if 'au_id' in session:
+            permission_level = ue.check_user_role(session['au_id'])
             if permission_level == 'Super User':
                 return render_template('user-management.html')
             else:
@@ -187,8 +187,8 @@ def user_management_page():
 @internal_page.route('/upgrade')
 def upgrade_page():
     try:
-        if 'credentials' in session:
-            permission_level = ue.check_user_role()
+        if 'au_id' in session:
+            permission_level = ue.check_user_role(session['au_id'])
             return render_template('upgrade.html', value=permission_level)
         else:
             return redirect(url_for('basic_page.landing_page'))
@@ -211,8 +211,8 @@ def lo_page():
 @internal_page.route('/create-flashcards', methods=['GET'])
 def create_flashcards_page():
     try:
-        if 'credentials' in session:
-            permission_level = ue.check_user_role()
+        if 'au_id' in session:
+            permission_level = ue.check_user_role(session['au_id'])
             return render_template('create-flashcards.html', value=permission_level)
         else:
             return redirect(url_for('basic_page.landing_page'))
@@ -229,7 +229,7 @@ def get_sheet_lists():
     elif data_type == "userSheets" and 'au_id' in session:
         raw_data = se.get_user_sheets(session['au_id'])
     elif data_type == "requestSheets" and 'au_id' in session:
-        permission_level = ue.check_user_role()
+        permission_level = ue.check_user_role(session['au_id'])
         if permission_level == 'Super User':
             raw_data = se.get_request_sheets()
     else:
@@ -243,7 +243,7 @@ def get_sheet_lists():
 @google_api.route('/get-student-list', methods=['GET'])
 def get_student_list():
     if 'au_id' in session:
-        permission_level = ue.check_user_role()
+        permission_level = ue.check_user_role(session['au_id'])
         if permission_level in ['Super User', 'Teacher']:
             raw_data = ue.get_student_data(session['au_id'])
         else:
@@ -259,7 +259,7 @@ def get_student_list():
 @google_api.route('/get-user-list', methods=['GET'])
 def get_user_list():
     if 'au_id' in session:
-        permission_level = ue.check_user_role()
+        permission_level = ue.check_user_role(session['au_id'])
         if permission_level == 'Super User':
             raw_data = ue.get_user_data()
         else:
@@ -276,9 +276,8 @@ def get_user_list():
 @google_api.route('/register-sheet', methods=['POST'])
 def register_sheet():
     if 'au_id' in session:
-        user_role = ue.check_user_role()
         google_id = request.data.decode('UTF-8')
-        response = su.import_new_sheet(google_id, user_role)
+        response = su.import_new_sheet(google_id)
     else:
         response = 'unknown_error'
     return jsonify(response)
@@ -308,7 +307,7 @@ def process_update_sheet_status_request():
     event = input['event']
 
     result = se.check_sheet_availability(google_id)
-    if 'credentials' in session and result['status'] == 'sheet_accessible':
+    if 'au_id' in session and result['status'] == 'sheet_accessible':
         result['status'] = su.update_sheet_status(google_id=google_id, event=event)
 
     return jsonify(result)
@@ -322,7 +321,7 @@ def process_update_user_role_request():
 
     result = {}
     if 'au_id' in session:
-        permission_level = ue.check_user_role()
+        permission_level = ue.check_user_role(session['au_id'])
         if permission_level == 'Super User':
             result['event'] = uu.update_user_role(user_id=user_id, event=event)
         else:
