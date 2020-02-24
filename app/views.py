@@ -105,6 +105,9 @@ def show_blog(sheet_id):
     try:
         if 'credentials' in session:
             permission_level = ue.check_user_role()
+            if permission_level == 'Blocked':
+                session.clear()
+                return redirect(url_for('basic_page.account_suspended_page'))
         else:
             permission_level = 'Guest'
 
@@ -120,7 +123,11 @@ def dashboard_page():
     try:
         if 'credentials' in session:
             permission_level = ue.check_user_role()
-            return render_template('dashboard.html', value=permission_level)
+            if permission_level == 'Blocked':
+                session.clear()
+                return redirect(url_for('basic_page.account_suspended_page'))
+            else:
+                return render_template('dashboard.html', value=permission_level)
         else:
             return redirect(url_for('basic_page.landing_page'))
     except:

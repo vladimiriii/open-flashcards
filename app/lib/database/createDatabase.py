@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 
 # Database
 from databaseConfig import DATABASE
-from models import Base, db_session, app_user_role, app_user, app_user_action_type, sheet_action_type
+from models import Base, db_session, app_user_role, app_user, app_user_action_type, sheet_action_type, sheet_status
 import procedures as proc
 import triggers as trig
 
