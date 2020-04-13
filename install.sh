@@ -1,7 +1,8 @@
 #! /usr/bin/env bash
-echo `python3 -m venv env`
+echo "Setting up virtual environment..."
+echo `python3 -m venv venv`
 currentDir=`pwd`
-virtualenvPath='env/bin/activate'
+virtualenvPath='venv/bin/activate'
 source $currentDir/$virtualenvPath
 
 echo "Installing requirements..."

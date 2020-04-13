@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from flask import session
-
 from app.lib.database.models import db_session, app_user, app_user_role
 
 
