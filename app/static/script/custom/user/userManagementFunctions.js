@@ -1,20 +1,7 @@
-function getUserList(table, buttonsToAdd) {
+async function createTable(table, buttonsToAdd) {
     $("#spinner").show();
-    $.ajax({
-        type: "GET",
-        url: '/get-user-list',
-        data: {"table": table},
-        success: function(result) {
-            createTables(table, result, buttonsToAdd)
-        },
-        error: function(msg){
-            console.log(msg);
-        }
-    });
-}
+    const data = await getUserList(table);
 
-
-function createTables(table, data, buttonsToAdd) {
     $.when(generateUserList(table, data, buttonsToAdd)).done(function(userColumn){
         if (userColumn !== -1) {
             $('#' + table).DataTable({
@@ -39,6 +26,23 @@ function createTables(table, data, buttonsToAdd) {
         }
         $("#spinner").hide();
     });
+}
+
+
+function getUserList(table) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: "GET",
+            url: '/get-user-list',
+            data: {"table": table},
+            success: (response) => {
+                resolve(response);
+            },
+            error: (response) => {
+                reject(response);
+            }
+        })
+    })
 }
 
 
