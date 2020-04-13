@@ -14,7 +14,8 @@ function addCancelButtons(div, tableData, sheetIdIndex, googleIdIndex, statusInd
 function buildCancelButton(div, sheetId, googleId) {
     const cellID = "#opt-" + div + '-' + sheetId;
     const btn = '<button type="button" class="btn btn-outline-danger btn-sm confirm-col-btn" '
-           + 'onclick="cancelReviewRequest(\'' + googleId + '\')">'
+           + 'onclick="cancelReviewRequest(\'' + googleId + '\')"'
+           + 'data-toggle="tooltip" data-placement="top" title="Cancel request to make public">'
            + '<i class="fa fa-undo" aria-hidden="true"></i></button>'
    $(cellID).append(btn);
 }
