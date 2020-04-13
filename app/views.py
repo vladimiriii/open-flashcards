@@ -313,6 +313,15 @@ def process_update_sheet_status_request():
     return jsonify(result)
 
 
+@google_api.route('/check-user-role', methods=['GET'])
+def process_check_user_role_request():
+    if 'au_id' in session:
+        permission_level = ue.check_user_role(session['au_id'])
+    else:
+        permission_level = "Guest"
+    return jsonify({"role": permission_level})
+
+
 @google_api.route('/update-user-role', methods=['POST'])
 def process_update_user_role_request():
     input = json.loads(request.data)

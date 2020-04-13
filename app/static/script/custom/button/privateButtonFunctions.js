@@ -1,10 +1,11 @@
 // SHARE BUTTON FUNCTIONS
-function addPrivateButtons(div, tableData, sheetIdIndex, googleIdIndex, statusIndex) {
+function addPrivateButtons(div, tableData, indices) {
     for (rowIndex in tableData) {
-        const status = tableData[rowIndex][statusIndex]
-        if (status == 'Public') {
-            const sheetId = String(tableData[rowIndex][sheetIdIndex]);
-            const googleId = String(tableData[rowIndex][googleIdIndex]);
+        const status = tableData[rowIndex][indices['status']];
+        const isOwner = tableData[rowIndex][indices['isOwner']];
+        if (status == 'Public' & isOwner) {
+            const sheetId = String(tableData[rowIndex][indices['sheetId']]);
+            const googleId = String(tableData[rowIndex][indices['googleId']]);
             buildPrivateButton(div, sheetId, googleId);
         }
     }

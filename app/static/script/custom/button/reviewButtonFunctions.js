@@ -1,8 +1,8 @@
 // REVIEW BUTTON FUNCTIONS
-function addReviewButtons(div, tableData, sheetIdIndex, googleIdIndex) {
+function addReviewButtons(div, tableData, indices) {
     for (rowIndex in tableData) {
-        const sheetId = String(tableData[rowIndex][sheetIdIndex]);
-        const googleId = String(tableData[rowIndex][googleIdIndex]);
+        const sheetId = String(tableData[rowIndex][indices['sheetId']]);
+        const googleId = String(tableData[rowIndex][indices['googleId']]);
         buildReviewButton(div, sheetId, googleId);
     }
 }

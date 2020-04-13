@@ -1,7 +1,7 @@
 // VIEW BUTTON FUNCTIONS
-function addViewButtons(div, tableData, sheetIdIndex) {
+function addViewButtons(div, tableData, indices) {
     for (rowIndex in tableData) {
-        const sheetId = String(tableData[rowIndex][sheetIdIndex]);
+        const sheetId = String(tableData[rowIndex][indices['sheetId']]);
         buildViewButton(div, sheetId);
     }
 }

@@ -1,10 +1,12 @@
 // SHARE BUTTON FUNCTIONS
-function addShareButtons(div, tableData, sheetIdIndex, googleIdIndex, statusIndex) {
+function addShareButtons(div, tableData, indices) {
     for (rowIndex in tableData) {
-        const status = tableData[rowIndex][statusIndex];
-        if (status == 'Private') {
-            const sheetId = String(tableData[rowIndex][sheetIdIndex]);
-            const googleId = String(tableData[rowIndex][googleIdIndex]);
+        const status = tableData[rowIndex][indices['status']];
+        const isOwner = tableData[rowIndex][indices['isOwner']];
+        // console.log(status + " - " + isOwner);
+        if (status == 'Private' & isOwner) {
+            const sheetId = String(tableData[rowIndex][indices['sheetId']]);
+            const googleId = String(tableData[rowIndex][indices['googleId']]);
             buildShareButton(div, sheetId, googleId);
         }
     }

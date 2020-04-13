@@ -8,6 +8,7 @@ def get_public_sheets():
     query = ("""
         SELECT s_id,
             s_google_id,
+            FALSE as aurs_is_owner,
             s_sheet_name,
             s_row_count,
             COALESCE(views, 0) AS views,
@@ -35,6 +36,7 @@ def get_user_sheets(user_id):
     query = (f"""
         SELECT s_id,
             s_google_id,
+            aurs_is_owner,
             s_sheet_name,
             s_row_count,
             COALESCE(views, 0) AS views,
@@ -43,6 +45,7 @@ def get_user_sheets(user_id):
         FROM sheet AS s
         INNER JOIN (
             SELECT aurs_s_id
+                , aurs_is_owner
             FROM app_user_rel_sheet
             WHERE aurs_au_id = {user_id}
             AND NOT aurs_deleted
@@ -69,6 +72,7 @@ def get_request_sheets():
     query = ("""
         SELECT s_id,
             s_google_id,
+            FALSE AS aurs_is_owner,
             s_sheet_name,
             s_row_count,
             COALESCE(views, 0) AS views,

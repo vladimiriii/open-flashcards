@@ -8,6 +8,6 @@ On Page Load
 -----------------------------------*/
 $(document).ready(function(){
 
-    getSheetLists("publicSheets", ['viewButton']);
+    createTable("publicSheets", ['viewButton']);
 
 });

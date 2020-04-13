@@ -1,24 +1,11 @@
-function getSheetLists(table, buttonsToAdd) {
-    $("#spinner").show();
-    $.ajax({
-        type: "GET",
-        url: '/get-sheet-lists',
-        data: {"table": table},
-        success: function(result) {
-            createTables(table, result, buttonsToAdd)
-        },
-        error: function(msg){
-            console.log(msg);
-        }
-    });
-}
+async function createTable(table, buttonsToAdd) {
+    const data = await getSheetLists(table);
 
-
-function createTables(table, data, buttonsToAdd) {
-    $.when(generateSheetList(table, data, buttonsToAdd)).done(function(viewColumn){
-        if (viewColumn !== -2) {
+    const infoColumns = 3
+    $.when(generateSheetList(table, data, buttonsToAdd, infoColumns)).done(function(viewColumn){
+        if (viewColumn !== -infoColumns) {
             $('#' + table).DataTable({
-                'order': [[ Math.max(0, viewColumn - 2), "desc" ]],
+                'order': [[ Math.max(0, viewColumn - infoColumns), "desc" ]],
                 'lengthChange': false,
             });
         }
@@ -38,14 +25,29 @@ function createTables(table, data, buttonsToAdd) {
 }
 
 
-function generateSheetList(div, tableData, buttonsToAdd) {
+function getSheetLists(table) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: "GET",
+            url: '/get-sheet-lists',
+            data: {"table": table},
+            success: (response) => {
+                resolve(response);
+            },
+            error: (response) => {
+                reject(response);
+            }
+        })
+    })
+}
+
+
+function generateSheetList(div, tableData, buttonsToAdd, infoColumns) {
     $('#' + div).empty();
-    let viewColumn = -2,
+    let viewColumn = -infoColumns,
         headerHtml = "",
         rowHtml = "",
-        sheetIdIndex = null,
-        googleIdIndex = null,
-        statusIndex = null;
+        indices = null;
 
     // Generate Table HTML
     if (tableData == null) {
@@ -56,17 +58,15 @@ function generateSheetList(div, tableData, buttonsToAdd) {
         headerHtml += '<tr>'
         viewColumn = tableData['columns'].indexOf('Views');
         const columnList = tableData['columns'].slice();
-        columnList.splice(2, tableData['columns'].length).map( function(column) {
+        columnList.splice(infoColumns, tableData['columns'].length).map( function(column) {
             headerHtml += '<th class="' + getSheetColumnClass(column) + '">' + column + '</th>';
         })
         headerHtml += '<th class="all confirm-head">Options</th></tr>';
 
         // Data Rows
-        sheetIdIndex = tableData['columns'].indexOf("sheetId");
-        googleIdIndex = tableData['columns'].indexOf("googleId");
-        statusIndex = tableData['columns'].indexOf("Status");
+        indices = getColumnIndices(tableData);
         for (rowIndex in tableData['data']) {
-            rowHtml += addTableRow(tableData['data'][rowIndex], div, sheetIdIndex, googleIdIndex);
+            rowHtml += addTableRow(tableData['data'][rowIndex], div, indices['sheetId'], infoColumns);
         }
     }
     const rows = "<tbody>" + rowHtml + "</tbody>";
@@ -79,21 +79,20 @@ function generateSheetList(div, tableData, buttonsToAdd) {
 
     // Append Buttons
     if (tableData != null) {
-        addAllButtons(div, tableData, buttonsToAdd, sheetIdIndex, googleIdIndex, statusIndex);
+        addAllButtons(div, tableData, buttonsToAdd, indices);
     }
 
     return viewColumn;
 }
 
 
-function addTableRow(rowData, div, sheetIdIndex, googleIdIndex){
+function addTableRow(rowData, div, sheetIdIndex, infoColumns){
     const sheetId = String(rowData[sheetIdIndex]);
-    const googleId = String(rowData[googleIdIndex]);
     const htmlId = div + '-' + sheetId;
 
     let rowHtml = '<tr class="table-row">'
     const rowCopy = rowData.slice();
-    rowCopy.splice(2, rowCopy.length).map(function(dataPoint) {
+    rowCopy.splice(infoColumns, rowCopy.length).map(function(dataPoint) {
         rowHtml += '<td>' + dataPoint + '</td>';
     });
 
@@ -105,26 +104,27 @@ function addTableRow(rowData, div, sheetIdIndex, googleIdIndex){
 }
 
 
-function addAllButtons(div, tableData, buttonsToAdd, sheetIdIndex, googleIdIndex, statusIndex){
+async function addAllButtons(div, tableData, buttonsToAdd, indices){
+    const userRole = await getUserRole();
 
     if (typeof buttonsToAdd !== "undefined") {
         if (buttonsToAdd.includes("viewButton")) {
-            addViewButtons(div, tableData['data'], sheetIdIndex);
+            addViewButtons(div, tableData['data'], indices);
         };
         if (buttonsToAdd.includes("shareButton")) {
-            addShareButtons(div, tableData['data'], sheetIdIndex, googleIdIndex, statusIndex);
+            addShareButtons(div, tableData['data'], indices);
         };
         if (buttonsToAdd.includes("reviewButton")) {
-            addReviewButtons(div, tableData['data'], sheetIdIndex, googleIdIndex);
+            addReviewButtons(div, tableData['data'], indices);
         };
         if (buttonsToAdd.includes("approveButton")) {
-            addApproveButtons(div, tableData['data'], sheetIdIndex, googleIdIndex);
+            addApproveButtons(div, tableData['data'], indices);
         };
         if (buttonsToAdd.includes("privateButton")) {
-            addPrivateButtons(div, tableData['data'], sheetIdIndex, googleIdIndex, statusIndex);
+            addPrivateButtons(div, tableData['data'], indices);
         };
         if (buttonsToAdd.includes("cancelButton")) {
-            addCancelButtons(div, tableData['data'], sheetIdIndex, googleIdIndex, statusIndex);
+            addCancelButtons(div, tableData['data'], indices);
         };
     }
 }

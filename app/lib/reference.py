@@ -1,6 +1,7 @@
 column_lookup = {
     "s_google_id": "googleId",
     "s_id": "sheetId",
+    "aurs_is_owner": "isOwner",
     "s_sheet_name": "Sheet Name",
     "s_row_count": "# of Cards",
     "s_last_modified": "Last Modified",

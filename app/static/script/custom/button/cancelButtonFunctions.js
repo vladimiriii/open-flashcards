@@ -1,10 +1,11 @@
 // SHARE BUTTON FUNCTIONS
-function addCancelButtons(div, tableData, sheetIdIndex, googleIdIndex, statusIndex) {
+function addCancelButtons(div, tableData, indices) {
     for (rowIndex in tableData) {
-        const status = tableData[rowIndex][statusIndex]
-        if (status == 'Review Requested') {
-            const sheetId = String(tableData[rowIndex][sheetIdIndex]);
-            const googleId = String(tableData[rowIndex][googleIdIndex]);
+        const status = tableData[rowIndex][indices['status']];
+        const isOwner = tableData[rowIndex][indices['isOwner']];
+        if (status == 'Review Requested' & isOwner) {
+            const sheetId = String(tableData[rowIndex][indices['sheetId']]);
+            const googleId = String(tableData[rowIndex][indices['googleId']]);
             buildCancelButton(div, sheetId, googleId);
         }
     }
