@@ -40,8 +40,44 @@ function addApproveButtons(div, tableData, sheetIdIndex, googleIdIndex) {
 function buildApproveButton(div, sheetId, googleId) {
     const cellId = "#opt-" + div + '-' + sheetId;
     const approveButton = '<button type="button" class="btn btn-outline-warning btn-sm confirm-col-btn" '
-               + 'data-toggle="modal" data-target="#approveModal">'
+               + 'onclick="generateApproveModal(\'' + googleId + '\')"'
+               + 'data-toggle="tooltip" data-placement="top" title="Approve or deny this request">'
                + '<i class="fa fa-check-circle-o" aria-hidden="true"></i></button>'
 
    $(cellId).append(approveButton);
+}
+
+function generateApproveModal(id) {
+    event.stopPropagation();
+    $.when(generateApproveModalButtons(id)).done(function() {
+        $('#approveModal').modal('show');
+    })
+
+}
+
+function generateApproveModalButtons(id) {
+    $('#approveBtn:not(.bound)').addClass('bound').click(function() {
+        requestResponse(id, 'Approve Sheet');
+    });
+    $('#denyBtn:not(.bound)').addClass('bound').click(function() {
+        requestResponse(id, "Cancel Request");
+    });
+}
+
+
+function requestResponse(googleId, response) {
+    $("#spinner").show();
+    $.ajax({
+        type: "POST",
+        url: '/update-sheet-status',
+        data: JSON.stringify({"googleId": googleId, "event": response}),
+        contentType: 'application/json',
+        success: function(result) {
+            $("#spinner").hide();
+            window.location.reload();
+        },
+        error: function(msg){
+            console.log(msg);
+        }
+    })
 }
