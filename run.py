@@ -21,5 +21,5 @@ if __name__ == '__main__':
     app.run(debug=args.debug
             , host=args.host
             , port=args.port
-            , ssl_context=app.config['SSL']
+            # , ssl_context=app.config['SSL']
             )
