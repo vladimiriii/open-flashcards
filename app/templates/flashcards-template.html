@@ -20,17 +20,17 @@
 </head>
 <body>
     {% include 'includes/spinner.html' %}
+    <!-- Navbar -->
+    {% if permission_level == 'Super User' %}
+        {% include 'modules/admin-navbar.html' %}
+    {% elif permission_level == 'Teacher' %}
+        {% include 'modules/teacher-navbar.html' %}
+    {% elif permission_level in ['Graduate', 'UnderGraduate']%}
+        {% include 'modules/student-navbar.html' %}
+    {% else %}
+        {% include 'modules/navbar.html' %}
+    {% endif %}
     <div class="container-fluid">
-        <!-- Navbar -->
-        {% if permission_level == 'Super User' %}
-            {% include 'modules/admin-navbar.html' %}
-        {% elif permission_level == 'Teacher' %}
-            {% include 'modules/teacher-navbar.html' %}
-        {% elif permission_level in ['Graduate', 'UnderGraduate']%}
-            {% include 'modules/student-navbar.html' %}
-        {% else %}
-            {% include 'modules/navbar.html' %}
-        {% endif %}
         <!-- Page Content -->
         <div class="row">
             <!-- Tool Bar -->
@@ -94,9 +94,9 @@
                 </div>
             </div>
         </div>
-        {% include 'modules/footer.html' %}
-        {% include 'modules/card-options-modal.html' %}
-        {% include 'modules/feedback-modal.html' %}
     </div>
+    {% include 'modules/footer.html' %}
+    {% include 'modules/card-options-modal.html' %}
+    {% include 'modules/feedback-modal.html' %}
 </body>
 </html>

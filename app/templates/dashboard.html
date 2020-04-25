@@ -18,14 +18,14 @@
 <body>
     {% include 'includes/spinner.html' %}
     <!-- Content -->
+    {% if value == 'Super User' %}
+    {% include 'modules/admin-navbar.html' %}
+    {% elif value == 'Teacher' %}
+    {% include 'modules/teacher-navbar.html' %}
+    {% else %}
+    {% include 'modules/student-navbar.html' %}
+    {% endif %}
     <div class="container-fluid">
-        {% if value == 'Super User' %}
-        {% include 'modules/admin-navbar.html' %}
-        {% elif value == 'Teacher' %}
-        {% include 'modules/teacher-navbar.html' %}
-        {% else %}
-        {% include 'modules/student-navbar.html' %}
-        {% endif %}
         <div class="row main-panel">
             <div class="col-md-12">
                 <h3>Your Flash Cards</h3>
@@ -35,10 +35,10 @@
                 <h3><a href="/create-flashcards">Create New Cards</a></h3>
             </div>
         </div>
-        {% include 'modules/footer.html' %}
-        {% include 'modules/share-modal.html' %}
-        {% include 'modules/feedback-modal.html' %}
     </div>
+    {% include 'modules/footer.html' %}
+    {% include 'modules/share-modal.html' %}
+    {% include 'modules/feedback-modal.html' %}
 </body>
 
 </html>

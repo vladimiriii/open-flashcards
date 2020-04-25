@@ -11,50 +11,46 @@
 
 /* Header Section */
 #initial-view {
-    padding-left: 15px;
-    padding-right: 15px;
     min-height: 70vh;
 }
 
 #primary-image {
     width: 100%;
+    min-height: 700px;
     background-image: url("../img/neurons.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    opacity: 0.4;
+    opacity: 0.25;
     z-index: 1;
 }
 
 #text-overlay {
     width: 100%;
-    height: 60%;
+    min-height: 700px;
     position: absolute;
     z-index: 2;
     left: 50%;
     transform: translate(-50%, 0);
 }
 
-#header-row {
+.text-overlay-row {
     display: inline;
     text-align: center;
 }
 
 #primary-header {
-    padding-top: 100px;
+    padding-top: 10vh;
     font-size: 160px;
     font-family: custom;
-    color: #FF5500;
-}
-
-#tag-line-row {
-    display: inline;
-    text-align: center;
+    color: #E76F51;
 }
 
 #tag-line {
   font-style: italic;
   font-family: custom;
+  font-size: 30px;
+  color: #264653;
 }
 
 /* Text Sections */

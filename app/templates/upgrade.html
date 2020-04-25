@@ -8,6 +8,7 @@
     {% include 'includes/base-scripts.html' %}
 
     <!-- Page Specific Styling -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/pricing.css') }}">
 
     <!-- Custom JavaScript -->
     <script src="{{ url_for('static',filename='script/custom/page/upGradeOnLoad.js') }}"></script>
@@ -27,7 +28,66 @@
         {% endif %}
         <div class="row main-panel">
             <div class="col-md-12">
-                <h1>Upgrade details here</h1>
+                <h1>Upgrade Your Account</h1>
+                <div class="row">
+                    <div class="col-md-3 package-panel">
+                        <h2>Undergraduate</h2>
+                        <div class="row">
+                            <div class="col-md-12 what-you-get">
+                                <h4>What you get</h4>
+                                <ul>
+                                    <li>Import up to 5 Google sheets (you must be the owner)</li>
+                                    <li>Import Google sheets owned by a Teacher</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 pricing">
+                                <h4>Price</h4>
+                                <p>FREE!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 package-panel">
+                        <h2>Graduate</h2>
+                        <div class="row">
+                            <div class="col-md-12 what-you-get">
+                                <h4>What you get</h4>
+                                <ul>
+                                    <li>Import as many Google sheets as you want</li>
+                                    <li>Import any Google sheet you have access to (i.e. you do not have to be the owner)</li>
+                                    <li>That warm glow from knowing you are supporting a product you find useful!</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 pricing">
+                                <h4>Price</h4>
+                                <p>$1 a month or $10 for a year</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 package-panel">
+                        <h2>Teacher</h2>
+                        <div class="row">
+                            <div class="col-md-12 what-you-get">
+                                <h4>What you get</h4>
+                                <ul>
+                                    <li>Import as many Google sheets as you want</li>
+                                    <li>Import any Google sheet you have access to (i.e. you do not have to be the owner)</li>
+                                    <li>Provide free access to your sheets for other users</li>
+                                    <li>Access to an analytics dashboard to monitor usage</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 pricing">
+                                <h4>Price</h4>
+                                <p>$1 per a month per student that accesses your Sheets</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         {% include 'modules/footer.html' %}

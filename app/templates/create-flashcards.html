@@ -17,14 +17,14 @@
 <body>
     {% include 'includes/spinner.html' %}
     <!-- Content -->
+    {% if value == 'Super User' %}
+    {% include 'modules/admin-navbar.html' %}
+    {% elif value == 'Teacher' %}
+    {% include 'modules/teacher-navbar.html' %}
+    {% else %}
+    {% include 'modules/student-navbar.html' %}
+    {% endif %}
     <div class="container-fluid">
-        {% if value == 'Super User' %}
-        {% include 'modules/admin-navbar.html' %}
-        {% elif value == 'Teacher' %}
-        {% include 'modules/teacher-navbar.html' %}
-        {% else %}
-        {% include 'modules/student-navbar.html' %}
-        {% endif %}
         <div class="row main-panel">
             <div class="col-md-12">
                 <h3>Create New Flash Cards</h3>
@@ -40,20 +40,20 @@
 <!--                </button>-->
             </div>
         </div>
-        {% include 'modules/footer.html' %}
-        <!-- Modal -->
-        <div class="row">
-            <div class="modal fade" data-backdrop="static" data-keyboard="false" id="confirmation-modal" role="dialog">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="navbar-collapse modal-header" id="modal-header">
-                        </div>
-                        <div class="modal-body" id="modal-body">
-                        </div>
-                        <div class="modal-footer" id="modal-footer">
-                            <a href="./"><button type="button" class="btn btn-outline-info" id="home-btn">Back to Dashboard</button></a>
-                            <button type="button" class="btn btn-outline-warning" id="close-btn">Close</button>
-                        </div>
+    </div>
+    {% include 'modules/footer.html' %}
+    <!-- Modal -->
+    <div class="row">
+        <div class="modal fade" data-backdrop="static" data-keyboard="false" id="confirmation-modal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="navbar-collapse modal-header" id="modal-header">
+                    </div>
+                    <div class="modal-body" id="modal-body">
+                    </div>
+                    <div class="modal-footer" id="modal-footer">
+                        <a href="./"><button type="button" class="btn btn-outline-info" id="home-btn">Back to Dashboard</button></a>
+                        <button type="button" class="btn btn-outline-warning" id="close-btn">Close</button>
                     </div>
                 </div>
             </div>

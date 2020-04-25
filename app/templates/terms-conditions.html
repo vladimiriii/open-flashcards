@@ -8,24 +8,24 @@
 
 </head>
 <body>
+	<!-- Navbar -->
+	{% if value == 'Super User' %}
+	{% include 'modules/admin-navbar.html' %}
+	{% elif value == 'Teacher' %}
+	{% include 'modules/teacher-navbar.html' %}
+	{% elif value in ['Undergraduate', 'Graduate'] %}
+	{% include 'modules/student-navbar.html' %}
+	{% else %}
+	{% include 'modules/navbar.html' %}
+	{% endif %}
 	<div class="container-fluid">
-        <!-- Navbar -->
-		{% if value == 'Super User' %}
-        {% include 'modules/admin-navbar.html' %}
-        {% elif value == 'Teacher' %}
-        {% include 'modules/teacher-navbar.html' %}
-        {% elif value in ['Undergraduate', 'Graduate'] %}
-        {% include 'modules/student-navbar.html' %}
-		{% else %}
-		{% include 'modules/navbar.html' %}
-        {% endif %}
         <!-- Content -->
 		<div class="row">
             <div class='col-md-12 main-panel'>
                 <h3>Please check back soon!</h3>
             </div>
         </div>
-        {% include 'modules/footer.html' %}
 	</div>
+	{% include 'modules/footer.html' %}
 </body>
 </html>

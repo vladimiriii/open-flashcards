@@ -19,17 +19,17 @@
 </head>
 <body>
 	{% include 'includes/spinner.html' %}
-	<!-- Content -->
+	<!-- Navbar -->
+	{% include 'modules/admin-navbar.html' %}
 	<div class="container-fluid">
-		{% include 'modules/admin-navbar.html' %}
 		<div class="row main-panel">
-    	<div class="col-md-12">
-			<h3>User Management</h3>
-			<table id="currentUsers" class="display responsive" width="100%"></table>
-		</div>
-    </div>
-    {% include 'modules/footer.html' %}
-	{% include 'modules/feedback-modal.html' %}
+	    	<div class="col-md-12">
+				<h3>User Management</h3>
+				<table id="currentUsers" class="display responsive" width="100%"></table>
+			</div>
+	    </div>
 	</div>
+	{% include 'modules/footer.html' %}
+	{% include 'modules/feedback-modal.html' %}
 </body>
 </html>

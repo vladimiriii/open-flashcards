@@ -18,16 +18,16 @@
 <body>
 	{% include 'includes/spinner.html' %}
 	<!-- Content -->
+	{% include 'modules/admin-navbar.html' %}
 	<div class="container-fluid">
-		{% include 'modules/admin-navbar.html' %}
 		<div class="row main-panel">
-    	<div class="col-md-12">
-			<h3>Requests to be Made Public</h3>
-			<table id="requestSheets" class="display responsive" width="100%"></table>
-		</div>
-    </div>
-    {% include 'modules/footer.html' %}
-	{% include 'modules/approve-modal.html' %}
+	    	<div class="col-md-12">
+				<h3>Requests to be Made Public</h3>
+				<table id="requestSheets" class="display responsive" width="100%"></table>
+			</div>
+	    </div>
 	</div>
+	{% include 'modules/footer.html' %}
+	{% include 'modules/approve-modal.html' %}
 </body>
 </html>

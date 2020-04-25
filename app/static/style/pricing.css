@@ -1,0 +1,14 @@
+.package-panel {
+    height: 600px;
+    margin: 5px 5px 5px 5px;
+    border: 2px black solid;
+    border-radius: 5px;
+}
+
+.what-you-get {
+    height: 200px;
+}
+
+.pricing {
+    height: 100px;
+}

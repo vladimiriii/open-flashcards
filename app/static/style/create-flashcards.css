@@ -3,6 +3,10 @@
   width: 50%;
 }
 
+.main-panel {
+    min-height: 70vh;
+}
+
 @media screen and (max-width: 992px) {
     .text-input {
       width: 100%;
