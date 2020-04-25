@@ -135,22 +135,6 @@ def dashboard_page():
         return redirect(url_for('basic_page.general_error_page'))
 
 
-@internal_page.route('/student-management')
-def student_management_page():
-    try:
-        if 'au_id' in session:
-            permission_level = ue.check_user_role(session['au_id'])
-            if permission_level in ['Teacher', 'Super User']:
-                return render_template('student-management.html', value=permission_level)
-            else:
-                return redirect(url_for('internal_page.dashboard_page'))
-        else:
-            return redirect(url_for('basic_page.landing_page'))
-    except:
-        print(utils.generate_error_message(sys.exc_info()))
-        return redirect(url_for('basic_page.general_error_page'))
-
-
 @internal_page.route('/sheet-management')
 def sheet_management_page():
     try:

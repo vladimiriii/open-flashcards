@@ -10,8 +10,16 @@ body {
 }
 
 /* Navbar */
+.navbar {
+    margin-bottom: 30px
+}
+
 .navbar-brand {
-	font-size: 20px;
+	font-size: 30px;
+}
+
+li.active > a {
+    color: grey;
 }
 
 /* Body */
@@ -25,33 +33,22 @@ h2, h3, h4, h5 {
   margin-bottom: 30px;
 }
 
-/* Mobile View */
-@media screen and (max-width: 992px) {
-    .main-panel {
-        padding-right: 5px;
-        padding-left: 5px;
-    }
-
-    .landing-page-col {
-        padding-right: 5px;
-        padding-left: 5px;
-    }
-}
-
 /* Footer */
 .page-footer {
     text-align: center;
-    margin-top:10px;
-    width:100%;
-    background-color: #FFFFFF;
+    margin-top: 50px;
+    padding-bottom: 20px;
+    width: 100%;
+    background-color: #212529;
+    color: #FFF;
     -webkit-box-shadow: inset 0 2px 0 rgba(255, 255, 255, .15), 0 2px 5px rgba(0, 0, 0, .075);
 }
 
 .share-btn {
     display: inline-block;
     border-radius: 50px;
-    color: #777;
-    border: 2px solid #777;
+    color: #CCC;
+    border: 2px solid #CCC;
     padding: 0.5em;
     width: 2.8em;
     opacity: 0.9;
@@ -77,8 +74,27 @@ h2, h3, h4, h5 {
     border: 2px solid #FFA62D;
 }
 
-.document-links {
+p.document-links > a {
     margin-bottom: 20px;
+    color: #CCC;
+}
+
+p.document-links > a:hover {
+    margin-bottom: 20px;
+    color: #FFF;
+}
+
+/* Mobile View */
+@media screen and (max-width: 992px) {
+    .main-panel {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
+
+    .landing-page-col {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
 }
 
 /* Spinner */

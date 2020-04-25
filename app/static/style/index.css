@@ -4,11 +4,6 @@
   /* src: url("/static/fonts/Handlee-Regular.ttf"); */
 }
 
-/* Nav bar */
-.navbar {
-    margin-bottom: 0px
-}
-
 /* Header Section */
 #initial-view {
     min-height: 70vh;
