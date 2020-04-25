@@ -6,12 +6,16 @@
 
 /* Header Section */
 #initial-view {
-    min-height: 70vh;
+    min-height: 60vh;
+}
+
+.navbar {
+    margin-bottom: 0px
 }
 
 #primary-image {
     width: 100%;
-    min-height: 700px;
+    min-height: 650px;
     background-image: url("../img/neurons.jpg");
     background-position: center;
     background-repeat: no-repeat;
@@ -22,7 +26,7 @@
 
 #text-overlay {
     width: 100%;
-    min-height: 700px;
+    min-height: 650px;
     position: absolute;
     z-index: 2;
     left: 50%;
@@ -50,12 +54,8 @@
 
 /* Text Sections */
 .landing-page-col {
-    padding-top: 50px;
-    padding-bottom: 50px;
-}
-
-.section-header {
-    font-size: 50px;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 #second-view {
