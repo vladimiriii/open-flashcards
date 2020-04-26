@@ -1,4 +1,6 @@
 import pandas as pd
+import os
+import configparser
 
 from googleapiclient.discovery import build
 from google.oauth2.service_account import Credentials as service_account_credentials
@@ -6,8 +8,6 @@ from google.oauth2.credentials import Credentials as user_credentials
 
 from flask import session
 from app.lib import reference as ref
-
-SERVICE_ACCOUNT_FILE = "app/static/data/private/service_account.json"
 
 
 def get_drive_client_credentials():
@@ -27,6 +27,7 @@ def get_sheets_client_credentials():
 
 
 def get_drive_service_account_credentials():
+    SERVICE_ACCOUNT_FILE = get_config_field('Google', 'SERVICE_ACCOUNT_FILE')
     credentials = service_account_credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE,
         scopes=['https://www.googleapis.com/auth/drive.readonly'])
@@ -37,6 +38,7 @@ def get_drive_service_account_credentials():
 
 
 def get_sheets_service_account_credentials():
+    SERVICE_ACCOUNT_FILE = get_config_field('Google', 'SERVICE_ACCOUNT_FILE')
     credentials = service_account_credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE,
         scopes=['https://www.googleapis.com/auth/spreadsheets.readonly'])
@@ -88,3 +90,11 @@ def generate_error_message(sys_info):
     message = "ERROR FOUND\nError Type: \"" + str(sys_info[0]) + "\"\nError Value: \"" + str(
         sys_info[1]) + "\"\nError Traceback: \"" + str(sys_info[2]) + "\""
     return message
+
+
+def get_config_field(section, field):
+    app_dir = os.path.abspath(os.curdir) + '/config.cfg'
+    config = configparser.RawConfigParser()
+    config_filepath = app_dir
+    config.read(config_filepath)
+    return config.get(section, field)
