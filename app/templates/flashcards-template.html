@@ -8,15 +8,15 @@
 
     <!-- Page Specific Styling -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/cards.css') }}?v=001">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/cardAnimation.css') }}?v=001">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style/cardAnimation.css') }}?v=002">
 
     <!-- Custom JavaScript -->
     <script>
         var sheetId = '{{ sheet_id }}';
     </script>
-    <script src="{{ url_for('static',filename='script/custom/card/cardSet.js') }}"></script>
-    <script src="{{ url_for('static',filename='script/custom/card/cardViewFunctions.js') }}"></script>
-    <script src="{{ url_for('static',filename='script/custom/page/cardViewOnLoad.js') }}"></script>
+    <script src="{{ url_for('static',filename='script/custom/card/cardSet.js') }}?v=001"></script>
+    <script src="{{ url_for('static',filename='script/custom/card/cardViewFunctions.js') }}?v=001"></script>
+    <script src="{{ url_for('static',filename='script/custom/page/cardViewOnLoad.js') }}?v=001"></script>
 
 </head>
 <body>

@@ -1,67 +1,93 @@
-.card {
+.panel {
     cursor: pointer;
     max-width: 300px;
     height: 260px;
-
     margin: 0 auto;
     position: relative;
+
     -webkit-perspective: 800px;
             perspective: 800px;
-
-    -webkit-transition: 1.2s;
-            transition: 1.2s;
-
-    -webkit-transform-style: preserve-3d;
-            transform-style: preserve-3d;
 }
 
-.face {
-    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
+.panel .front {
     text-align: center;
     height: 100%;
     width: 100%;
     display: block;
     position: absolute;
-}
-
-.front, .back {
-     -webkit-backface-visibility: hidden;
-             backface-visibility: hidden;
-     -webkit-transition: 0.6s;
-             transition: 0.6s;
-     -webkit-transform-style: preserve-3d;
-             transform-style: preserve-3d;
-     position: absolute;
-     top: 0;
-     left: 0;
- }
-
-.card .front {
-    z-index: 2;
-    background: #F4A261;
     padding-top: 30%;
-    -webkit-transform: rotateY(0deg);
-            transform: rotateY(0deg);
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
+
+    background: #F4A261;
+    z-index: 900;
+
+    -webkit-transform: rotateX(0) rotateY(0);
+            transform: rotateX(0) rotateY(0);
+    -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+    -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+    -webkit-transition: all 1.0s ease-in-out;
+            transition: all 1.0s ease-in-out;
 }
 
-.card .back {
+.panel.flipped .front {
+    z-index: 900;
+    border-color: #eee;
+    background: #333;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
+    -webkit-transform: rotateY(179deg);
+            transform: rotateY(179deg);
+}
+
+.panel .back {
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    display: block;
+    position: absolute;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
+
     background: #E9C46A;
-    z-index: 1
-    -webkit-transform: rotateY( 180deg );
-            transform: rotateY( 180deg );
-    -webkit-transition: 0.6s;
-            transition: 0.6s;
-    -webkit-transition: z-index 0.35s step-end;
-            transition: z-index 0.35s step-end;
+    z-index: 800;
+
+    -webkit-transform: rotateY(-179deg);
+            transform: rotateY(-179deg);
+
+    -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+
+    -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+
+    -webkit-transition: all 1.0s ease-in-out;
+            transition: all 1.0s ease-in-out;
 }
 
-.card.flipped {
-    -webkit-transform: rotateY( 180deg );
-            transform: rotateY( 180deg );
-}
+.panel.flipped .back {
+    z-index: 1000;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
+    background: #E9C46A;
 
-.card.flipped .back {
-    z-index: 3;
-    -webkit-transition: z-index 0.35s step-end;
-            transition: z-index 0.35s step-end;
-}
+    -webkit-transform: rotateX(0) rotateY(0);
+            transform: rotateX(0) rotateY(0);
+  }
+
+  .click .front {
+    cursor: pointer;
+    -webkit-transform: rotateY(0);
+            transform: rotateY(0);
+  }
+  .click.flipped .front {
+    -webkit-transform: rotateY(-180deg);
+            transform: rotateY(-180deg);
+  }
+  .click .back {
+    cursor: pointer;
+    -webkit-transform: rotateY(180deg);
+            transform: rotateY(180deg);
+  }
+  .click.flipped .back {
+    -webkit-transform: rotateY(0);
+            transform: rotateY(0);
+  }

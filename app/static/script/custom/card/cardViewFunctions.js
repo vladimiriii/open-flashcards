@@ -224,7 +224,7 @@ function refreshCards() {
 
         // Refresh Cards
         populateCards(cards.nextCards);
-    }, 250);
+    }, 500);
 
     // Gives more satisfying click
     setTimeout(function() {
