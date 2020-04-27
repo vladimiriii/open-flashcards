@@ -1,14 +1,12 @@
 function getSheetData(id) {
     $("#spinner").show();
-    const dataJson = JSON.stringify({"sheetID": id});
 
     return $.ajax({
-        type: "POST",
+        type: "GET",
         url: '/card-data',
-        data: dataJson,
+        data: {"sheetId": id},
         contentType: 'application/json',
         success: function(result) {
-            console.log(result);
             if ('error' in result) {
                 showResultModal(result['error']);
             }

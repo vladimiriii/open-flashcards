@@ -325,18 +325,17 @@ def process_update_user_role_request():
     return jsonify(result)
 
 
-@google_api.route('/card-data', methods=['POST'])
+@google_api.route('/card-data', methods=['GET'])
 def output_card_data():
-    inputs = json.loads(request.data)
-    sheet_id = inputs['sheetID']
+    sheet_id = request.args['sheetId']
+    sheet_is_public = se.check_sheet_is_public(sheet_id)
     if 'au_id' in session:
         user_has_access = se.check_user_has_access(sheet_id, session['au_id'])
-        if user_has_access:
+        if user_has_access or sheet_is_public:
             results = cd.get_data(sheet_id=sheet_id)
         else:
             results = {'error': 'incorrect_premissions'}
     else:
-        sheet_is_public = se.check_sheet_is_public(sheet_id)
         if sheet_is_public:
             results = cd.get_data(sheet_id=sheet_id)
         else:
