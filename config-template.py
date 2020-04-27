@@ -1,5 +1,5 @@
 # Application
-SERVER_PORT = '<server port for hosting application EG: 5555>'
+SERVER_PORT = 80  # Server port for hosting application EG: 5555. Http default is 80
 FN_FLASK_SECRET_KEY = '<secret key for your app>'
 
 # Google
@@ -11,7 +11,7 @@ CERT = '<path to SSL certifcate>'
 KEY = '<path to SSL key>'
 
 # Database
-DB_PORT = <Database port>
+DB_PORT = 5432  # Database port. Postgres default is 5432
 DB_HOST = '<Database host>'
 DB_NAME = '<Name of the database>'
 DB_USERNAME = '<Username to create the database>'
