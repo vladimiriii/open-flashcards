@@ -146,7 +146,7 @@ def get_sheet_row_count(google_id):
     rangeName = 'A1:Z'
     result = service.spreadsheets().values().get(spreadsheetId=google_id, range=rangeName).execute()
 
-    return len(result.get('values', []))
+    return len(result.get('values', [])) - 1
 
 
 def check_sheet_availability(google_id):
