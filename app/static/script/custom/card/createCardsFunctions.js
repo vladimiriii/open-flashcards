@@ -80,7 +80,7 @@ responseMap = {
     },
     'invalid_url': {
         'header': "Oops!",
-        'body': "Looks like the URL provided was not the correct format. Please double check and try again."
+        'body': "Looks like the provided URL did not work. Please ensure the URL is correct and is for a Google Sheet (i.e. not an uploaded Excel file) and try again."
     },
     'unknown_error': {
         'header': "Oops!",
