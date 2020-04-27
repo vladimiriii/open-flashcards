@@ -90,11 +90,3 @@ def generate_error_message(sys_info):
     message = "ERROR FOUND\nError Type: \"" + str(sys_info[0]) + "\"\nError Value: \"" + str(
         sys_info[1]) + "\"\nError Traceback: \"" + str(sys_info[2]) + "\""
     return message
-
-
-def get_config_field(section, field):
-    app_dir = os.path.abspath(os.curdir) + '/config.cfg'
-    config = configparser.RawConfigParser()
-    config_filepath = app_dir
-    config.read(config_filepath)
-    return config.get(section, field)

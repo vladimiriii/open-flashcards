@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import configparser
-import os
 from flask import Flask
+import config
 
 
 def create_app():
@@ -29,21 +28,11 @@ def init_modules(app):
 
 # Read config file
 def load_config(app):
-
-    # Get the path to the application directory, that's where the config file resides.
-    par_dir = os.path.join(__file__, os.pardir)
-    par_dir_abs_path = os.path.abspath(par_dir)
-    app_dir = os.path.dirname(par_dir_abs_path)
-
-    config = configparser.RawConfigParser()
-    config_filepath = app_dir + '/config.cfg'
-    config.read(config_filepath)
-
     # Add Server Port to App config
-    app.config['SERVER_PORT'] = config.get('Application', 'SERVER_PORT')
+    app.config['SERVER_PORT'] = config.SERVER_PORT
 
     # Add Secret Key
-    app.config['FN_FLASK_SECRET_KEY'] = config.get('Application', 'FN_FLASK_SECRET_KEY')
+    app.config['FN_FLASK_SECRET_KEY'] = config.FN_FLASK_SECRET_KEY
 
     # Add SSL certifcate/key paths
-    app.config['SSL'] = (config.get('SSL', 'CERT'), config.get('SSL', 'KEY'))
+    app.config['SSL'] = (config.CERT, config.KEY)

@@ -8,10 +8,11 @@ from google.oauth2.credentials import Credentials
 
 # Custom Libraries
 from app.lib import utils
+import config
 
 # Service Account Key and Scopes
-CLIENT_SECRETS_FILE = utils.get_config_field('Google', 'CLIENT_SECRETS_FILE')
-SERVICE_ACCOUNT_FILE = utils.get_config_field('Google', 'SERVICE_ACCOUNT_FILE')
+CLIENT_SECRETS_FILE = config.CLIENT_SECRETS_FILE
+SERVICE_ACCOUNT_FILE = config.SERVICE_ACCOUNT_FILE
 SCOPES = [
     'openid email profile',
     'https://www.googleapis.com/auth/spreadsheets.readonly',
