@@ -1,6 +1,4 @@
 import pandas as pd
-import os
-import configparser
 
 from googleapiclient.discovery import build
 from google.oauth2.service_account import Credentials as service_account_credentials
@@ -8,6 +6,7 @@ from google.oauth2.credentials import Credentials as user_credentials
 
 from flask import session
 from app.lib import reference as ref
+import config
 
 
 def get_drive_client_credentials():
@@ -27,9 +26,8 @@ def get_sheets_client_credentials():
 
 
 def get_drive_service_account_credentials():
-    SERVICE_ACCOUNT_FILE = get_config_field('Google', 'SERVICE_ACCOUNT_FILE')
     credentials = service_account_credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE,
+        config.SERVICE_ACCOUNT_FILE,
         scopes=['https://www.googleapis.com/auth/drive.readonly'])
 
     service = build('drive', 'v3', credentials=credentials)
@@ -38,9 +36,8 @@ def get_drive_service_account_credentials():
 
 
 def get_sheets_service_account_credentials():
-    SERVICE_ACCOUNT_FILE = get_config_field('Google', 'SERVICE_ACCOUNT_FILE')
     credentials = service_account_credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE,
+        config.SERVICE_ACCOUNT_FILE,
         scopes=['https://www.googleapis.com/auth/spreadsheets.readonly'])
 
     service = build('sheets', 'v4', credentials=credentials)
