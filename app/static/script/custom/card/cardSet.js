@@ -72,7 +72,7 @@ class cardSet {
             }
         }
 
-        // Reove Category Column from available indicies (if found)
+        // Remove Category Column from available indicies (if found)
         if (categoriesProvided) {
            availableIndices.splice(this.rawData['headers'].indexOf(indexMapping['categories']), 1);
         }
@@ -128,7 +128,6 @@ class cardSet {
         if (this._randomFlag) {
             allIds = shuffle(allIds);
         }
-
         this.idList = allIds;
         this._fullListLength = allIds.length;
     }
@@ -197,7 +196,6 @@ class cardSet {
 
             results.push(textRecord);
         }
-
         return results;
     }
 
@@ -238,48 +236,3 @@ function shuffle(array) {
 
   return array;
 };
-
-
-// x = new cardSet({
-//     "headers": ["spanish", "english", "poopies"],
-//     "data": [
-//         ['hola', 'hello', 'basic1'],
-//         ['como', 'how', 'basic1'],
-//         ['estas', 'you are', 'basic1'],
-//         ['bien', 'good', 'basic3'],
-//         ['mal', 'bad', 'basic3'],
-//         // ['que', 'what', 'basic3'],
-//     ]
-// });
-//
-// console.log(x.rawData);
-//
-// // Test column suggest
-// suggestedColumnMap = x.suggestColumns();
-// console.log(suggestedColumnMap);
-// x.saveIndexMap(suggestedColumnMap);
-// console.log(x._indexMapping);
-//
-// // // Test get category List
-// // console.log(x.categoryList);
-//
-// // Test Random Flag
-// x.randomFlag = false;
-// x.refreshIdList()
-// console.log(x.idList);
-// console.log(x.nextCards)
-//
-// x.randomFlag = true;
-// x.refreshIdList()
-// console.log(x.idList);
-// console.log(x.nextCards)
-//
-// x.category = 'basic3';
-// x.refreshIdList()
-// console.log(x.idList);
-// console.log(x.nextCards)
-//
-// x.category = 'basic1';
-// x.refreshIdList()
-// console.log(x.idList);
-// console.log(x.nextCards)

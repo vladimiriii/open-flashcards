@@ -60,7 +60,6 @@ function buildIndicatorList(div, dataset, optional=false) {
 
 
 function populateCards(cardsToDisplay) {
-
     // Get Text and Append to Cards
     for (let card in cardsToDisplay) {
 
@@ -69,10 +68,12 @@ function populateCards(cardsToDisplay) {
         // Generate ID tags
         let frontHtmlID = '#card' + String(card + 1) + ' .front';
         let primaryBackHtmlID = '#card' + String(card + 1) + '-back1';
+        let secondaryBackHtmlID = '#card' + String(card + 1) + '-back2';
 
         // Empty Old Values/Reset Font Sizes
         $(frontHtmlID).empty();
         $(primaryBackHtmlID).empty();
+        $(secondaryBackHtmlID).empty();
 
         // Append Words to Cards
         let frontText = '<p class="card-text" id="card' + String(card + 1) + '-ft">' + cardsToDisplay[card]['frontText'] + '</p>';
@@ -90,8 +91,6 @@ function populateCards(cardsToDisplay) {
 
         // If there is a third language, append that too
         if ('secondaryBackText' in cardsToDisplay[card]) {
-            let secondaryBackHtmlID = '#card' + String(card + 1) + '-back2';
-            $(secondaryBackHtmlID).empty();
             $(secondaryBackHtmlID).append('<p class="card-text" id="card' + String(card + 1) + '-bt2">' + cardsToDisplay[card]['secondaryBackText'] + '</p>');
             $('#card' + String(card + 1) + '-bt2').css('font-size', defaultFontSize);
             $('#card' + String(card + 1) + '-bt2').css('font-size',
@@ -169,6 +168,7 @@ function updateColumnMapping() {
     // Get Category and Language Lists
     const categories = cards.categoryList;
     buildIndicatorList("category-list", categories);
+    cards.category = 'all';
 
     setTimeout(function() {
         // Get Random numbers

@@ -48,6 +48,15 @@ def process_data(response):
 
     results = {}
     results['headers'] = response[0]
-    results['data'] = response[1:len(response)]
+    columns = len(results['headers'])
+
+    # If values are missing in the last column, pad with extra value
+    corrected_data = []
+    for x in response[1:len(response)]:
+        if len(x) < columns:
+            x.append('')
+        corrected_data.append(x)
+
+    results['data'] = corrected_data
 
     return results
