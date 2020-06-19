@@ -32,13 +32,13 @@ function populateModalDropdowns(columnLookup) {
     buildIndicatorList("modal-categories-list", Object.values(columnLookup), true);
 
     // Select the correct values in each drop down
-    $('#primary-list option[value="' + columnLookup['languageOne'] + '"]').attr('selected', true);
-    $('#secondary-list option[value="' + columnLookup['languageTwo'] + '"]').attr('selected', true);
+    $('#primary-list option[value="' + columnLookup['language1'] + '"]').attr('selected', true);
+    $('#secondary-list option[value="' + columnLookup['language2'] + '"]').attr('selected', true);
     $('#modal-categories-list option[value="' + columnLookup['categories'] + '"]').attr('selected', true);
-    if (columnLookup['languageThree'] === null) {
-        $('#tertiary-list>option:eq(0)').attr('selected', true);
+    if ('language3' in columnLookup) {
+        $('#tertiary-list option[value="' + columnLookup['language3'] + '"]').attr('selected', true);
     } else {
-        $('#tertiary-list option[value="' + columnLookup['languageThree'] + '"]').attr('selected', true);
+        $('#tertiary-list>option:eq(0)').attr('selected', true);
     };
 };
 
@@ -156,9 +156,9 @@ function updateColumnMapping() {
     unflipCards();
 
     const indexMapping = {};
-    indexMapping['languageOne'] = $("#primary-list").val();
-    indexMapping['languageTwo'] = $("#secondary-list").val();
-    indexMapping['languageThree'] = $("#tertiary-list").val();
+    indexMapping['language1'] = $("#primary-list").val();
+    indexMapping['language2'] = $("#secondary-list").val();
+    indexMapping['language3'] = $("#tertiary-list").val();
     indexMapping['categories'] = $("#modal-categories-list").val();
 
     cards.saveIndexMap(indexMapping);

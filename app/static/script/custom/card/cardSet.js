@@ -88,12 +88,12 @@ class cardSet {
         }
 
         // Assign Remaining Columns
-        indexMapping['languageOne'] = this.rawData['headers'][availableIndices[0]];
-        indexMapping['languageTwo'] = this.rawData['headers'][availableIndices[1]];
+        indexMapping['language1'] = this.rawData['headers'][availableIndices[0]];
+        indexMapping['language2'] = this.rawData['headers'][availableIndices[1]];
         if (availableIndices.length > 2) {
-           indexMapping['languageThree'] = this.rawData['headers'][availableIndices[2]];
-        } else {
-           indexMapping['languageThree'] = null;
+            for (let i = 2; i < availableIndices.length; i++) {
+                indexMapping['language' + (i + 1).toString()] = this.rawData['headers'][availableIndices[i]];
+            }
         }
 
         // Return results
@@ -103,9 +103,9 @@ class cardSet {
 
     saveIndexMap(map) {
         const result = {};
-        result['languageOne'] = this.rawData['headers'].indexOf(map['languageOne']);
-        result['languageTwo'] = this.rawData['headers'].indexOf(map['languageTwo']);
-        result['languageThree'] = this.rawData['headers'].indexOf(map['languageThree']);
+        result['language1'] = this.rawData['headers'].indexOf(map['language1']);
+        result['language2'] = this.rawData['headers'].indexOf(map['language2']);
+        result['language3'] = this.rawData['headers'].indexOf(map['language3']);
         result['categories'] = this.rawData['headers'].indexOf(map['categories']);
         this._indexMapping = result;
     }
@@ -186,12 +186,12 @@ class cardSet {
         for (let id in currentIds) {
             let textRecord = {};
             rawRecord = this.rawData['data'][currentIds[id]];
-            textRecord['frontText'] = rawRecord[this._indexMapping['languageOne']];
-            textRecord['primaryBackText'] = rawRecord[this._indexMapping['languageTwo']];
+            textRecord['frontText'] = rawRecord[this._indexMapping['language1']];
+            textRecord['primaryBackText'] = rawRecord[this._indexMapping['language2']];
 
             // If there is a third language, append that too
-            if (this._indexMapping['languageThree'] != -1) {
-                textRecord['secondaryBackText'] = rawRecord[this._indexMapping['languageThree']];
+            if (this._indexMapping['language3'] != -1) {
+                textRecord['secondaryBackText'] = rawRecord[this._indexMapping['language3']];
             }
 
             results.push(textRecord);
